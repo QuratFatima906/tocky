@@ -11,4 +11,4 @@ export const spacing = {
 
 export type Spacing = keyof typeof spacing;
 
-export const MINIMUM_HIT_SLOP = 44;
+export const MINIMUM_TOUCH_TARGET = 44;

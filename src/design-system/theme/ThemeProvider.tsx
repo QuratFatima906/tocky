@@ -10,34 +10,49 @@ import {
 import { AccessibilityInfo, useColorScheme } from 'react-native';
 
 import {
+  categoryForeground,
+  categoryGlyph,
   categorySurface,
   colors,
-  duration,
+  durations,
   easing,
   elevation,
+  gradients,
   radius,
   spacing,
-  spring,
+  springs,
   textVariants,
+  REDUCED_MOTION_DURATION,
   type ColorRole,
   type ColorScheme,
+  type DurationName,
+  type ElevationLevel,
+  type Gradient,
+  type GradientName,
   type ThemePreference,
 } from '../tokens';
+
+type ShadowStyle = (typeof elevation)['light'][ElevationLevel];
 
 export type Theme = {
   readonly scheme: ColorScheme;
   readonly color: Record<ColorRole, string>;
-  readonly elevation: (typeof elevation)['light'];
+  readonly gradient: Record<GradientName, Gradient>;
+  readonly elevation: Record<ElevationLevel, ShadowStyle>;
   readonly spacing: typeof spacing;
   readonly radius: typeof radius;
   readonly text: typeof textVariants;
   readonly motion: {
-    readonly duration: typeof duration;
-    readonly easing: typeof easing;
-    readonly spring: typeof spring;
     readonly reduced: boolean;
+    readonly duration: (name: DurationName) => number;
+    readonly easing: typeof easing;
+    readonly spring: typeof springs;
   };
-  readonly categorySurface: (hue: string) => string;
+  readonly category: {
+    readonly surface: (hue: string) => string;
+    readonly foreground: (hue: string) => string;
+    readonly glyph: (hue: string) => string;
+  };
 };
 
 type ThemeContextValue = {
@@ -53,12 +68,21 @@ function useReduceMotionEnabled(): boolean {
 
   useEffect(() => {
     let isMounted = true;
+    let hasReceivedLiveValue = false;
+
     AccessibilityInfo.isReduceMotionEnabled()
       .then((enabled) => {
-        if (isMounted) setIsEnabled(enabled);
+        if (isMounted && !hasReceivedLiveValue) setIsEnabled(enabled);
       })
-      .catch(() => setIsEnabled(false));
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setIsEnabled);
+      .catch(() => {
+        if (isMounted && !hasReceivedLiveValue) setIsEnabled(false);
+      });
+
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', (enabled) => {
+      hasReceivedLiveValue = true;
+      setIsEnabled(enabled);
+    });
+
     return () => {
       isMounted = false;
       subscription.remove();
@@ -82,27 +106,33 @@ export function ThemeProvider({
   const scheme: ColorScheme =
     preference === 'system' ? (systemScheme === 'dark' ? 'dark' : 'light') : preference;
 
-  const resolveCategorySurface = useCallback(
-    (hue: string) => categorySurface(hue, scheme),
-    [scheme],
+  const resolveDuration = useCallback(
+    (name: DurationName) => (reducedMotion ? REDUCED_MOTION_DURATION : durations[name]),
+    [reducedMotion],
+  );
+
+  const theme = useMemo<Theme>(
+    () => ({
+      scheme,
+      color: colors[scheme],
+      gradient: gradients[scheme],
+      elevation: elevation[scheme],
+      spacing,
+      radius,
+      text: textVariants,
+      motion: { reduced: reducedMotion, duration: resolveDuration, easing, spring: springs },
+      category: {
+        surface: (hue) => categorySurface(hue, scheme),
+        foreground: (hue) => categoryForeground(hue, scheme),
+        glyph: (hue) => categoryGlyph(hue, scheme),
+      },
+    }),
+    [reducedMotion, resolveDuration, scheme],
   );
 
   const value = useMemo<ThemeContextValue>(
-    () => ({
-      preference,
-      setPreference,
-      theme: {
-        scheme,
-        color: colors[scheme],
-        elevation: elevation[scheme],
-        spacing,
-        radius,
-        text: textVariants,
-        motion: { duration, easing, spring, reduced: reducedMotion },
-        categorySurface: resolveCategorySurface,
-      },
-    }),
-    [preference, reducedMotion, resolveCategorySurface, scheme],
+    () => ({ theme, preference, setPreference }),
+    [preference, theme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -9,3 +9,9 @@ export const radius = {
 } as const;
 
 export type Radius = keyof typeof radius;
+
+const TILE_RADIUS_RATIO = 1 / 3;
+
+export function tileRadius(size: number): number {
+  return Math.round(size * TILE_RADIUS_RATIO);
+}

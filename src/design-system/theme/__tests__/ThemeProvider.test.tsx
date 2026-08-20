@@ -2,7 +2,14 @@ import { act, render, screen } from '@testing-library/react-native';
 import { useEffect } from 'react';
 import { AccessibilityInfo, Text, useColorScheme } from 'react-native';
 
-import { CATEGORY_PRESETS, colors } from '../../tokens';
+import {
+  CATEGORY_PRESETS,
+  colors,
+  contrastRatio,
+  durations,
+  REDUCED_MOTION_DURATION,
+  WCAG_AA_BODY_TEXT,
+} from '../../tokens';
 import { ThemeProvider, useTheme, useThemePreference } from '../ThemeProvider';
 
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
@@ -26,7 +33,17 @@ function MotionProbe() {
 
 function CategorySurfaceProbe({ hue }: { hue: string }) {
   const theme = useTheme();
-  return <Text testID="surface">{theme.categorySurface(hue)}</Text>;
+  return <Text testID="surface">{theme.category.surface(hue)}</Text>;
+}
+
+function CategoryForegroundProbe({ hue }: { hue: string }) {
+  const theme = useTheme();
+  return <Text testID="foreground">{theme.category.foreground(hue)}</Text>;
+}
+
+function MotionDurationProbe() {
+  const theme = useTheme();
+  return <Text testID="duration">{String(theme.motion.duration('normal'))}</Text>;
 }
 
 function readTestId(testID: string): string {
@@ -109,6 +126,19 @@ describe('ThemeProvider', () => {
     });
   });
 
+  describe('category colors', () => {
+    it('keeps a category label readable against its own surface', async () => {
+      await render(
+        <ThemeProvider initialPreference="light">
+          <CategoryForegroundProbe hue={WORK.hue} />
+        </ThemeProvider>,
+      );
+      expect(contrastRatio(readTestId('foreground'), WORK.tint)).toBeGreaterThanOrEqual(
+        WCAG_AA_BODY_TEXT,
+      );
+    });
+  });
+
   describe('reduced motion', () => {
     it('reports the system reduce-motion setting', async () => {
       mockedIsReduceMotionEnabled.mockResolvedValue(true);
@@ -144,6 +174,51 @@ describe('ThemeProvider', () => {
         </ThemeProvider>,
       );
       expect(readTestId('motion')).toBe('false');
+    });
+
+    it('collapses animation durations to zero when reduce motion is on', async () => {
+      mockedIsReduceMotionEnabled.mockResolvedValue(true);
+      await render(
+        <ThemeProvider>
+          <MotionDurationProbe />
+        </ThemeProvider>,
+      );
+      expect(readTestId('duration')).toBe(String(REDUCED_MOTION_DURATION));
+    });
+
+    it('uses the full duration when reduce motion is off', async () => {
+      await render(
+        <ThemeProvider>
+          <MotionDurationProbe />
+        </ThemeProvider>,
+      );
+      expect(readTestId('duration')).toBe(String(durations.normal));
+    });
+
+    it('ignores a slow initial read that resolves after a live change', async () => {
+      let resolveInitialRead: (value: boolean) => void = () => {};
+      mockedIsReduceMotionEnabled.mockReturnValue(
+        new Promise<boolean>((resolve) => {
+          resolveInitialRead = resolve;
+        }),
+      );
+
+      await render(
+        <ThemeProvider>
+          <MotionProbe />
+        </ThemeProvider>,
+      );
+
+      const notifyReduceMotionChanged = mockedAddEventListener.mock.calls[0]![1] as unknown as (
+        isReduceMotionEnabled: boolean,
+      ) => void;
+      await act(async () => notifyReduceMotionChanged(true));
+      expect(readTestId('motion')).toBe('true');
+
+      await act(async () => {
+        resolveInitialRead(false);
+      });
+      expect(readTestId('motion')).toBe('true');
     });
 
     it('removes its listener on unmount', async () => {

@@ -1,3 +1,5 @@
+import { hexToRgba, readableOn, WCAG_AA_NON_TEXT } from './contrast';
+import { palette } from './palette';
 import type { ColorScheme } from './scheme';
 
 export type CategoryIconName = 'work' | 'learning' | 'personal' | 'health' | 'creative' | 'social';
@@ -19,25 +21,26 @@ export const CATEGORY_PRESETS: readonly CategoryPreset[] = [
 ] as const;
 
 const DARK_TINT_ALPHA = 0.18;
+const DERIVED_LIGHT_TINT_ALPHA = 0.12;
 
 const presetByHue = new Map(CATEGORY_PRESETS.map((preset) => [preset.hue.toUpperCase(), preset]));
 
-export function hexToRgba(hex: string, alpha: number): string {
-  const normalized = hex.replace('#', '');
-  const expanded =
-    normalized.length === 3
-      ? normalized
-          .split('')
-          .map((char) => char + char)
-          .join('')
-      : normalized;
-  const red = parseInt(expanded.slice(0, 2), 16);
-  const green = parseInt(expanded.slice(2, 4), 16);
-  const blue = parseInt(expanded.slice(4, 6), 16);
-  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-}
-
 export function categorySurface(hue: string, scheme: ColorScheme): string {
   if (scheme === 'dark') return hexToRgba(hue, DARK_TINT_ALPHA);
-  return presetByHue.get(hue.toUpperCase())?.tint ?? hexToRgba(hue, 0.12);
+  return presetByHue.get(hue.toUpperCase())?.tint ?? hexToRgba(hue, DERIVED_LIGHT_TINT_ALPHA);
 }
+
+export function categoryForeground(hue: string, scheme: ColorScheme): string {
+  return readableOn(hue, categoryBackdrop(hue, scheme));
+}
+
+export function categoryGlyph(hue: string, scheme: ColorScheme): string {
+  return readableOn(hue, categoryBackdrop(hue, scheme), WCAG_AA_NON_TEXT);
+}
+
+function categoryBackdrop(hue: string, scheme: ColorScheme): string {
+  if (scheme === 'dark') return palette.nightCard;
+  return presetByHue.get(hue.toUpperCase())?.tint ?? palette.white;
+}
+
+export { hexToRgba };

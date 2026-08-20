@@ -1,14 +1,32 @@
-export { CATEGORY_PRESETS, categorySurface, hexToRgba } from './category';
+export { CATEGORY_PRESETS, categoryForeground, categoryGlyph, categorySurface } from './category';
 export type { CategoryIconName, CategoryPreset } from './category';
 export { colors } from './colors';
 export type { ColorRole } from './colors';
+export {
+  contrastRatio,
+  hexToRgba,
+  readableOn,
+  WCAG_AA_BODY_TEXT,
+  WCAG_AA_LARGE_TEXT,
+  WCAG_AA_NON_TEXT,
+} from './contrast';
 export { elevation } from './elevation';
 export type { ElevationLevel } from './elevation';
-export { duration, easing, spring, PRESSED_OPACITY, PRESSED_SCALE } from './motion';
-export { radius } from './radius';
+export { gradients } from './gradients';
+export type { Gradient, GradientName } from './gradients';
+export {
+  durations,
+  easing,
+  springs,
+  PRESSED_OPACITY,
+  PRESSED_SCALE,
+  REDUCED_MOTION_DURATION,
+} from './motion';
+export type { DurationName, SpringName } from './motion';
+export { radius, tileRadius } from './radius';
 export type { Radius } from './radius';
 export type { ColorScheme, ThemePreference } from './scheme';
-export { spacing, MINIMUM_HIT_SLOP } from './spacing';
+export { spacing, MINIMUM_TOUCH_TARGET } from './spacing';
 export type { Spacing } from './spacing';
-export { fontFamily, textVariants, MAXIMUM_FONT_SCALE } from './typography';
-export type { TextVariant } from './typography';
+export { fontFamily, textVariants } from './typography';
+export type { TextVariant, VariantStyle } from './typography';
