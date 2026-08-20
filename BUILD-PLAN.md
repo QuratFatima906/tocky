@@ -4,6 +4,7 @@ Work is divided into small chunks. **One PR per chunk.** Each chunk must leave t
 repo green: typecheck, lint, and tests all pass.
 
 Sources of truth:
+
 - **Visual:** `design-source/app-v2.html` (from Claude Design `Tocky App v2.dc.html`)
 - **Tokens:** `design-source/brand-system.html`
 - **Behavior:** `Tocky-Flows.md` (mirrored into `docs/`)
@@ -32,6 +33,7 @@ Progress is tracked in `PROGRESS.md`.
 ## Milestone A — Foundation
 
 ### A1 · Project scaffold & tooling
+
 - [ ] Expo + TypeScript (strict) + Expo Router project
 - [ ] Path aliases (`@/…`), absolute imports
 - [ ] ESLint (expo config + import ordering) and Prettier
@@ -44,6 +46,7 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] `README.md` with setup and human-action checklist
 
 ### A2 · Design tokens
+
 - [ ] `tokens/color.ts` — brand pink ramp, neutrals, 6 category hues + tints,
       semantic (success/warning/error/info), light **and** dark surface sets
 - [ ] `tokens/typography.ts` — Fredoka (display/numerals) + Figtree (text/UI),
@@ -57,6 +60,7 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] Snapshot test asserting every token is defined in both schemes
 
 ### A3 · Design system primitives
+
 - [ ] `TockyIcon` — all 16 icons as `react-native-svg`, ported 1:1
 - [ ] `TockyOwl` — 5 expressions, derived shade logic ported 1:1
 - [ ] `Text` — variant-driven, Dynamic Type aware, never raw `<Text>` in screens
@@ -78,6 +82,7 @@ Progress is tracked in `PROGRESS.md`.
 ## Milestone B — Data & domain
 
 ### B1 · Local persistence
+
 - [ ] `expo-sqlite` setup with versioned migrations
 - [ ] Tables: `categories`, `sessions`, `pauses`, `tasks`, `prefs`, `sync_queue`
 - [ ] Indexes on `sessions(startedAt)`, `sessions(categoryId)`
@@ -88,6 +93,7 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] Integration tests against an in-memory database
 
 ### B2 · Domain: duration & aggregation (pure, no React)
+
 - [ ] `duration.ts` — `(endedAt − startedAt) − Σ pauses`, open-pause handling
 - [ ] `format.ts` — `4h 18m`, `01:42:18`, `12h 04m`, relative day labels
 - [ ] `bucketing.ts` — split sessions at **local midnight** for day/week/month buckets
@@ -98,6 +104,7 @@ Progress is tracked in `PROGRESS.md`.
       backwards clock jumps, zero-length, multi-day sessions
 
 ### B3 · Timer engine
+
 - [ ] `TimerController` implementing `IDLE → RUNNING ⇄ PAUSED → ENDED`
 - [ ] Start / Pause / Resume / End / Switch, all idempotent and debounced
 - [ ] Single-active-session invariant enforced at the service layer
@@ -115,6 +122,7 @@ Each screen chunk delivers: layout matching the design, all states from
 `Tocky-Flows.md` §3, wiring to services, unit tests, and accessibility labels.
 
 ### C1 · Navigation shell
+
 - [ ] Expo Router layout: Home · History · `+` · Insights · Tasks
 - [ ] Raised centre `+` opening the New-session modal
 - [ ] Persistent "Now tracking" mini-bar host above the tab bar
@@ -122,6 +130,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] Deep-link routes for Siri and widgets
 
 ### C2 · Home
+
 - [ ] Greeting (date + name) and profile/owl entry to Settings
 - [ ] "Tracked today" card: total, vs-yesterday delta, segmented category bar, legend
 - [ ] Breakdown list: category tile · progress · time
@@ -130,6 +139,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] States: active · no active session · empty day · loading skeleton
 
 ### C3 · New session (modal)
+
 - [ ] Category grid with selected ring + check
 - [ ] Optional label field
 - [ ] Pinned "Start {Category} session" button, disabled until a category is chosen
@@ -138,6 +148,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] **End-to-end slice: start → Timer → end → saved → Home updates**
 
 ### C4 · Timer
+
 - [ ] Header (collapse · title · ⋯ menu), category pill with label
 - [ ] Progress ring + owl + elapsed numerals + goal
 - [ ] Control cluster: End · Primary (Pause/Start) · Switch
@@ -148,6 +159,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] Collapse keeps the session running
 
 ### C5 · History
+
 - [ ] Day groups (Today · Yesterday · dated) with daily totals
 - [ ] Session rows: start time · category tile · title · duration
 - [ ] Search/filter by category, label, and date
@@ -155,6 +167,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] States: empty · loading skeleton
 
 ### C6 · Session detail & editing
+
 - [ ] Owl hero, category pill, title, duration, date and range
 - [ ] Meta rows: Started · Ended · Pauses (count + total) · Linked task
 - [ ] Note card
@@ -164,6 +177,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] Validation: end ≤ start blocked inline; overlap disallowed
 
 ### C7 · Insights
+
 - [ ] Week switcher with disabled forward chevron on the current week
 - [ ] Total with week-over-week delta
 - [ ] Daily stacked bar chart, category-colored, tallest day tagged
@@ -173,6 +187,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] States: not-enough-data (<2 tracked days) · loading skeleton
 
 ### C8 · Tasks
+
 - [ ] Header count ("3 of 7 done today"), add button
 - [ ] Category filter chips
 - [ ] Active-task card showing live tracked time
@@ -183,12 +198,14 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] States: empty · loading skeleton
 
 ### C9 · Onboarding
+
 - [ ] Three-pane pager with dot indicator and skip
 - [ ] Pane 1 Meet Tocky · 2 One tap · 3 Insights + privacy
 - [ ] "Get started" → Home; "I already have an account" → sign-in
 - [ ] Shown once; persisted completion flag
 
 ### C10 · Settings
+
 - [ ] Profile card + edit
 - [ ] Tocky Plus banner, hidden when already Plus
 - [ ] Preferences: daily reminder (+ time picker), idle detection, weekly report
@@ -202,6 +219,7 @@ Each screen chunk delivers: layout matching the design, all states from
 ## Milestone D — Robustness
 
 ### D1 · Edge & fail cases (`Tocky-Flows.md` §6)
+
 - [ ] Short session (<60s) discard confirm
 - [ ] Suspiciously long session keep-or-edit prompt
 - [ ] Cross-midnight attribution (split at local midnight)
@@ -215,6 +233,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] Notifications denied while reminder is ON
 
 ### D2 · Accessibility
+
 - [ ] VoiceOver labels, roles, and hints on every interactive element
 - [ ] Live timer announced politely, not per second
 - [ ] Dynamic Type to the largest sizes; Timer and Insights verified
@@ -225,6 +244,7 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] Automated a11y assertions in the test suite
 
 ### D3 · Performance
+
 - [ ] Only the elapsed numerals re-render on tick
 - [ ] Memoized selectors; aggregation cached and invalidated on write
 - [ ] Cold start under 2s
@@ -237,24 +257,28 @@ Each screen chunk delivers: layout matching the design, all states from
 ## Milestone E — Release
 
 ### E1 · Observability
+
 - [ ] Sentry (JS + native), scrubbing notes and free text
 - [ ] Structured logger
 - [ ] Analytics abstraction and the event taxonomy from the product plan
 - [ ] No-op cleanly when keys are absent
 
 ### E2 · End-to-end tests
+
 - [ ] Maestro flows: first run · start→end · pause/resume · switch · edit ·
       delete · offline · kill-and-restore · task-linked session
 - [ ] CI job running E2E on an iOS simulator
 
 ### E3 · Build & deploy
+
 - [ ] EAS build profiles: development · preview · production
 - [ ] App icon, adaptive icon, splash
 - [ ] GitHub Actions: EAS build on `main`, submit to TestFlight on tag
 - [ ] App Store metadata, privacy manifest, screenshots
 - [ ] Release checklist
 
-### E4 · Siri / App Intents *(needs Xcode + Apple Developer account)*
+### E4 · Siri / App Intents _(needs Xcode + Apple Developer account)_
+
 - [ ] Native module bridging the shared data layer
 - [ ] Intents: start · stop · switch · log time · query time · query summary
 - [ ] `AppEntity` for categories/tasks with disambiguation
