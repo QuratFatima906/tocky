@@ -1,0 +1,52 @@
+export const palette = {
+  pinkDeep: '#E23E70',
+  pinkPressed: '#F0487B',
+  pink: '#FF5C8A',
+  pinkLight: '#FF7BA3',
+  pinkSoft: '#FF8CAC',
+  pinkPale: '#FFB3CC',
+  pinkBorder: '#FFD4E2',
+  pinkTint: '#FFE7EF',
+  pinkWash: '#FFF1F6',
+  pinkOnDark: '#FF6F97',
+
+  white: '#FFFFFF',
+  paper: '#FBFAF8',
+  mist: '#F3F1F5',
+  hairline: '#F0ECF6',
+  line: '#D9D5E0',
+  soft: '#877F92',
+  stone: '#726C7D',
+  slate: '#6C6675',
+  charcoal: '#4A4453',
+  lilac: '#9A8FB0',
+  ink: '#2C2833',
+
+  lilacWash: '#F6F1FB',
+  violetWash: '#F3EDFC',
+  violetBorder: '#E7DFF0',
+  mintWash: '#EAF7F3',
+  blushBorder: '#F7D3D3',
+
+  night: '#191720',
+  nightRaised: '#211E2A',
+  nightCard: '#2A2634',
+  nightSunken: '#141219',
+  nightLine: '#35313F',
+  nightBorderStrong: '#7E7791',
+  nightMuted: '#948DA3',
+  nightSubtle: '#7E7791',
+  nightInk: '#1B1622',
+  nightText: '#F4F2F8',
+  nightTextInverse: '#E7E3EF',
+
+  success: '#45C67E',
+  warning: '#F2B21E',
+  error: '#F26B6B',
+  info: '#6AA6F0',
+} as const;
+
+export const shadowColor = {
+  light: '#4C3A6E',
+  dark: '#000000',
+} as const;

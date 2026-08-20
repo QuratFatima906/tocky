@@ -49,6 +49,8 @@ Instructions for each are in `README.md`.
 
 ## Log
 
-| Date       | Chunk | What landed                                                       |
-| ---------- | ----- | ----------------------------------------------------------------- |
-| 2026-08-20 | —     | Plan and progress files created; design + behavior specs imported |
+| Date       | Chunk | What landed                                                                                                                                                                                                                                                                                |
+| ---------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-08-20 | —     | Plan and progress files created; design + behavior specs imported                                                                                                                                                                                                                          |
+| 2026-08-20 | A1    | Expo + Expo Router scaffold, strict TypeScript, ESLint/Prettier, Jest, CI. Review drove out an iOS privacy manifest, a coverage-threshold CI failure, a duplicated Reanimated Babel plugin, and an unused background mode that risked App Store rejection.                                 |
+| 2026-08-20 | A2    | Token layer and theme provider. Review found every semantic colour and category chip failed WCAG AA as text, so colours are now _derived_ to be readable rather than hand-picked. Line heights became ratios so Dynamic Type scales them. Fixed a font-load hang and a reduce-motion race. |
