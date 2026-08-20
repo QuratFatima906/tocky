@@ -94,3 +94,12 @@ export function readableOn(
   readableCache.set(cacheKey, result);
   return result;
 }
+
+export function shade(hex: string, amount: number): string {
+  const channels = parseHex(hex);
+  if (channels === null) return hex;
+  const [red, green, blue] = channels.map((channel) =>
+    amount >= 0 ? channel + (255 - channel) * amount : channel * (1 + amount),
+  ) as [number, number, number];
+  return toHex(red, green, blue);
+}

@@ -11,6 +11,7 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/**/index.ts',
     '!src/design-system/theme/useAppFonts.ts',
+    '!src/test/**',
   ],
   coverageThreshold: {
     global: { statements: 90, branches: 80, functions: 90, lines: 90 },

@@ -59,15 +59,26 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] Font loading with splash-screen hold
 - [ ] Snapshot test asserting every token is defined in both schemes
 
-### A3 · Design system primitives
+### A3a · Icon and mascot artwork
 
-- [ ] `TockyIcon` — all 16 icons as `react-native-svg`, ported 1:1
-- [ ] `TockyOwl` — 5 expressions, derived shade logic ported 1:1
-- [ ] `Text` — variant-driven, Dynamic Type aware, never raw `<Text>` in screens
-- [ ] `Screen` — safe areas, background, scroll behavior, status-bar style
-- [ ] `Card`, `Surface`
+- [ ] `TockyIcon` — all 16 icons ported 1:1 to `react-native-svg`
+- [ ] `TockyOwl` — 5 expressions with the derived shade logic
+- [ ] Cutout colour is a prop, so glyphs read correctly on dark tiles
+- [ ] Dev-only component gallery route for visual review, stripped from release builds
+- [ ] Web preview so the design can be checked without Xcode
+
+### A3b · Core primitives
+
+- [ ] `Text` — variant-driven, Dynamic Type aware, never a raw `<Text>` in a screen
+- [ ] `Screen` — safe areas, background or gradient, status-bar style
+- [ ] `Surface` / `Card`
+- [ ] `Pressable` base with the shared press animation and Reduce Motion handling
 - [ ] `Button` (primary/secondary/destructive/ghost · sm/md/lg · loading/disabled/pressed)
-- [ ] `IconButton` (≥44pt hit target enforced)
+- [ ] `IconButton` with the 44pt minimum enforced
+- [ ] Unit tests and accessibility assertions for each
+
+### A3c · Composite primitives
+
 - [ ] `CategoryTile`, `CategoryPill`, `CategoryChip` — always hue **+ icon + label**
 - [ ] `ProgressBar`, `SegmentedBar`, `ProgressRing`
 - [ ] `ListRow`, `SessionRow`, `SectionHeader`
@@ -75,7 +86,7 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] `Toast` + toast host
 - [ ] `Sheet` (bottom sheet), `ConfirmDialog`
 - [ ] `TabBar` with the raised centre `+`
-- [ ] Unit tests + a11y assertions for every primitive
+- [ ] Unit tests and accessibility assertions for each
 
 ---
 
