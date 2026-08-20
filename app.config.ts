@@ -67,6 +67,7 @@ const config: ExpoConfig = {
       },
     ],
   ],
+  web: { bundler: 'metro', output: 'single' },
   experiments: { typedRoutes: true },
 };
 

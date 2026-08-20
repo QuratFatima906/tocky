@@ -5,6 +5,7 @@ import {
   hexToRgba,
   parseHex,
   readableOn,
+  shade,
   toHex,
   WCAG_AA_BODY_TEXT,
   WCAG_AA_NON_TEXT,
@@ -18,6 +19,33 @@ import { spacing } from '../spacing';
 import { textVariants } from '../typography';
 
 const SCHEMES: readonly ColorScheme[] = ['light', 'dark'];
+
+describe('shade', () => {
+  it('matches the shade formula the design source uses', () => {
+    const designShade = (hex: string, amount: number) => {
+      const channels = [0, 2, 4].map((index) => parseInt(hex.slice(index + 1, index + 3), 16));
+      return `#${channels
+        .map((channel) =>
+          Math.round(amount >= 0 ? channel + (255 - channel) * amount : channel * (1 + amount))
+            .toString(16)
+            .padStart(2, '0'),
+        )
+        .join('')
+        .toUpperCase()}`;
+    };
+
+    for (const hue of ['#8C7DE8', '#2FBFA0', '#F2B21E', '#FF5C8A']) {
+      for (const amount of [-0.22, -0.16, 0, 0.42, 0.58]) {
+        expect(shade(hue, amount)).toBe(designShade(hue, amount));
+      }
+    }
+  });
+
+  it('is a no-op at zero and safe on unparseable input', () => {
+    expect(shade('#8C7DE8', 0)).toBe('#8C7DE8');
+    expect(shade('rebeccapurple', -0.2)).toBe('rebeccapurple');
+  });
+});
 
 describe('contrast helpers', () => {
   it('computes known WCAG ratios', () => {

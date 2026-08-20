@@ -6,6 +6,7 @@ export {
   contrastRatio,
   hexToRgba,
   readableOn,
+  shade,
   WCAG_AA_BODY_TEXT,
   WCAG_AA_LARGE_TEXT,
   WCAG_AA_NON_TEXT,

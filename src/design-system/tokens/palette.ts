@@ -21,6 +21,7 @@ export const palette = {
   charcoal: '#4A4453',
   lilac: '#9A8FB0',
   ink: '#2C2833',
+  pupil: '#403A4D',
 
   lilacWash: '#F6F1FB',
   violetWash: '#F3EDFC',
