@@ -1,0 +1,4055 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TockyIcon renders add with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-add"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={16}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={1.3}
+            width={2.6}
+            x={10.7}
+            y={4}
+          />
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={2.6}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={1.3}
+            width={16}
+            x={4}
+            y={10.7}
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders creative with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-creative"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGPath
+          d="M12 2.5 C12.8 8 16 11.2 21.5 12 C16 12.8 12.8 16 12 21.5 C11.2 16 8 12.8 2.5 12 C8 11.2 11.2 8 12 2.5 Z"
+          fill={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders edit with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-edit"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="edit"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={1.7}
+                matrix={
+                  [
+                    0.7071067811865476,
+                    0.7071067811865475,
+                    -0.7071067811865475,
+                    0.7071067811865476,
+                    9.489592359914344,
+                    -8.90990257669732,
+                  ]
+                }
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={0.85}
+                width={4.2}
+                x={13.4}
+                y={6.2}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="edit"
+          >
+            <RNSVGPath
+              d="M5 19 5 15.4 15.6 4.8 18.6 7.8 8 18.4z"
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              strokeLinejoin={1}
+              strokeWidth={1.6}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders health with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-health"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGPath
+          d="M12 20.6 C4 15 3 9.6 6.6 7 C9.1 5.2 11 6.9 12 8.7 C13 6.9 14.9 5.2 17.4 7 C21 9.6 20 15 12 20.6 Z"
+          fill={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders history with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-history"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="history"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={6.4}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={0.85}
+                width={1.7}
+                x={11.2}
+                y={6.5}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={1.7}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={0.85}
+                width={5}
+                x={12}
+                y={11.2}
+              />
+              <RNSVGCircle
+                cx={12}
+                cy={12}
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                r={1.5}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="history"
+          >
+            <RNSVGCircle
+              cx={12}
+              cy={12}
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              r={9}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders home with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-home"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="home"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={6}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={1.2}
+                width={4}
+                x={10}
+                y={14}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="home"
+          >
+            <RNSVGPath
+              d="M12 3 L21 11.2 L18.4 11.2 L18.4 20 L5.6 20 L5.6 11.2 L3 11.2 Z"
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              propList={
+                [
+                  "fill",
+                  "stroke",
+                  "strokeWidth",
+                  "strokeLinejoin",
+                ]
+              }
+              stroke={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              strokeLinejoin={1}
+              strokeWidth={1.6}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders insights with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-insights"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={8}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={2}
+            width={4}
+            x={4}
+            y={12}
+          />
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={12}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={2}
+            width={4}
+            x={10}
+            y={8}
+          />
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={16}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={2}
+            width={4}
+            x={16}
+            y={4}
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders learning with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-learning"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="learning"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={1.7}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={0.85}
+                width={8.4}
+                x={8.4}
+                y={7.4}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={1.7}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={0.85}
+                width={8.4}
+                x={8.4}
+                y={10.6}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={1.7}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={0.85}
+                width={5}
+                x={8.4}
+                y={13.8}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="learning"
+          >
+            <RNSVGRect
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              height={16}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              rx={2.6}
+              width={14}
+              x={5}
+              y={4}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders pause with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-pause"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={14}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={1.8}
+            width={3.6}
+            x={7}
+            y={5}
+          />
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={14}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={1.8}
+            width={3.6}
+            x={13.4}
+            y={5}
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders personal with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-personal"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={12}
+            cy={8}
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={3.7}
+          />
+          <RNSVGPath
+            d="M4.5 20 Q4.5 13.4 12 13.4 Q19.5 13.4 19.5 20 Z"
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders social with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-social"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          >
+            <RNSVGDefs>
+              <RNSVGMask
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                maskContentUnits={1}
+                maskType={0}
+                maskUnits={1}
+                name="social"
+                width={24}
+                x={0}
+                y={0}
+              >
+                <RNSVGRect
+                  fill={
+                    {
+                      "payload": 4294967295,
+                      "type": 0,
+                    }
+                  }
+                  height={24}
+                  propList={
+                    [
+                      "fill",
+                    ]
+                  }
+                  width={24}
+                  x={0}
+                  y={0}
+                />
+                <RNSVGRect
+                  fill={
+                    {
+                      "payload": 4278190080,
+                      "type": 0,
+                    }
+                  }
+                  height={9.5}
+                  propList={
+                    [
+                      "fill",
+                    ]
+                  }
+                  rx={3.4}
+                  width={12.5}
+                  x={9.5}
+                  y={9.5}
+                />
+              </RNSVGMask>
+            </RNSVGDefs>
+            <RNSVGGroup
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              mask="social"
+            >
+              <RNSVGPath
+                d="M3 8.5 Q3 5 6.5 5 L13.5 5 Q17 5 17 8.5 L17 11 Q17 14.5 13.5 14.5 L8.5 14.5 L5.5 17.2 L5.5 14.5 Q3 14.3 3 11 Z"
+                fill={
+                  {
+                    "payload": 4287397352,
+                    "type": 0,
+                  }
+                }
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              />
+            </RNSVGGroup>
+          </RNSVGGroup>
+          <RNSVGPath
+            d="M11 12 Q11 10.2 12.8 10.2 L18.6 10.2 Q20.4 10.2 20.4 12 L20.4 14.4 Q20.4 16.2 18.6 16.2 L16 16.2 L18.6 18.6 L18.6 16.2 Q11 16.2 11 14.4 Z"
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders start with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-start"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGPath
+          d="M8 5.5 19 12 8 18.5z"
+          fill={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          strokeLinejoin={1}
+          strokeWidth={2.6}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders stop with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-stop"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGRect
+          fill={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          height={12}
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={3.6}
+          width={12}
+          x={6}
+          y={6}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders switch with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-switch"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={null}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeLinejoin={1}
+          strokeWidth={2.2}
+        >
+          <RNSVGPath
+            d="M4 9 L17 9"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+          <RNSVGPath
+            d="M14 6 L17 9 L14 12"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+          <RNSVGPath
+            d="M20 15 L7 15"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+          <RNSVGPath
+            d="M10 12 L7 15 L10 18"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders tasks with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-tasks"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="tasks"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGPath
+                d="M7.8 12.4 L10.8 15.4 L16.4 9"
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2.2}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="tasks"
+          >
+            <RNSVGCircle
+              cx={12}
+              cy={12}
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              r={9}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders work with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-work"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="work"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={3.3}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={1.3}
+                width={2.6}
+                x={10.7}
+                y={6.7}
+              />
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height={3}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                rx={1.3}
+                width={3.2}
+                x={10.4}
+                y={12.3}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="work"
+          >
+            <RNSVGRect
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              height={5.5}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              rx={2.5}
+              width={7}
+              x={8.5}
+              y={4.5}
+            />
+            <RNSVGRect
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              height={12}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              rx={3.4}
+              width={18}
+              x={3}
+              y={8}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyOwl renders the curious expression with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 67,
+        "width": 64,
+      }
+    }
+    testID="tocky-owl-curious"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={67}
+      bbWidth={64}
+      focusable={false}
+      height={67}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 67,
+            "width": 64,
+          },
+        ]
+      }
+      vbHeight={134}
+      vbWidth={128}
+      width={64}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGEllipse
+          cx={55}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGEllipse
+          cx={73}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGPath
+          d="M40 34 Q45 12 53 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGPath
+          d="M88 34 Q83 12 75 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={74}
+          fill={
+            {
+              "payload": 4294947788,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={50}
+          ry={48}
+        />
+        <RNSVGEllipse
+          cx={18}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              0.224951054343865,
+              -0.224951054343865,
+              0.9743700647852352,
+              18.457423181374967,
+              -1.9987241610083828,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={110}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              -0.224951054343865,
+              0.224951054343865,
+              0.9743700647852352,
+              -15.176791473885075,
+              26.795010795006334,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={86}
+          fill={
+            {
+              "payload": 4294959082,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={29}
+          ry={25}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={48}
+            cy={61.5}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={6.8}
+          />
+          <RNSVGCircle
+            cx={45.4}
+            cy={58.6}
+            fill={
+              {
+                "payload": 4294967295,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2.5}
+          />
+        </RNSVGGroup>
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={80}
+            cy={61.5}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={6.8}
+          />
+          <RNSVGCircle
+            cx={77.4}
+            cy={58.6}
+            fill={
+              {
+                "payload": 4294967295,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2.5}
+          />
+        </RNSVGGroup>
+        <RNSVGPath
+          d="M59.5 74 Q64 72.5 68.5 74 Q65.5 82 64 83 Q62.5 82 59.5 74 Z"
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyOwl renders the happy expression with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 67,
+        "width": 64,
+      }
+    }
+    testID="tocky-owl-happy"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={67}
+      bbWidth={64}
+      focusable={false}
+      height={67}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 67,
+            "width": 64,
+          },
+        ]
+      }
+      vbHeight={134}
+      vbWidth={128}
+      width={64}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGEllipse
+          cx={55}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGEllipse
+          cx={73}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGPath
+          d="M40 34 Q45 12 53 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGPath
+          d="M88 34 Q83 12 75 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={74}
+          fill={
+            {
+              "payload": 4294947788,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={50}
+          ry={48}
+        />
+        <RNSVGEllipse
+          cx={18}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              0.224951054343865,
+              -0.224951054343865,
+              0.9743700647852352,
+              18.457423181374967,
+              -1.9987241610083828,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={110}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              -0.224951054343865,
+              0.224951054343865,
+              0.9743700647852352,
+              -15.176791473885075,
+              26.795010795006334,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={86}
+          fill={
+            {
+              "payload": 4294959082,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={29}
+          ry={25}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGGroup
+          fill={null}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4282399309,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeWidth={3.6}
+        >
+          <RNSVGPath
+            d="M40,63 Q48,53 56,63"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+          <RNSVGPath
+            d="M72,63 Q80,53 88,63"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+        </RNSVGGroup>
+        <RNSVGPath
+          d="M59.5 74 Q64 72.5 68.5 74 Q65.5 82 64 83 Q62.5 82 59.5 74 Z"
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyOwl renders the sleepy expression with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 67,
+        "width": 64,
+      }
+    }
+    testID="tocky-owl-sleepy"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={67}
+      bbWidth={64}
+      focusable={false}
+      height={67}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 67,
+            "width": 64,
+          },
+        ]
+      }
+      vbHeight={134}
+      vbWidth={128}
+      width={64}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGEllipse
+          cx={55}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGEllipse
+          cx={73}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGPath
+          d="M40 34 Q45 12 53 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGPath
+          d="M88 34 Q83 12 75 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={74}
+          fill={
+            {
+              "payload": 4294947788,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={50}
+          ry={48}
+        />
+        <RNSVGEllipse
+          cx={18}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              0.224951054343865,
+              -0.224951054343865,
+              0.9743700647852352,
+              18.457423181374967,
+              -1.9987241610083828,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={110}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              -0.224951054343865,
+              0.224951054343865,
+              0.9743700647852352,
+              -15.176791473885075,
+              26.795010795006334,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={86}
+          fill={
+            {
+              "payload": 4294959082,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={29}
+          ry={25}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGGroup
+            fill={null}
+            propList={
+              [
+                "fill",
+                "stroke",
+                "strokeWidth",
+                "strokeLinecap",
+              ]
+            }
+            stroke={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            strokeLinecap={1}
+            strokeWidth={3.6}
+          >
+            <RNSVGPath
+              d="M40,60 Q48,67 56,60"
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+            />
+            <RNSVGPath
+              d="M72,60 Q80,67 88,60"
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+            />
+          </RNSVGGroup>
+          <RNSVGText
+            content={null}
+            dx={[]}
+            dy={[]}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            font={
+              {
+                "fontFamily": "Figtree_700Bold",
+                "fontSize": 11,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rotate={[]}
+            x={
+              [
+                97,
+              ]
+            }
+            y={
+              [
+                42,
+              ]
+            }
+          >
+            <RNSVGTSpan
+              content="z"
+              dx={[]}
+              dy={[]}
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              font={{}}
+              rotate={[]}
+              x={[]}
+              y={[]}
+            />
+          </RNSVGText>
+          <RNSVGText
+            content={null}
+            dx={[]}
+            dy={[]}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            font={
+              {
+                "fontFamily": "Figtree_700Bold",
+                "fontSize": 7.5,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rotate={[]}
+            x={
+              [
+                105,
+              ]
+            }
+            y={
+              [
+                32,
+              ]
+            }
+          >
+            <RNSVGTSpan
+              content="z"
+              dx={[]}
+              dy={[]}
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              font={{}}
+              rotate={[]}
+              x={[]}
+              y={[]}
+            />
+          </RNSVGText>
+        </RNSVGGroup>
+        <RNSVGPath
+          d="M59.5 74 Q64 72.5 68.5 74 Q65.5 82 64 83 Q62.5 82 59.5 74 Z"
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyOwl renders the surprised expression with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 67,
+        "width": 64,
+      }
+    }
+    testID="tocky-owl-surprised"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={67}
+      bbWidth={64}
+      focusable={false}
+      height={67}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 67,
+            "width": 64,
+          },
+        ]
+      }
+      vbHeight={134}
+      vbWidth={128}
+      width={64}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGEllipse
+          cx={55}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGEllipse
+          cx={73}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGPath
+          d="M40 34 Q45 12 53 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGPath
+          d="M88 34 Q83 12 75 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={74}
+          fill={
+            {
+              "payload": 4294947788,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={50}
+          ry={48}
+        />
+        <RNSVGEllipse
+          cx={18}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              0.224951054343865,
+              -0.224951054343865,
+              0.9743700647852352,
+              18.457423181374967,
+              -1.9987241610083828,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={110}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              -0.224951054343865,
+              0.224951054343865,
+              0.9743700647852352,
+              -15.176791473885075,
+              26.795010795006334,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={86}
+          fill={
+            {
+              "payload": 4294959082,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={29}
+          ry={25}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={48}
+            cy={61.5}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={6.8}
+          />
+          <RNSVGCircle
+            cx={45.4}
+            cy={58.6}
+            fill={
+              {
+                "payload": 4294967295,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2.5}
+          />
+        </RNSVGGroup>
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={80}
+            cy={61.5}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={6.8}
+          />
+          <RNSVGCircle
+            cx={77.4}
+            cy={58.6}
+            fill={
+              {
+                "payload": 4294967295,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2.5}
+          />
+        </RNSVGGroup>
+        <RNSVGGroup
+          fill={null}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4282399309,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeWidth={2.4}
+        >
+          <RNSVGPath
+            d="M40,41 Q48,36 56,40"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+          <RNSVGPath
+            d="M72,40 Q80,36 88,41"
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          />
+        </RNSVGGroup>
+        <RNSVGPath
+          d="M59.5 74 Q64 72.5 68.5 74 Q65.5 82 64 83 Q62.5 82 59.5 74 Z"
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={87}
+          fill={
+            {
+              "payload": 4290611991,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={3.4}
+          ry={4.2}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyOwl renders the wink expression with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 67,
+        "width": 64,
+      }
+    }
+    testID="tocky-owl-wink"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={67}
+      bbWidth={64}
+      focusable={false}
+      height={67}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 67,
+            "width": 64,
+          },
+        ]
+      }
+      vbHeight={134}
+      vbWidth={128}
+      width={64}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGEllipse
+          cx={55}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGEllipse
+          cx={73}
+          cy={119}
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={7.5}
+          ry={5}
+        />
+        <RNSVGPath
+          d="M40 34 Q45 12 53 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGPath
+          d="M88 34 Q83 12 75 34 Z"
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={74}
+          fill={
+            {
+              "payload": 4294947788,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={50}
+          ry={48}
+        />
+        <RNSVGEllipse
+          cx={18}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              0.224951054343865,
+              -0.224951054343865,
+              0.9743700647852352,
+              18.457423181374967,
+              -1.9987241610083828,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={110}
+          cy={80}
+          fill={
+            {
+              "payload": 4292253355,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.9743700647852352,
+              -0.224951054343865,
+              0.224951054343865,
+              0.9743700647852352,
+              -15.176791473885075,
+              26.795010795006334,
+            ]
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={10}
+          ry={21}
+        />
+        <RNSVGEllipse
+          cx={64}
+          cy={86}
+          fill={
+            {
+              "payload": 4294959082,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          rx={29}
+          ry={25}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294942907,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={18}
+        />
+        <RNSVGCircle
+          cx={48}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGCircle
+          cx={80}
+          cy={61}
+          fill={
+            {
+              "payload": 4294967295,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+          r={14}
+        />
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={48}
+            cy={61.5}
+            fill={
+              {
+                "payload": 4282399309,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={6.8}
+          />
+          <RNSVGCircle
+            cx={45.4}
+            cy={58.6}
+            fill={
+              {
+                "payload": 4294967295,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2.5}
+          />
+        </RNSVGGroup>
+        <RNSVGPath
+          d="M72,61 Q80,68 88,61"
+          fill={null}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4282399309,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeWidth={3.6}
+        />
+        <RNSVGPath
+          d="M59.5 74 Q64 72.5 68.5 74 Q65.5 82 64 83 Q62.5 82 59.5 74 Z"
+          fill={
+            {
+              "payload": 4294095390,
+              "type": 0,
+            }
+          }
+          propList={
+            [
+              "fill",
+            ]
+          }
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;

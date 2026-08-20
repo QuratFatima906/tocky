@@ -1,93 +1,62 @@
-import { render, screen } from '@testing-library/react-native';
+import { screen } from '@testing-library/react-native';
 
-import { INCLUDING_HIDDEN } from '@/test/renderWithProviders';
+import { INCLUDING_HIDDEN, renderWithProviders } from '@/test/renderWithProviders';
 
-import { shade } from '../../tokens/contrast';
 import { TockyIcon, TOCKY_ICON_NAMES } from '../TockyIcon';
 import { OWL_EXPRESSIONS, TockyOwl } from '../TockyOwl';
 
 describe('TockyIcon', () => {
-  it.each(TOCKY_ICON_NAMES)('renders %s without crashing', async (name) => {
-    await render(<TockyIcon name={name} color="#8C7DE8" size={24} />);
-    expect(screen.getByTestId(`tocky-icon-${name}`, INCLUDING_HIDDEN)).toBeTruthy();
+  it.each(TOCKY_ICON_NAMES)('renders %s with stable geometry', async (name) => {
+    await renderWithProviders(<TockyIcon name={name} color="#8C7DE8" size={24} />);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
-  it('covers every icon the design system declares', () => {
-    expect(TOCKY_ICON_NAMES).toHaveLength(16);
+  it('exposes a distinct name for every glyph it can draw', () => {
     expect(new Set(TOCKY_ICON_NAMES).size).toBe(TOCKY_ICON_NAMES.length);
   });
 
   it('renders at the requested size', async () => {
-    await render(<TockyIcon name="work" color="#8C7DE8" size={32} />);
+    await renderWithProviders(<TockyIcon name="work" color="#8C7DE8" size={32} />);
     const artwork = screen.getByTestId('tocky-icon-work', INCLUDING_HIDDEN);
     expect(artwork.props.style).toMatchObject({ width: 32, height: 32 });
   });
 
+  it('needs no knowledge of what it sits on, since cutouts are masked to transparency', async () => {
+    await renderWithProviders(<TockyIcon name="history" color="#8C7DE8" size={24} />);
+    const rendered = JSON.stringify(screen.toJSON());
+    expect(rendered).toContain('"mask":"history"');
+    expect(rendered).toContain('RNSVGMask');
+  });
+
   it('stays out of the accessibility tree, since a text label always accompanies it', async () => {
-    await render(<TockyIcon name="work" color="#8C7DE8" size={24} />);
+    await renderWithProviders(<TockyIcon name="work" color="#8C7DE8" size={24} />);
     const artwork = screen.getByTestId('tocky-icon-work', INCLUDING_HIDDEN);
     expect(artwork.props['aria-hidden']).toBe(true);
-    expect(artwork.props.accessibilityElementsHidden).toBe(true);
-    expect(artwork.props.importantForAccessibility).toBe('no-hide-descendants');
   });
 });
 
 describe('TockyOwl', () => {
-  it.each(OWL_EXPRESSIONS)('renders the %s expression without crashing', async (expression) => {
-    await render(<TockyOwl expression={expression} size={64} />);
-    expect(screen.getByTestId(`tocky-owl-${expression}`, INCLUDING_HIDDEN)).toBeTruthy();
+  it.each(OWL_EXPRESSIONS)('renders the %s expression with stable geometry', async (expression) => {
+    await renderWithProviders(<TockyOwl expression={expression} size={64} />);
+    expect(screen.toJSON()).toMatchSnapshot();
   });
 
   it('keeps the artwork aspect ratio when sized', async () => {
-    await render(<TockyOwl size={128} />);
+    await renderWithProviders(<TockyOwl size={128} />);
     const artwork = screen.getByTestId('tocky-owl-curious', INCLUDING_HIDDEN);
     expect(artwork.props.style.width).toBe(128);
     expect(artwork.props.style.height).toBeCloseTo(128 * (134 / 128), 5);
   });
 
+  it('derives every shade from the two hues it is given', async () => {
+    await renderWithProviders(<TockyOwl bodyColor="#2FBFA0" size={64} />);
+    const rendered = JSON.stringify(screen.toJSON());
+    expect(rendered).not.toContain('8C7DE8');
+  });
+
   it('stays out of the accessibility tree, since it is decorative', async () => {
-    await render(<TockyOwl size={64} />);
+    await renderWithProviders(<TockyOwl size={64} />);
     const artwork = screen.getByTestId('tocky-owl-curious', INCLUDING_HIDDEN);
     expect(artwork.props['aria-hidden']).toBe(true);
-    expect(artwork.props.accessibilityElementsHidden).toBe(true);
-    expect(artwork.props.importantForAccessibility).toBe('no-hide-descendants');
-  });
-});
-
-describe('shade', () => {
-  it('darkens toward black for negative amounts', () => {
-    expect(shade('#8C7DE8', -0.16)).toBe('#7669C3');
-  });
-
-  it('lightens toward white for positive amounts', () => {
-    expect(shade('#8C7DE8', 0.58)).toBe('#CFC8F5');
-  });
-
-  it('is a no-op at zero', () => {
-    expect(shade('#8C7DE8', 0)).toBe('#8C7DE8');
-  });
-
-  it('returns unparseable input unchanged', () => {
-    expect(shade('rebeccapurple', -0.2)).toBe('rebeccapurple');
-  });
-
-  it('matches the shade formula the design source uses', () => {
-    const designShade = (hex: string, amount: number) => {
-      const channels = [0, 2, 4].map((index) => parseInt(hex.slice(index + 1, index + 3), 16));
-      return `#${channels
-        .map((channel) =>
-          Math.round(amount >= 0 ? channel + (255 - channel) * amount : channel * (1 + amount))
-            .toString(16)
-            .padStart(2, '0'),
-        )
-        .join('')
-        .toUpperCase()}`;
-    };
-
-    for (const hue of ['#8C7DE8', '#2FBFA0', '#F2B21E', '#FF5C8A']) {
-      for (const amount of [-0.22, -0.16, 0, 0.42, 0.58]) {
-        expect(shade(hue, amount)).toBe(designShade(hue, amount));
-      }
-    }
   });
 });

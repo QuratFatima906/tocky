@@ -4,6 +4,7 @@ import Svg, { Circle, Ellipse, G, Path, Text as SvgText } from 'react-native-svg
 import { DecorativeArtwork } from './DecorativeArtwork';
 import { shade } from '../tokens/contrast';
 import { palette } from '../tokens/palette';
+import { fontFamily } from '../tokens/typography';
 
 export const OWL_EXPRESSIONS = ['curious', 'happy', 'sleepy', 'surprised', 'wink'] as const;
 
@@ -19,8 +20,8 @@ type TockyOwlProps = {
 };
 
 const ASPECT_RATIO = 134 / 128;
-const PUPIL_COLOR = '#403A4D';
-const EYE_WHITE = '#FFFFFF';
+const PUPIL_COLOR = palette.pupil;
+const EYE_WHITE = palette.white;
 
 const BODY_DARK_AMOUNT = -0.16;
 const BELLY_AMOUNT = 0.58;
@@ -91,10 +92,22 @@ export const TockyOwl = memo(function TockyOwl({
               <Path d="M40,60 Q48,67 56,60" />
               <Path d="M72,60 Q80,67 88,60" />
             </G>
-            <SvgText x={97} y={42} fontSize={11} fontWeight="700" fill={PUPIL_COLOR}>
+            <SvgText
+              x={97}
+              y={42}
+              fontSize={11}
+              fontFamily={fontFamily.textBold}
+              fill={PUPIL_COLOR}
+            >
               z
             </SvgText>
-            <SvgText x={105} y={32} fontSize={7.5} fontWeight="700" fill={PUPIL_COLOR}>
+            <SvgText
+              x={105}
+              y={32}
+              fontSize={7.5}
+              fontFamily={fontFamily.textBold}
+              fill={PUPIL_COLOR}
+            >
               z
             </SvgText>
           </G>

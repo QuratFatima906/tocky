@@ -1,14 +1,17 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   CATEGORY_PRESETS,
+  MINIMUM_TOUCH_TARGET,
   OWL_EXPRESSIONS,
   TOCKY_ICON_NAMES,
   TockyIcon,
   TockyOwl,
+  useTextStyle,
   useTheme,
   useThemePreference,
+  type CategoryIconName,
   type ThemePreference,
 } from '@/design-system';
 
@@ -20,45 +23,51 @@ const TILE_SIZE = 48;
 const GLYPH_SIZE = 24;
 const THEME_OPTIONS: readonly ThemePreference[] = ['light', 'dark', 'system'];
 
-function SchemeSwitcher() {
+function SchemeOption({ option }: { option: ThemePreference }) {
   const theme = useTheme();
   const { preference, setPreference } = useThemePreference();
-  const variant = theme.text.labelSmall;
+  const isSelected = preference === option;
+  const { style, ...textProps } = useTextStyle(
+    'labelSmall',
+    isSelected ? theme.color.textOnAccent : theme.color.textSecondary,
+  );
+
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ selected: isSelected }}
+      accessibilityLabel={`Preview in ${option} theme`}
+      onPress={() => setPreference(option)}
+      style={[
+        styles.schemeOption,
+        {
+          backgroundColor: isSelected ? theme.color.accent : theme.color.surfaceMuted,
+          borderRadius: theme.radius.pill,
+          paddingHorizontal: theme.spacing.lg,
+        },
+      ]}
+    >
+      <Text style={style} {...textProps}>
+        {option}
+      </Text>
+    </Pressable>
+  );
+}
+
+function SchemeSwitcher() {
+  const theme = useTheme();
 
   return (
     <View style={[styles.switcher, { gap: theme.spacing.sm }]}>
-      {THEME_OPTIONS.map((option) => {
-        const isSelected = preference === option;
-        return (
-          <Text
-            key={option}
-            accessibilityRole="button"
-            accessibilityState={{ selected: isSelected }}
-            accessibilityLabel={`Preview in ${option} theme`}
-            onPress={() => setPreference(option)}
-            style={{
-              fontFamily: variant.fontFamily,
-              fontSize: variant.fontSize,
-              lineHeight: variant.fontSize * variant.lineHeightRatio,
-              color: isSelected ? theme.color.textOnAccent : theme.color.textSecondary,
-              backgroundColor: isSelected ? theme.color.accent : theme.color.surfaceMuted,
-              borderRadius: theme.radius.pill,
-              paddingHorizontal: theme.spacing.lg,
-              paddingVertical: theme.spacing.sm,
-              overflow: 'hidden',
-            }}
-          >
-            {option}
-          </Text>
-        );
-      })}
+      {THEME_OPTIONS.map((option) => (
+        <SchemeOption key={option} option={option} />
+      ))}
     </View>
   );
 }
 
-function CategoryTilePreview({ hue, name }: { hue: string; name: string }) {
+function CategoryTilePreview({ hue, icon }: { hue: string; icon: CategoryIconName }) {
   const theme = useTheme();
-  const surface = theme.category.surface(hue);
 
   return (
     <View
@@ -68,16 +77,11 @@ function CategoryTilePreview({ hue, name }: { hue: string; name: string }) {
           width: TILE_SIZE,
           height: TILE_SIZE,
           borderRadius: theme.radius.lg,
-          backgroundColor: surface,
+          backgroundColor: theme.category.surface(hue),
         },
       ]}
     >
-      <TockyIcon
-        name={name.toLowerCase() as (typeof TOCKY_ICON_NAMES)[number]}
-        color={theme.category.glyph(hue)}
-        cutoutColor={theme.scheme === 'dark' ? theme.color.surface : surface}
-        size={GLYPH_SIZE}
-      />
+      <TockyIcon name={icon} color={theme.category.glyph(hue)} size={GLYPH_SIZE} />
     </View>
   );
 }
@@ -85,7 +89,7 @@ function CategoryTilePreview({ hue, name }: { hue: string; name: string }) {
 export function ArtGallery() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const titleVariant = theme.text.title;
+  const title = useTextStyle('title', theme.color.text);
 
   return (
     <ScrollView
@@ -98,16 +102,7 @@ export function ArtGallery() {
       }}
     >
       <View style={{ gap: theme.spacing.md }}>
-        <Text
-          accessibilityRole="header"
-          style={{
-            fontFamily: titleVariant.fontFamily,
-            fontSize: titleVariant.fontSize,
-            lineHeight: titleVariant.fontSize * titleVariant.lineHeightRatio,
-            letterSpacing: titleVariant.letterSpacing,
-            color: theme.color.text,
-          }}
-        >
+        <Text accessibilityRole="header" {...title}>
           Tocky artwork
         </Text>
         <SchemeSwitcher />
@@ -138,7 +133,7 @@ export function ArtGallery() {
         <GalleryGrid>
           {CATEGORY_PRESETS.map((preset) => (
             <GalleryItem key={preset.name} caption={preset.name}>
-              <CategoryTilePreview hue={preset.hue} name={preset.icon} />
+              <CategoryTilePreview hue={preset.hue} icon={preset.icon} />
             </GalleryItem>
           ))}
         </GalleryGrid>
@@ -182,5 +177,10 @@ export function ArtGallery() {
 
 const styles = StyleSheet.create({
   switcher: { flexDirection: 'row' },
+  schemeOption: {
+    minHeight: MINIMUM_TOUCH_TARGET,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   tile: { alignItems: 'center', justifyContent: 'center' },
 });

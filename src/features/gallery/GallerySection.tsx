@@ -1,25 +1,12 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { useTheme, type TextVariant } from '@/design-system';
-
-function useVariantStyle(variantName: TextVariant, color: string) {
-  const theme = useTheme();
-  const variant = theme.text[variantName];
-  return {
-    fontFamily: variant.fontFamily,
-    fontSize: variant.fontSize,
-    lineHeight: variant.fontSize * variant.lineHeightRatio,
-    letterSpacing: variant.letterSpacing,
-    textTransform: variant.textTransform,
-    color,
-  } as const;
-}
+import { useTextStyle, useTheme } from '@/design-system';
 
 export function GalleryHeading({ children }: { children: string }) {
   const theme = useTheme();
   return (
-    <Text accessibilityRole="header" style={useVariantStyle('sectionTitle', theme.color.text)}>
+    <Text accessibilityRole="header" {...useTextStyle('sectionTitle', theme.color.text)}>
       {children}
     </Text>
   );
@@ -27,8 +14,9 @@ export function GalleryHeading({ children }: { children: string }) {
 
 export function GalleryCaption({ children }: { children: string }) {
   const theme = useTheme();
+  const { style, ...textProps } = useTextStyle('captionSmall', theme.color.textSecondary);
   return (
-    <Text style={[useVariantStyle('captionSmall', theme.color.textSecondary), styles.centered]}>
+    <Text style={[style, styles.centered]} {...textProps}>
       {children}
     </Text>
   );
