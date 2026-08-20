@@ -31,7 +31,9 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo
@@ -42,7 +44,7 @@ yarn-error.*
 
 # Tocky
 /design-source/
-.env*.local
 /coverage/
 /.maestro-output/
-*.tsbuildinfo
+
+.remember/

@@ -32,4 +32,35 @@ module.exports = [
       'prefer-const': 'error',
     },
   },
+  {
+    files: ['src/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
+    languageOptions: { parserOptions: { projectService: true } },
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+    },
+  },
+  {
+    files: ['src/design-system/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-imports': 'off' },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
+    ignores: ['src/design-system/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/design-system/tokens/palette', '@/design-system/tokens/palette'],
+              message:
+                'Raw palette values are internal to the design system. Use theme color roles from useTheme().',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
