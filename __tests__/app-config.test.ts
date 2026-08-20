@@ -1,6 +1,12 @@
-import config from '../app.config';
+import config, { NATIVE_SURFACES } from '../app.config';
+import { palette } from '../src/design-system/tokens/palette';
 
 describe('app config', () => {
+  it('keeps native surface colors in step with the design system palette', () => {
+    expect(NATIVE_SURFACES.paper).toBe(palette.paper);
+    expect(NATIVE_SURFACES.night).toBe(palette.night);
+  });
+
   it('bundles only the assets directory', () => {
     expect(config.assetBundlePatterns).toEqual(['assets/**/*']);
   });
