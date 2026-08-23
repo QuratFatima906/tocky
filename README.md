@@ -58,6 +58,15 @@ Then open <http://localhost:8081/gallery>, or press **Open design gallery** on
 the home screen. The light / dark / system control at the top switches themes
 without touching system settings.
 
+On a simulator, `EXPO_PUBLIC_DEV_ROUTE` boots straight into any route, which
+saves tapping through the app when capturing screenshots:
+
+```bash
+EXPO_PUBLIC_DEV_ROUTE=/gallery/primitives npm run ios
+```
+
+It is ignored outside `__DEV__`.
+
 ## Architecture
 
 ```

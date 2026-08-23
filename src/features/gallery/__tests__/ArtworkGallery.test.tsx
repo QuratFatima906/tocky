@@ -3,13 +3,13 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 import { CATEGORY_PRESETS, OWL_EXPRESSIONS, TOCKY_ICON_NAMES } from '@/design-system';
 import { INCLUDING_HIDDEN, renderWithProviders } from '@/test/renderWithProviders';
 
-import { ArtGallery } from '../ArtGallery';
+import { ArtworkGallery } from '../ArtworkGallery';
 
 async function renderGallery() {
-  await renderWithProviders(<ArtGallery />);
+  await renderWithProviders(<ArtworkGallery />);
 }
 
-describe('ArtGallery', () => {
+describe('ArtworkGallery', () => {
   it('shows every owl expression', async () => {
     await renderGallery();
     for (const expression of OWL_EXPRESSIONS) {

@@ -1,70 +1,23 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   CATEGORY_PRESETS,
-  MINIMUM_TOUCH_TARGET,
   OWL_EXPRESSIONS,
   TOCKY_ICON_NAMES,
   TockyIcon,
   TockyOwl,
-  useTextStyle,
   useTheme,
-  useThemePreference,
   type CategoryIconName,
-  type ThemePreference,
 } from '@/design-system';
 
 import { GalleryCaption, GalleryGrid, GalleryItem, GallerySection } from './GallerySection';
+import { SchemeSwitcher } from './SchemeSwitcher';
 
 const CONTROL_ICONS = ['start', 'pause', 'stop', 'switch', 'add', 'edit'] as const;
 const NAVIGATION_ICONS = ['home', 'history', 'insights', 'tasks'] as const;
 const TILE_SIZE = 48;
 const GLYPH_SIZE = 24;
-const THEME_OPTIONS: readonly ThemePreference[] = ['light', 'dark', 'system'];
-
-function SchemeOption({ option }: { option: ThemePreference }) {
-  const theme = useTheme();
-  const { preference, setPreference } = useThemePreference();
-  const isSelected = preference === option;
-  const { style, ...textProps } = useTextStyle(
-    'labelSmall',
-    isSelected ? theme.color.textOnAccent : theme.color.textSecondary,
-  );
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ selected: isSelected }}
-      accessibilityLabel={`Preview in ${option} theme`}
-      onPress={() => setPreference(option)}
-      style={[
-        styles.schemeOption,
-        {
-          backgroundColor: isSelected ? theme.color.accent : theme.color.surfaceMuted,
-          borderRadius: theme.radius.pill,
-          paddingHorizontal: theme.spacing.lg,
-        },
-      ]}
-    >
-      <Text style={style} {...textProps}>
-        {option}
-      </Text>
-    </Pressable>
-  );
-}
-
-function SchemeSwitcher() {
-  const theme = useTheme();
-
-  return (
-    <View style={[styles.switcher, { gap: theme.spacing.sm }]}>
-      {THEME_OPTIONS.map((option) => (
-        <SchemeOption key={option} option={option} />
-      ))}
-    </View>
-  );
-}
 
 function CategoryTilePreview({ hue, icon }: { hue: string; icon: CategoryIconName }) {
   const theme = useTheme();
@@ -86,10 +39,9 @@ function CategoryTilePreview({ hue, icon }: { hue: string; icon: CategoryIconNam
   );
 }
 
-export function ArtGallery() {
+export function ArtworkGallery() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const title = useTextStyle('title', theme.color.text);
 
   return (
     <ScrollView
@@ -101,12 +53,7 @@ export function ArtGallery() {
         gap: theme.spacing.xl,
       }}
     >
-      <View style={{ gap: theme.spacing.md }}>
-        <Text accessibilityRole="header" {...title}>
-          Tocky artwork
-        </Text>
-        <SchemeSwitcher />
-      </View>
+      <SchemeSwitcher />
 
       <GallerySection title="Owl expressions">
         <GalleryGrid>
@@ -176,11 +123,5 @@ export function ArtGallery() {
 }
 
 const styles = StyleSheet.create({
-  switcher: { flexDirection: 'row' },
-  schemeOption: {
-    minHeight: MINIMUM_TOUCH_TARGET,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   tile: { alignItems: 'center', justifyContent: 'center' },
 });

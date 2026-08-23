@@ -15,7 +15,7 @@ Legend: ☐ not started · ◐ in progress · ☑ merged
 | B2  | Domain: duration & aggregation    | ☐      | —   |                                          |
 | B3  | Timer engine                      | ☐      | —   |                                          |
 | C1  | Navigation shell                  | ☐      | —   |                                          |
-| C2  | Home screen                       | ☐      | —   |                                          |
+| C2  | Home screen (next)                | ☐      | —   |                                          |
 | C3  | New session modal                 | ☐      | —   |                                          |
 | C4  | Timer screen                      | ☐      | —   |                                          |
 | C5  | History screen                    | ☐      | —   |                                          |

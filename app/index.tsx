@@ -1,12 +1,18 @@
-import { Link } from 'expo-router';
+import { Link, Redirect } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { MINIMUM_TOUCH_TARGET, TockyOwl, useTextStyle, useTheme } from '@/design-system';
+
+const DEV_ENTRY_ROUTE = process.env.EXPO_PUBLIC_DEV_ROUTE;
 
 export default function HomeScreen() {
   const theme = useTheme();
   const title = useTextStyle('title', theme.color.text);
   const link = useTextStyle('label', theme.color.textOnAccent);
+
+  if (__DEV__ && DEV_ENTRY_ROUTE !== undefined && DEV_ENTRY_ROUTE !== '') {
+    return <Redirect href={DEV_ENTRY_ROUTE as Parameters<typeof Redirect>[0]['href']} />;
+  }
 
   return (
     <View
