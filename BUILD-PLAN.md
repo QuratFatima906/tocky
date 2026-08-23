@@ -64,8 +64,6 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] `TockyIcon` — all 16 icons ported 1:1 to `react-native-svg`
 - [ ] `TockyOwl` — 5 expressions with the derived shade logic
 - [ ] Cutout colour is a prop, so glyphs read correctly on dark tiles
-- [ ] Dev-only component gallery route for visual review, stripped from release builds
-- [ ] Web preview so the design can be checked without Xcode
 
 ### A3b · Core primitives
 
@@ -77,16 +75,15 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] `IconButton` with the 44pt minimum enforced
 - [ ] Unit tests and accessibility assertions for each
 
-### A3c · Composite primitives
+### A3c · Composite primitives — **cancelled**
 
-- [ ] `CategoryTile`, `CategoryPill`, `CategoryChip` — always hue **+ icon + label**
-- [ ] `ProgressBar`, `SegmentedBar`, `ProgressRing`
-- [ ] `ListRow`, `SessionRow`, `SectionHeader`
-- [ ] `EmptyState`, `ErrorState`, `OfflineBanner`, `Skeleton`
-- [ ] `Toast` + toast host
-- [ ] `Sheet` (bottom sheet), `ConfirmDialog`
-- [ ] `TabBar` with the raised centre `+`
-- [ ] Unit tests and accessibility assertions for each
+Cut deliberately. Building fifteen components before any screen existed was
+foundation for its own sake. Composite components are now built **when a screen
+first needs them**, inside that screen's chunk, and promoted into
+`src/design-system/components` the moment a second screen uses one.
+
+Deferred until a screen demands them: `ProgressRing`, `Toast`, `Sheet`,
+`ConfirmDialog`, `Skeleton`, `ErrorState`, `OfflineBanner`, `SectionHeader`.
 
 ---
 

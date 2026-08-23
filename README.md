@@ -44,20 +44,6 @@ npm run ios
 | `npm test`          | Jest unit and integration tests          |
 | `npm run verify`    | Typecheck, lint, and test — what CI runs |
 
-## Reviewing the design system
-
-There is a dev-only gallery at `/gallery` that renders every design-system
-component in light and dark. It is the fastest way to check work against the
-design without a simulator, and it is stripped from release builds.
-
-```bash
-npm run web
-```
-
-Then open <http://localhost:8081/gallery>, or press **Open design gallery** on
-the home screen. The light / dark / system control at the top switches themes
-without touching system settings.
-
 ## Architecture
 
 ```

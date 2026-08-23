@@ -1,5 +1,6 @@
 module.exports = {
   preset: 'jest-expo',
+  resolver: 'react-native-worklets/jest/resolver.js',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/design-source/', '/.maestro/'],
   moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' },
