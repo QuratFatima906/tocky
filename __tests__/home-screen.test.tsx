@@ -9,9 +9,4 @@ describe('HomeScreen', () => {
     await renderWithProviders(<HomeScreen />);
     expect(screen.getByRole('header', { name: 'Tocky' })).toBeTruthy();
   });
-
-  it('offers a route into the design gallery while developing', async () => {
-    await renderWithProviders(<HomeScreen />);
-    expect(screen.getByText('Open design gallery')).toBeTruthy();
-  });
 });

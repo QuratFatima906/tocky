@@ -64,8 +64,6 @@ Progress is tracked in `PROGRESS.md`.
 - [ ] `TockyIcon` — all 16 icons ported 1:1 to `react-native-svg`
 - [ ] `TockyOwl` — 5 expressions with the derived shade logic
 - [ ] Cutout colour is a prop, so glyphs read correctly on dark tiles
-- [ ] Dev-only component gallery route for visual review, stripped from release builds
-- [ ] Web preview so the design can be checked without Xcode
 
 ### A3b · Core primitives
 
