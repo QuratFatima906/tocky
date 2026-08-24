@@ -1,13 +1,5 @@
-import { overlapsRange, sessionSecondsInRange } from './duration';
+import { sessionSecondsInRange } from './duration';
 import type { Category, CategoryTotal, DayBreakdown, Session, TimeRange } from './types';
-
-export function sessionsInRange(
-  sessions: readonly Session[],
-  range: TimeRange,
-  now: number,
-): readonly Session[] {
-  return sessions.filter((session) => overlapsRange(session, range, now));
-}
 
 export function breakdownForRange(
   sessions: readonly Session[],
@@ -15,9 +7,11 @@ export function breakdownForRange(
   range: TimeRange,
   now: number,
 ): DayBreakdown {
+  const knownCategoryIds = new Set(categories.map((category) => category.id));
   const secondsByCategoryId = new Map<string, number>();
 
   for (const session of sessions) {
+    if (!knownCategoryIds.has(session.categoryId)) continue;
     const seconds = sessionSecondsInRange(session, range, now);
     if (seconds === 0) continue;
     secondsByCategoryId.set(
@@ -36,14 +30,6 @@ export function breakdownForRange(
     .sort((first, second) => second.seconds - first.seconds);
 
   return { totalSeconds, categoryTotals };
-}
-
-export function totalSecondsInRange(
-  sessions: readonly Session[],
-  range: TimeRange,
-  now: number,
-): number {
-  return sessions.reduce((total, session) => total + sessionSecondsInRange(session, range, now), 0);
 }
 
 export function findActiveSession(sessions: readonly Session[]): Session | null {

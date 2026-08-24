@@ -4,22 +4,23 @@ import { TockyIcon, TOCKY_ICON_NAMES, type TockyIconName } from '../art';
 import { useTheme } from '../theme/ThemeProvider';
 import { tileRadius } from '../tokens';
 
-const FALLBACK_ICON: TockyIconName = 'work';
+const DEFAULT_TILE_SIZE = 38;
 const GLYPH_TO_TILE_RATIO = 0.5;
 
 export type CategoryTileProps = {
-  icon: string;
+  icon: string | undefined;
   color: string;
-  size: number;
+  size?: number;
   testID?: string;
 };
 
-export function categoryIconName(icon: string): TockyIconName {
-  return TOCKY_ICON_NAMES.find((name) => name === icon) ?? FALLBACK_ICON;
+export function categoryIconName(icon: string | undefined): TockyIconName | null {
+  return TOCKY_ICON_NAMES.find((name) => name === icon) ?? null;
 }
 
-export function CategoryTile({ icon, color, size, testID }: CategoryTileProps) {
+export function CategoryTile({ icon, color, size = DEFAULT_TILE_SIZE, testID }: CategoryTileProps) {
   const theme = useTheme();
+  const glyph = categoryIconName(icon);
 
   return (
     <View
@@ -33,11 +34,13 @@ export function CategoryTile({ icon, color, size, testID }: CategoryTileProps) {
         justifyContent: 'center',
       }}
     >
-      <TockyIcon
-        name={categoryIconName(icon)}
-        color={theme.category.glyph(color)}
-        size={Math.round(size * GLYPH_TO_TILE_RATIO)}
-      />
+      {glyph !== null && (
+        <TockyIcon
+          name={glyph}
+          color={theme.category.glyph(color)}
+          size={Math.round(size * GLYPH_TO_TILE_RATIO)}
+        />
+      )}
     </View>
   );
 }

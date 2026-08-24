@@ -1,4 +1,5 @@
-import { View } from 'react-native';
+import { useState } from 'react';
+import { View, type LayoutChangeEvent } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useSessionStore } from '@/data';
@@ -12,8 +13,6 @@ import { NowTrackingBar } from './components/NowTrackingBar';
 import { SessionRow } from './components/SessionRow';
 import { TrackedTodayCard } from './components/TrackedTodayCard';
 import { useHomeSnapshot } from './useHomeSnapshot';
-
-const NOW_TRACKING_BAR_CLEARANCE = 96;
 
 export type HomeScreenProps = {
   userName?: string;
@@ -35,6 +34,7 @@ export function HomeScreen({
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const store = useSessionStore();
+  const [nowTrackingBarHeight, setNowTrackingBarHeight] = useState(0);
   const {
     isLoading,
     greeting,
@@ -56,7 +56,9 @@ export function HomeScreen({
         testID="home-screen"
         contentStyle={{
           paddingBottom:
-            insets.bottom + theme.spacing.xl + (activeSession ? NOW_TRACKING_BAR_CLEARANCE : 0),
+            insets.bottom +
+            theme.spacing.xl +
+            (activeSession !== null ? nowTrackingBarHeight + theme.spacing.md : 0),
         }}
       >
         <HomeGreeting greeting={greeting} name={userName} now={now} onOpenProfile={onOpenProfile} />
@@ -77,7 +79,7 @@ export function HomeScreen({
                 onSelectCategory={onOpenCategory}
               />
             ) : (
-              <EmptyDay />
+              <EmptyDay hasEarlierSessions={recentSessions.length > 0} />
             )}
 
             {recentSessions.length > 0 && (
@@ -102,6 +104,10 @@ export function HomeScreen({
 
       {activeSession !== null && (
         <View
+          testID="now-tracking-bar"
+          onLayout={({ nativeEvent }: LayoutChangeEvent) =>
+            setNowTrackingBarHeight(nativeEvent.layout.height)
+          }
           style={{
             position: 'absolute',
             left: theme.spacing.lg,

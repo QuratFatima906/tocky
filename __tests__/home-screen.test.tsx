@@ -1,4 +1,5 @@
-import { act, fireEvent, screen } from '@testing-library/react-native';
+import { act, fireEvent, screen, within } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { createInMemorySessionStore, LOADING_SNAPSHOT, type SessionStore } from '@/data';
 import type { Category, Session } from '@/domain';
@@ -291,12 +292,47 @@ describe('HomeScreen now tracking bar', () => {
     expect(screen.getByText('1:42:05')).toBeTruthy();
   });
 
+  it('exposes the pause button separately from the bar so VoiceOver can reach it', async () => {
+    await renderHome(activeStore());
+
+    const bar = screen.getByLabelText(/^Now tracking, Work,/);
+    const pauseButton = screen.getByLabelText('Pause Work');
+
+    expect(bar).not.toBe(pauseButton);
+    expect(bar.props.accessible).toBe(true);
+    expect(pauseButton.props.accessible).toBe(true);
+    expect(within(bar).queryByLabelText('Pause Work')).toBeNull();
+  });
+
+  it('speaks the elapsed time as words rather than a stopwatch string', async () => {
+    await renderHome(activeStore());
+
+    expect(screen.getByLabelText(/1 hour 42 minutes\. Open the timer\.$/)).toBeTruthy();
+  });
+
+  it('clears scroll space equal to the measured bar height, not a fixed guess', async () => {
+    await renderHome(activeStore());
+    const measuredHeight = 187;
+
+    await act(async () => {
+      fireEvent(screen.getByTestId('now-tracking-bar'), 'layout', {
+        nativeEvent: { layout: { height: measuredHeight, width: 358, x: 0, y: 0 } },
+      });
+    });
+
+    const { paddingBottom } = StyleSheet.flatten(
+      screen.getByTestId('home-screen').props.contentContainerStyle,
+    );
+
+    expect(paddingBottom).toBeGreaterThanOrEqual(measuredHeight);
+  });
+
   it('opens the timer when the bar is tapped', async () => {
     const onOpenTimer = jest.fn();
     await renderHome(activeStore(), { onOpenTimer });
 
     await act(async () => {
-      fireEvent.press(screen.getByLabelText(/^Now tracking Work, 1:42:00/));
+      fireEvent.press(screen.getByLabelText(/^Now tracking, Work, 1 hour 42 minutes/));
     });
 
     expect(onOpenTimer).toHaveBeenCalled();
@@ -323,5 +359,63 @@ describe('HomeScreen category breakdown', () => {
     });
 
     expect(onOpenCategory).toHaveBeenCalledWith('work');
+  });
+});
+
+describe('HomeScreen across local midnight', () => {
+  it('resets the day and keeps yesterday visible in Recent when the clock rolls over', async () => {
+    const lateLastNight = new Date(2026, 7, 19, 23, 40).getTime();
+    const justBeforeMidnight = new Date(2026, 7, 19, 23, 55).getTime();
+    jest.setSystemTime(justBeforeMidnight);
+
+    await renderHome(
+      storeWith([
+        buildSession({
+          id: 'last-night',
+          label: 'Late push',
+          startedAt: lateLastNight,
+          endedAt: lateLastNight + 15 * MINUTE,
+        }),
+      ]),
+    );
+
+    expect(screen.getByLabelText('15 minutes tracked today')).toBeTruthy();
+
+    await act(async () => {
+      jest.advanceTimersByTime(30 * MINUTE);
+    });
+
+    expect(screen.getByLabelText('0 minutes tracked today')).toBeTruthy();
+    expect(screen.getByText('Nothing tracked today yet — tap + to start')).toBeTruthy();
+    expect(screen.getByLabelText(/^Late push, Work, Yesterday,/)).toBeTruthy();
+  });
+
+  it('tells a brand new user nothing is tracked yet', async () => {
+    await renderHome(storeWith([]));
+
+    expect(screen.getByText('Nothing tracked yet — tap + to start')).toBeTruthy();
+  });
+});
+
+describe('HomeScreen yesterday comparison across a daylight-saving change', () => {
+  it('compares against the same clock time, not the same elapsed hours', async () => {
+    const lateOnFallBackDay = new Date(2026, 10, 1, 23, 30).getTime();
+    jest.setSystemTime(lateOnFallBackDay);
+
+    const earlyToday = new Date(2026, 10, 1, 0, 5).getTime();
+    const yesterdayEvening = new Date(2026, 9, 31, 20, 0).getTime();
+
+    await renderHome(
+      storeWith([
+        buildSession({ id: 'today', startedAt: earlyToday, endedAt: earlyToday + 20 * MINUTE }),
+        buildSession({
+          id: 'yesterday',
+          startedAt: yesterdayEvening,
+          endedAt: yesterdayEvening + 120 * MINUTE,
+        }),
+      ]),
+    );
+
+    expect(screen.getByText('−1h 40m vs yesterday')).toBeTruthy();
   });
 });

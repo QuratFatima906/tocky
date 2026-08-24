@@ -4,7 +4,7 @@ import { Text, TockyOwl, useTheme } from '@/design-system';
 
 const OWL_SIZE = 96;
 
-export function EmptyDay() {
+export function EmptyDay({ hasEarlierSessions }: { hasEarlierSessions: boolean }) {
   const theme = useTheme();
 
   return (
@@ -13,7 +13,9 @@ export function EmptyDay() {
     >
       <TockyOwl expression="sleepy" size={OWL_SIZE} />
       <Text variant="bodyMedium" color="textSecondary" align="center">
-        Nothing tracked yet — tap + to start
+        {hasEarlierSessions
+          ? 'Nothing tracked today yet — tap + to start'
+          : 'Nothing tracked yet — tap + to start'}
       </Text>
     </View>
   );

@@ -1,11 +1,5 @@
-export {
-  breakdownForRange,
-  findActiveSession,
-  mostRecentlyStarted,
-  sessionsInRange,
-  totalSecondsInRange,
-} from './aggregate';
-export { dayRange, startOfDay } from './calendar';
+export { breakdownForRange, findActiveSession, mostRecentlyStarted } from './aggregate';
+export { dayRange, daysBetween, sameClockTimeOnPreviousDay, startOfDay } from './calendar';
 export {
   isPaused,
   isRunning,
@@ -23,5 +17,6 @@ export {
   formatElapsed,
   formatSessionRange,
   greetingForHour,
+  relativeDayLabel,
 } from './format';
 export type { Category, CategoryTotal, DayBreakdown, Pause, Session, TimeRange } from './types';

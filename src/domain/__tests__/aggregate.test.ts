@@ -1,10 +1,4 @@
-import {
-  breakdownForRange,
-  findActiveSession,
-  mostRecentlyStarted,
-  sessionsInRange,
-  totalSecondsInRange,
-} from '../aggregate';
+import { breakdownForRange, findActiveSession, mostRecentlyStarted } from '../aggregate';
 import { dayRange } from '../calendar';
 import type { Category, Session } from '../types';
 
@@ -89,18 +83,36 @@ describe('breakdownForRange', () => {
     expect(breakdownForRange([session], CATEGORIES, TODAY, TODAY_NOON).totalSeconds).toBe(2 * 3600);
   });
 
-  it('ignores sessions belonging to an unknown category', () => {
+  it('leaves sessions on an unknown category out of both the total and the rows', () => {
     const orphan = buildSession('a', 'deleted-category', 9, 30);
 
     const { totalSeconds, categoryTotals } = breakdownForRange(
-      [orphan],
+      [orphan, buildSession('b', 'work', 10, 30)],
       CATEGORIES,
       TODAY,
       TODAY_NOON,
     );
 
     expect(totalSeconds).toBe(30 * 60);
-    expect(categoryTotals).toHaveLength(0);
+    expect(categoryTotals).toHaveLength(1);
+  });
+
+  it('always keeps the total equal to the sum of its category rows', () => {
+    const sessions = [
+      buildSession('a', 'work', 9, 84),
+      buildSession('b', 'deleted-category', 11, 60),
+      buildSession('c', 'learning', 13, 45),
+    ];
+
+    const { totalSeconds, categoryTotals } = breakdownForRange(
+      sessions,
+      CATEGORIES,
+      TODAY,
+      TODAY_NOON,
+    );
+
+    expect(categoryTotals.reduce((sum, total) => sum + total.seconds, 0)).toBe(totalSeconds);
+    expect(categoryTotals.reduce((sum, total) => sum + total.share, 0)).toBeCloseTo(1);
   });
 
   it('returns an empty breakdown for a day with nothing tracked', () => {
@@ -108,30 +120,6 @@ describe('breakdownForRange', () => {
       totalSeconds: 0,
       categoryTotals: [],
     });
-  });
-});
-
-describe('totalSecondsInRange', () => {
-  it('adds every session clipped to the range', () => {
-    const sessions = [buildSession('a', 'work', 9, 30), buildSession('b', 'learning', 10, 45)];
-
-    expect(totalSecondsInRange(sessions, TODAY, TODAY_NOON)).toBe(75 * 60);
-  });
-});
-
-describe('sessionsInRange', () => {
-  it('keeps sessions that touch the range and drops the rest', () => {
-    const today = buildSession('today', 'work', 9, 30);
-    const yesterday: Session = {
-      ...today,
-      id: 'yesterday',
-      startedAt: new Date(2026, 7, 18, 9, 0).getTime(),
-      endedAt: new Date(2026, 7, 18, 10, 0).getTime(),
-    };
-
-    expect(sessionsInRange([today, yesterday], TODAY, TODAY_NOON).map((s) => s.id)).toEqual([
-      'today',
-    ]);
   });
 });
 

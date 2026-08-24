@@ -1,3 +1,5 @@
+import { daysBetween } from './calendar';
+
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_HOUR = 3600;
 
@@ -61,12 +63,23 @@ export function formatSessionRange(
   return endedAt === null ? `${start} – now` : `${start} – ${formatClockTime(endedAt, locale)}`;
 }
 
-export function formatDayHeading(timestamp: number, locale?: string): string {
-  const date = new Date(timestamp);
-  const weekday = date.toLocaleDateString(locale, { weekday: 'long' });
-  const dayAndMonth = date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+const DAYS_NAMED_RELATIVELY = ['Today', 'Yesterday'] as const;
 
-  return `${weekday}, ${dayAndMonth}`;
+export function relativeDayLabel(timestamp: number, now: number, locale?: string): string | null {
+  const daysBack = daysBetween(timestamp, now);
+  if (daysBack === 0) return null;
+
+  return DAYS_NAMED_RELATIVELY[daysBack] ?? formatDayAndMonth(timestamp, locale);
+}
+
+function formatDayAndMonth(timestamp: number, locale?: string): string {
+  return new Date(timestamp).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+}
+
+export function formatDayHeading(timestamp: number, locale?: string): string {
+  const weekday = new Date(timestamp).toLocaleDateString(locale, { weekday: 'long' });
+
+  return `${weekday}, ${formatDayAndMonth(timestamp, locale)}`;
 }
 
 export function greetingForHour(hour: number): string {

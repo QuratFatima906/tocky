@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 
-import { Card, Text, radius, useTheme } from '@/design-system';
+import { Card, Text, radius, tileRadius, useTheme } from '@/design-system';
 import { formatComparedToYesterday, formatDuration, formatDurationForSpeech } from '@/domain';
 import type { CategoryTotal } from '@/domain';
 
@@ -29,10 +29,7 @@ export function TrackedTodayCard({
           Tracked today
         </Text>
         {hasTrackedTime && (
-          <Text
-            variant="caption"
-            color={secondsVersusYesterday > 0 ? 'successText' : 'textSecondary'}
-          >
+          <Text variant="caption" color="textSecondary">
             {formatComparedToYesterday(secondsVersusYesterday)}
           </Text>
         )}
@@ -74,7 +71,7 @@ export function TrackedTodayCard({
                   style={{
                     width: LEGEND_SWATCH_SIZE,
                     height: LEGEND_SWATCH_SIZE,
-                    borderRadius: 3,
+                    borderRadius: tileRadius(LEGEND_SWATCH_SIZE),
                     backgroundColor: category.color,
                   }}
                 />

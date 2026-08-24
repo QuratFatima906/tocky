@@ -5,12 +5,11 @@ import {
   formatDuration,
   formatDurationForSpeech,
   formatSessionRange,
+  relativeDayLabel,
   sessionSeconds,
   type Category,
   type Session,
 } from '@/domain';
-
-const TILE_SIZE = 38;
 
 export function SessionRow({
   session,
@@ -26,13 +25,16 @@ export function SessionRow({
   const theme = useTheme();
   const seconds = sessionSeconds(session, now);
   const title = session.label ?? category?.name ?? 'Session';
+  const categoryName = category?.name ?? 'Uncategorised';
+  const dayLabel = relativeDayLabel(session.startedAt, now);
   const timeRange = formatSessionRange(session.startedAt, session.endedAt);
+  const whenTracked = dayLabel === null ? timeRange : `${dayLabel}, ${timeRange}`;
 
   return (
     <PressableScale
       accessible
       accessibilityRole="button"
-      accessibilityLabel={`${title}, ${category?.name ?? 'Uncategorised'}, ${timeRange}, ${formatDurationForSpeech(seconds)}`}
+      accessibilityLabel={`${title}, ${categoryName}, ${whenTracked}, ${formatDurationForSpeech(seconds)}`}
       onPress={() => onPress(session.id)}
     >
       <Surface
@@ -41,18 +43,14 @@ export function SessionRow({
         padding="lg"
         style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}
       >
-        <CategoryTile
-          icon={category?.icon ?? ''}
-          color={category?.color ?? theme.color.textTertiary}
-          size={TILE_SIZE}
-        />
+        <CategoryTile icon={category?.icon} color={category?.color ?? theme.color.textTertiary} />
 
         <View style={{ flex: 1 }}>
           <Text variant="bodyMedium" numberOfLines={1}>
             {title}
           </Text>
-          <Text variant="caption" color="textTertiary">
-            {category?.name ?? 'Uncategorised'} · {timeRange}
+          <Text variant="caption" color="textTertiary" numberOfLines={1}>
+            {categoryName} · {whenTracked}
           </Text>
         </View>
 

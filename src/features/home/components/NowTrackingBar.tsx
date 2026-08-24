@@ -1,11 +1,17 @@
 import { View } from 'react-native';
 
 import { CategoryTile, IconButton, PressableScale, Surface, Text, useTheme } from '@/design-system';
-import { formatElapsed, isPaused, sessionSeconds, type Category, type Session } from '@/domain';
+import {
+  formatDurationForSpeech,
+  formatElapsed,
+  isPaused,
+  sessionSeconds,
+  type Category,
+  type Session,
+} from '@/domain';
 import { useNow } from '@/hooks/useNow';
 
 const ELAPSED_TICK_MS = 1_000;
-const TILE_SIZE = 38;
 const LIVE_DOT_SIZE = 6;
 
 export function NowTrackingBar({
@@ -24,27 +30,26 @@ export function NowTrackingBar({
   const theme = useTheme();
   const now = useNow(ELAPSED_TICK_MS);
   const paused = isPaused(session);
-  const elapsed = formatElapsed(sessionSeconds(session, now));
+  const elapsedSeconds = sessionSeconds(session, now);
   const categoryName = category?.name ?? 'Uncategorised';
+  const state = paused ? 'Paused' : 'Now tracking';
 
   return (
-    <PressableScale
-      accessibilityRole="button"
-      accessibilityLabel={`${paused ? 'Paused' : 'Now tracking'} ${categoryName}, ${elapsed}. Open the timer.`}
-      onPress={onOpenTimer}
+    <Surface
+      radius="xl"
+      elevation="sheet"
+      bordered
+      padding="md"
+      style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}
     >
-      <Surface
-        radius="xl"
-        elevation="sheet"
-        bordered
-        padding="md"
-        style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}
+      <PressableScale
+        accessible
+        accessibilityRole="button"
+        accessibilityLabel={`${state}, ${categoryName}, ${formatDurationForSpeech(elapsedSeconds)}. Open the timer.`}
+        onPress={onOpenTimer}
+        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}
       >
-        <CategoryTile
-          icon={category?.icon ?? ''}
-          color={category?.color ?? theme.color.accent}
-          size={TILE_SIZE}
-        />
+        <CategoryTile icon={category?.icon} color={category?.color ?? theme.color.accent} />
 
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
@@ -57,19 +62,19 @@ export function NowTrackingBar({
               }}
             />
             <Text variant="microLabel" color="textTertiary">
-              {paused ? 'Paused' : 'Now tracking'} · {categoryName}
+              {state} · {categoryName}
             </Text>
           </View>
-          <Text variant="timerSmall">{elapsed}</Text>
+          <Text variant="timerSmall">{formatElapsed(elapsedSeconds)}</Text>
         </View>
+      </PressableScale>
 
-        <IconButton
-          icon={paused ? 'start' : 'pause'}
-          background="surfaceMuted"
-          accessibilityLabel={paused ? `Resume ${categoryName}` : `Pause ${categoryName}`}
-          onPress={() => (paused ? onResume(Date.now()) : onPause(Date.now()))}
-        />
-      </Surface>
-    </PressableScale>
+      <IconButton
+        icon={paused ? 'start' : 'pause'}
+        background="surfaceMuted"
+        accessibilityLabel={paused ? `Resume ${categoryName}` : `Pause ${categoryName}`}
+        onPress={() => (paused ? onResume(Date.now()) : onPause(Date.now()))}
+      />
+    </Surface>
   );
 }

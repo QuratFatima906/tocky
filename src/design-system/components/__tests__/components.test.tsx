@@ -2,8 +2,9 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 
 import { INCLUDING_HIDDEN, renderWithProviders } from '@/test/renderWithProviders';
 
-import { colors, MINIMUM_TOUCH_TARGET, textVariants } from '../../tokens';
+import { colors, MINIMUM_TOUCH_TARGET, textVariants, tileRadius } from '../../tokens';
 import { Button } from '../Button';
+import { CategoryTile } from '../CategoryTile';
 import { IconButton } from '../IconButton';
 import { Screen } from '../Screen';
 import { Card, Surface } from '../Surface';
@@ -159,5 +160,30 @@ describe('Screen', () => {
       </Screen>,
     );
     expect(flatten(screen.getByTestId('screen').props.style).paddingTop).toBe(24);
+  });
+});
+
+describe('CategoryTile', () => {
+  const WORK_HUE = '#8C7DE8';
+
+  it('renders the category glyph on a tinted tile', async () => {
+    await renderWithProviders(<CategoryTile icon="work" color={WORK_HUE} testID="tile" />);
+
+    expect(screen.getByTestId('tocky-icon-work', INCLUDING_HIDDEN)).toBeTruthy();
+  });
+
+  it('rounds the tile in proportion to its size', async () => {
+    await renderWithProviders(
+      <CategoryTile icon="work" color={WORK_HUE} size={44} testID="tile" />,
+    );
+
+    expect(flatten(screen.getByTestId('tile').props.style).borderRadius).toBe(tileRadius(44));
+  });
+
+  it('leaves the tile empty rather than showing a misleading glyph for an unknown category', async () => {
+    await renderWithProviders(<CategoryTile icon={undefined} color={WORK_HUE} testID="tile" />);
+
+    expect(screen.getByTestId('tile')).toBeTruthy();
+    expect(screen.queryByTestId('tocky-icon-work', INCLUDING_HIDDEN)).toBeNull();
   });
 });

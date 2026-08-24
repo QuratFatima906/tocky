@@ -7,6 +7,7 @@ import {
   formatElapsed,
   formatSessionRange,
   greetingForHour,
+  relativeDayLabel,
 } from '../format';
 
 describe('formatDuration', () => {
@@ -99,5 +100,21 @@ describe('greetingForHour', () => {
     [23, 'Evening'],
   ])('greets hour %i with "%s"', (hour, expected) => {
     expect(greetingForHour(hour)).toBe(expected);
+  });
+});
+
+describe('relativeDayLabel', () => {
+  const NOW = new Date(2026, 7, 19, 12, 0).getTime();
+
+  it('leaves today unlabelled', () => {
+    expect(relativeDayLabel(new Date(2026, 7, 19, 0, 5).getTime(), NOW)).toBeNull();
+  });
+
+  it('names yesterday', () => {
+    expect(relativeDayLabel(new Date(2026, 7, 18, 23, 55).getTime(), NOW)).toBe('Yesterday');
+  });
+
+  it('dates anything older', () => {
+    expect(relativeDayLabel(new Date(2026, 7, 15, 9, 0).getTime(), NOW, 'en-GB')).toBe('15 Aug');
   });
 });

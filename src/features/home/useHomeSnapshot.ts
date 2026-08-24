@@ -7,9 +7,8 @@ import {
   findActiveSession,
   greetingForHour,
   mostRecentlyStarted,
-  sessionsInRange,
+  sameClockTimeOnPreviousDay,
   startOfDay,
-  totalSecondsInRange,
   type Category,
   type DayBreakdown,
   type Session,
@@ -36,25 +35,23 @@ export function useHomeSnapshot(): HomeSnapshot {
 
   return useMemo(() => {
     const today = dayRange(now);
-    const yesterdayStart = startOfDay(now, -1);
-    const sameTimeYesterday = { start: yesterdayStart, end: yesterdayStart + (now - today.start) };
+    const upToNowYesterday = {
+      start: startOfDay(now, -1),
+      end: sameClockTimeOnPreviousDay(now),
+    };
 
-    const todaysSessions = sessionsInRange(sessions, today, now);
+    const todaysBreakdown = breakdownForRange(sessions, categories, today, now);
     const activeSession = findActiveSession(sessions);
 
     return {
       isLoading: status === 'loading',
       greeting: greetingForHour(new Date(now).getHours()),
-      today: breakdownForRange(todaysSessions, categories, today, now),
+      today: todaysBreakdown,
       secondsVersusYesterday:
-        totalSecondsInRange(todaysSessions, today, now) -
-        totalSecondsInRange(
-          sessionsInRange(sessions, sameTimeYesterday, now),
-          sameTimeYesterday,
-          now,
-        ),
+        todaysBreakdown.totalSeconds -
+        breakdownForRange(sessions, categories, upToNowYesterday, now).totalSeconds,
       recentSessions: mostRecentlyStarted(
-        todaysSessions.filter((session) => session.id !== activeSession?.id),
+        sessions.filter((session) => session.id !== activeSession?.id),
         RECENT_SESSION_LIMIT,
       ),
       activeSession,

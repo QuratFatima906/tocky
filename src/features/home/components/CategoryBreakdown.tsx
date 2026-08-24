@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { CategoryTile, PressableScale, ProgressBar, Text, useTheme } from '@/design-system';
 import { formatDuration, formatDurationForSpeech, type CategoryTotal } from '@/domain';
 
-const TILE_SIZE = 44;
+const BREAKDOWN_TILE_SIZE = 44;
 const PROGRESS_HEIGHT = 6;
 
 export function CategoryBreakdown({
@@ -35,7 +35,7 @@ export function CategoryBreakdown({
             paddingVertical: theme.spacing.md,
           }}
         >
-          <CategoryTile icon={category.icon} color={category.color} size={TILE_SIZE} />
+          <CategoryTile icon={category.icon} color={category.color} size={BREAKDOWN_TILE_SIZE} />
 
           <View style={{ flex: 1, gap: theme.spacing.sm }}>
             <Text variant="label">{category.name}</Text>
