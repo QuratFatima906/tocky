@@ -15,7 +15,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test",
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test -- --coverage",
     "bundle:check": "expo export --platform ios --output-dir /tmp/expo-export",
     "doctor": "expo-doctor",
     "web": "expo start --web"
