@@ -26,7 +26,7 @@ export type HomeScreenProps = {
 const noop = () => {};
 
 export function HomeScreen({
-  userName = 'there',
+  userName,
   onOpenProfile = noop,
   onOpenTimer = noop,
   onOpenSession = noop,

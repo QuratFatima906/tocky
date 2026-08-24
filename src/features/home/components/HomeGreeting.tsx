@@ -13,7 +13,7 @@ export function HomeGreeting({
   onOpenProfile,
 }: {
   greeting: string;
-  name: string;
+  name: string | undefined;
   now: number;
   onOpenProfile: () => void;
 }) {
@@ -24,7 +24,7 @@ export function HomeGreeting({
           {formatDayHeading(now)}
         </Text>
         <Text variant="title" accessibilityRole="header">
-          {greeting}, {name}
+          {name === undefined ? greeting : `${greeting}, ${name}`}
         </Text>
       </View>
 

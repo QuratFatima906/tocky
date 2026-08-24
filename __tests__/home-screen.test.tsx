@@ -49,6 +49,12 @@ describe('HomeScreen greeting', () => {
     expect(screen.getByRole('header', { name: 'Afternoon, Alex' })).toBeTruthy();
   });
 
+  it('greets without a name until onboarding captures one', async () => {
+    await renderWithProviders(<HomeScreen />, { store: storeWith([]) });
+
+    expect(screen.getByRole('header', { name: 'Afternoon' })).toBeTruthy();
+  });
+
   it("shows today's date", async () => {
     await renderHome(storeWith([]));
 
