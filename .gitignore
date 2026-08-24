@@ -50,3 +50,6 @@ yarn-error.*
 .remember/
 /ios/Pods/
 /ios/build/
+
+# Work in progress for the next chunk
+/src/domain/
