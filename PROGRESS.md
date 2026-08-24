@@ -16,26 +16,26 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Milestone B — Data & domain
 
-| #   | Chunk                          | Status | Notes                                             |
-| --- | ------------------------------ | ------ | ------------------------------------------------- |
-| B1  | Local persistence (SQLite)     | ☐      |                                                   |
-| B2  | Domain: duration & aggregation | ◐      | `types` / `duration` / `format` written, untested |
-| B3  | Timer engine                   | ☐      |                                                   |
+| #   | Chunk                          | Status | Notes          |
+| --- | ------------------------------ | ------ | -------------- |
+| B1  | Local persistence (SQLite)     | ☐      |                |
+| B2  | Domain: duration & aggregation | ☑      | landed with C2 |
+| B3  | Timer engine                   | ☐      |                |
 
 ## Milestone C — Screens
 
-| #   | Chunk                    | Status |
-| --- | ------------------------ | ------ |
-| C1  | Navigation shell         | ☐      |
-| C2  | **Home screen — next**   | ☐      |
-| C3  | New session modal        | ☐      |
-| C4  | Timer screen             | ☐      |
-| C5  | History screen           | ☐      |
-| C6  | Session detail & editing | ☐      |
-| C7  | Insights screen          | ☐      |
-| C8  | Tasks screen             | ☐      |
-| C9  | Onboarding               | ☐      |
-| C10 | Settings & categories    | ☐      |
+| #   | Chunk                       | Status |
+| --- | --------------------------- | ------ |
+| C1  | **Navigation shell — next** | ☐      |
+| C2  | Home screen                 | ☑      |
+| C3  | New session modal           | ☐      |
+| C4  | Timer screen                | ☐      |
+| C5  | History screen              | ☐      |
+| C6  | Session detail & editing    | ☐      |
+| C7  | Insights screen             | ☐      |
+| C8  | Tasks screen                | ☐      |
+| C9  | Onboarding                  | ☐      |
+| C10 | Settings & categories       | ☐      |
 
 ## Milestones D–F
 
@@ -54,12 +54,13 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Current state
 
-- `main` is green: **112 tests**, typecheck / lint / format clean.
+- `main` is green: **226 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.
-- `src/domain/` (`types.ts`, `duration.ts`, `format.ts`) is written but
-  **untracked and untested** — it lands with the Home chunk.
+- Home renders real aggregated data on the simulator in light and dark.
+- Jest runs pinned to `America/New_York` so local-time and DST bugs
+  cannot hide behind a UTC test machine.
 
 ## Environment
 
@@ -95,3 +96,4 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 | 2026-08-20 | A3a   | 16 icons and 5 owl expressions ported to react-native-svg. Review found cutouts painted white on dark backgrounds; they are now SVG masks, so icons need no knowledge of what sits behind them.                                                                                      |
 | 2026-08-23 | A3b   | Text, Screen, Surface/Card, PressableScale, Button, IconButton. First native build on the simulator. Found test files shipping as routes, and Reanimated 4's removed jest mock.                                                                                                      |
 | 2026-08-23 | —     | Component gallery removed after owner feedback.                                                                                                                                                                                                                                      |
+| 2026-08-24 | C2    | First real screen. Home with domain, in-memory store and dev seed. Found a pause-rounding bug that lost a second per pause, and that comparing today against yesterday's _whole_ day reads as judgement — it now compares against the same point yesterday.                          |

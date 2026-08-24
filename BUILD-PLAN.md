@@ -137,41 +137,49 @@ Each screen chunk delivers: layout matching the design, all states from
 - [ ] Modal vs pushed-screen presentation rules
 - [ ] Deep-link routes for Siri and widgets
 
-### C2 · Home — **next**
+### C2 · Home — **done**
 
 Delivers the first real Tocky screen. Includes the domain it needs, since a
 screen with no data is not a screen.
 
 **Domain (pure, no React)**
 
-- [ ] `types.ts` — Category, Session, Pause, CategoryTotal
-- [ ] `duration.ts` — `(endedAt − startedAt) − Σ pauses`, open-pause handling
-- [ ] `format.ts` — `4h 18m`, `01:42:18`, `+22m vs yesterday`, clock times, greeting
-- [ ] `aggregate.ts` — totals by category, share of day, yesterday comparison
-- [ ] Exhaustive unit tests: cross-midnight, DST, backwards clock jumps,
-      zero-length, running sessions
+- [x] `types.ts` — Category, Session, Pause, TimeRange, CategoryTotal, DayBreakdown
+- [x] `duration.ts` — `(endedAt − startedAt) − Σ pauses`, open-pause handling,
+      range clipping for day buckets
+- [x] `calendar.ts` — local day boundaries, DST-safe day offsets
+- [x] `format.ts` — `4h 18m`, `01:42:18`, `+22m vs yesterday`, clock times,
+      spoken durations for VoiceOver, greeting
+- [x] `aggregate.ts` — totals by category, share of day, yesterday comparison
+- [x] Exhaustive unit tests: cross-midnight, DST (23h/25h days), backwards clock
+      jumps, zero-length, running sessions. Tests run pinned to
+      `America/New_York` so local-vs-UTC bugs cannot hide.
 
 **Data**
 
-- [ ] `SessionRepository` / `CategoryRepository` interfaces
-- [ ] In-memory implementation with dev seed data, swapped for SQLite in B1
-      behind the same interface
+- [x] `SessionStore` contract — one store rather than split Session/Category
+      repositories, since Home always reads both together
+- [x] In-memory implementation with dev seed data, swapped for SQLite in B1
+      behind the same `subscribe`/`getSnapshot` surface
 
 **Screen** (visual reference: Home in `design-source/app-v2.html`)
 
-- [ ] Greeting: date + `Morning, {name}` + profile entry
-- [ ] "Tracked today" card: total, vs-yesterday delta, segmented category bar, legend
-- [ ] Breakdown list: category tile · progress bar · duration
-- [ ] Recent sessions list
-- [ ] "Now tracking" mini-bar: live elapsed, inline pause, tap to open Timer
-- [ ] States: active session · no active session · empty day · loading
+- [x] Greeting: date + `Morning, {name}` + profile entry
+- [x] "Tracked today" card: total, vs-yesterday delta, segmented category bar, legend
+- [x] Breakdown list: category tile · progress bar · duration
+- [x] Recent sessions list
+- [x] "Now tracking" mini-bar: live elapsed, inline pause, tap to open Timer
+- [x] States: active session · no active session · empty day · loading
 
 **Components built here** (promoted to the design system on second use)
 
-- [ ] `CategoryTile`, `SegmentedBar`, `ProgressBar`, `SessionRow`, `NowTrackingBar`
+- [x] `CategoryTile` and `ProgressBar` promoted immediately — used three times
+      each on Home alone
+- [x] `SegmentedBar`, `SessionRow`, `NowTrackingBar` stay in the Home feature
+      until a second screen needs them
 
-**Definition of done:** the screen renders real aggregated data on the iPhone 17
-Pro simulator, in light and dark, and matches the design.
+**Deferred to their own chunks:** the tab bar and the `+` entry point (C1),
+"See all" → History (C5), tapping the mini-bar through to Timer (C4).
 
 ### C3 · New session (modal)
 
