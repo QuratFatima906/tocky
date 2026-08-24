@@ -23,7 +23,12 @@ function ThemedApp() {
           headerShown: false,
           contentStyle: { backgroundColor: theme.color.background },
         }}
-      />
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="new-session" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="timer" />
+        <Stack.Screen name="session/[id]" />
+      </Stack>
     </>
   );
 }

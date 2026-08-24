@@ -129,13 +129,25 @@ Deferred until a screen demands them: `ProgressRing`, `Toast`, `Sheet`,
 Each screen chunk delivers: layout matching the design, all states from
 `Tocky-Flows.md` §3, wiring to services, unit tests, and accessibility labels.
 
-### C1 · Navigation shell
+### C1 · Navigation shell — **done**
 
-- [ ] Expo Router layout: Home · History · `+` · Insights · Tasks
-- [ ] Raised centre `+` opening the New-session modal
-- [ ] Persistent "Now tracking" mini-bar host above the tab bar
-- [ ] Modal vs pushed-screen presentation rules
-- [ ] Deep-link routes for Siri and widgets
+- [x] Expo Router layout: Home · History · `+` · Insights · Tasks
+- [x] Raised centre `+` opening the New-session modal
+- [x] Persistent "Now tracking" mini-bar host above the tab bar, hoisted out of
+      Home so it survives tab switches with the clock running
+- [x] Modal vs pushed-screen presentation rules (`new-session` is a modal;
+      `timer` and `session/[id]` are pushed; neither shows the tab bar)
+- [x] Deep-link routes verified against the `tocky://` scheme — `tocky://history`,
+      `tocky://new-session` and friends resolve and set tab state correctly,
+      which is what E4's Siri intents will target
+
+**Bottom clearance** is published by the tabs layout on a context and consumed
+by `Screen`, so no screen has to know what chrome floats below it. Both parts
+are measured, not assumed, so Dynamic Type cannot hide the last row.
+
+**Placeholders:** History, Insights, Tasks, New session, Timer and Session
+detail render a shared `ComingSoonScreen`. They exist so every tab and every
+tappable target on Home leads somewhere real; C3–C7 replace them.
 
 ### C2 · Home — **done**
 
