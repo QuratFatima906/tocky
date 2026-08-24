@@ -26,7 +26,11 @@ jobs:
 
       - run: npm ci
 
+      # Advisory: this also flags upstream patch releases, which would otherwise
+      # fail pull requests that changed no dependencies. Real dependency
+      # breakage still fails the bundle step below.
       - name: Dependency health
+        continue-on-error: true
         run: npx expo-doctor
 
       - name: Bundle for iOS
