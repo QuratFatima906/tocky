@@ -297,6 +297,89 @@ export function describeSessionStoreContract(
       expect(store.getSnapshot()).toBe(before);
     });
 
+    it('adds a task, newest first, open until it is completed', () => {
+      const store = createStore([]);
+
+      store.addTask({
+        title: 'Write release notes',
+        categoryId: 'work',
+        estimateSeconds: 1800,
+        at: CONTRACT_NOW,
+      });
+      const [task] = store.getSnapshot().tasks;
+
+      expect(task).toMatchObject({
+        title: 'Write release notes',
+        categoryId: 'work',
+        estimateSeconds: 1800,
+        createdAt: CONTRACT_NOW,
+        completedAt: null,
+      });
+    });
+
+    it('completes a task and lets it be reopened', () => {
+      const store = createStore([]);
+      store.addTask({
+        title: 'Ship it',
+        categoryId: 'work',
+        estimateSeconds: null,
+        at: CONTRACT_NOW,
+      });
+      const taskId = store.getSnapshot().tasks[0]!.id;
+
+      store.setTaskCompleted(taskId, CONTRACT_NOW + MINUTE);
+      expect(store.getSnapshot().tasks[0]!.completedAt).toBe(CONTRACT_NOW + MINUTE);
+
+      store.setTaskCompleted(taskId, null);
+      expect(store.getSnapshot().tasks[0]!.completedAt).toBeNull();
+    });
+
+    it('does not churn subscribers when a task is already in that state', () => {
+      const store = createStore([]);
+      store.addTask({
+        title: 'Ship it',
+        categoryId: 'work',
+        estimateSeconds: null,
+        at: CONTRACT_NOW,
+      });
+      const taskId = store.getSnapshot().tasks[0]!.id;
+      const onStoreChanged = jest.fn();
+      store.subscribe(onStoreChanged);
+
+      store.setTaskCompleted(taskId, null);
+      store.setTaskCompleted('never-existed', CONTRACT_NOW);
+
+      expect(onStoreChanged).not.toHaveBeenCalled();
+    });
+
+    it('links a session to the task it was started from', () => {
+      const store = createStore([]);
+      store.addTask({
+        title: 'Ship it',
+        categoryId: 'work',
+        estimateSeconds: null,
+        at: CONTRACT_NOW,
+      });
+      const taskId = store.getSnapshot().tasks[0]!.id;
+
+      store.startSession({
+        categoryId: 'work',
+        label: 'Ship it',
+        at: CONTRACT_NOW,
+        linkedTaskId: taskId,
+      });
+
+      expect(store.getSnapshot().sessions[0]!.linkedTaskId).toBe(taskId);
+    });
+
+    it('links a session to nothing when it was not started from a task', () => {
+      const store = createStore([]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+
+      expect(store.getSnapshot().sessions[0]!.linkedTaskId).toBeNull();
+    });
+
     it('leaves finished sessions alone when there is nothing active', () => {
       const store = createStore([FINISHED_SESSION]);
       const before = store.getSnapshot();

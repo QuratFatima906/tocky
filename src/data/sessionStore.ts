@@ -1,17 +1,26 @@
 import { randomUUID } from 'expo-crypto';
 
-import { findActiveSession, isPaused, type Category, type Session } from '@/domain';
+import { findActiveSession, isPaused, type Category, type Session, type Task } from '@/domain';
 
 export type SessionStoreSnapshot = {
   readonly status: 'loading' | 'ready';
   readonly categories: readonly Category[];
   readonly sessions: readonly Session[];
+  readonly tasks: readonly Task[];
+};
+
+export type AddTaskInput = {
+  readonly title: string;
+  readonly categoryId: string;
+  readonly estimateSeconds: number | null;
+  readonly at: number;
 };
 
 export type StartSessionInput = {
   readonly categoryId: string;
   readonly label: string | null;
   readonly at: number;
+  readonly linkedTaskId?: string | null;
 };
 
 export type SessionStore = {
@@ -29,6 +38,8 @@ export type SessionStore = {
   deleteSession: (sessionId: string) => void;
   editSession: (sessionId: string, edit: SessionEdit) => void;
   noteActiveSession: (note: string | null) => void;
+  addTask: (input: AddTaskInput) => void;
+  setTaskCompleted: (taskId: string, completedAt: number | null) => void;
 };
 
 export type SessionEdit = {
@@ -39,7 +50,7 @@ export type SessionEdit = {
   readonly note: string | null;
 };
 
-export function newSession({ categoryId, label, at }: StartSessionInput): Session {
+export function newSession({ categoryId, label, at, linkedTaskId }: StartSessionInput): Session {
   return {
     id: randomUUID(),
     categoryId,
@@ -47,8 +58,19 @@ export function newSession({ categoryId, label, at }: StartSessionInput): Sessio
     startedAt: at,
     endedAt: null,
     pauses: [],
-    linkedTaskId: null,
+    linkedTaskId: linkedTaskId ?? null,
     note: null,
+  };
+}
+
+export function newTask({ title, categoryId, estimateSeconds, at }: AddTaskInput): Task {
+  return {
+    id: randomUUID(),
+    title,
+    categoryId,
+    estimateSeconds,
+    createdAt: at,
+    completedAt: null,
   };
 }
 
@@ -66,6 +88,7 @@ export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   status: 'loading',
   categories: [],
   sessions: [],
+  tasks: [],
 };
 
 export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot): SessionStore {
@@ -132,6 +155,22 @@ export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot
         sessions: snapshot.sessions.map((session) =>
           session.id === sessionId ? { ...session, ...edit } : session,
         ),
+      };
+      listeners.forEach((listener) => listener());
+    },
+
+    addTask(input) {
+      snapshot = { ...snapshot, tasks: [newTask(input), ...snapshot.tasks] };
+      listeners.forEach((listener) => listener());
+    },
+
+    setTaskCompleted(taskId, completedAt) {
+      const existing = snapshot.tasks.find((task) => task.id === taskId);
+      if (existing === undefined || existing.completedAt === completedAt) return;
+
+      snapshot = {
+        ...snapshot,
+        tasks: snapshot.tasks.map((task) => (task.id === taskId ? { ...task, completedAt } : task)),
       };
       listeners.forEach((listener) => listener());
     },

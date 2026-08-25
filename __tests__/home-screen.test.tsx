@@ -27,7 +27,12 @@ function buildSession(overrides: Partial<Session> & Pick<Session, 'id'>): Sessio
 }
 
 function storeWith(sessions: readonly Session[]): SessionStore {
-  return createInMemorySessionStore({ status: 'ready', categories: CATEGORIES, sessions });
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: CATEGORIES,
+    sessions,
+    tasks: [],
+  });
 }
 
 async function renderHome(store: SessionStore, props = {}) {

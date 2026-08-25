@@ -6,6 +6,15 @@ export type Category = {
   readonly isArchived: boolean;
 };
 
+export type Task = {
+  readonly id: string;
+  readonly title: string;
+  readonly categoryId: string;
+  readonly estimateSeconds: number | null;
+  readonly createdAt: number;
+  readonly completedAt: number | null;
+};
+
 export type Pause = {
   readonly startedAt: number;
   readonly endedAt: number | null;

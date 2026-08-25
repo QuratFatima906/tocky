@@ -5,7 +5,12 @@ import { DEFAULT_CATEGORIES } from '../defaultCategories';
 import { createInMemorySessionStore, LOADING_SNAPSHOT } from '../sessionStore';
 
 function createStore(sessions: readonly Session[]) {
-  return createInMemorySessionStore({ status: 'ready', categories: DEFAULT_CATEGORIES, sessions });
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: DEFAULT_CATEGORIES,
+    sessions,
+    tasks: [],
+  });
 }
 
 describeSessionStoreContract('createInMemorySessionStore', createStore);
@@ -16,6 +21,7 @@ describe('createInMemorySessionStore', () => {
       status: 'ready',
       categories: DEFAULT_CATEGORIES,
       sessions: [FINISHED_SESSION],
+      tasks: [],
     });
   });
 

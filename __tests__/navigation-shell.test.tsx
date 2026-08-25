@@ -35,7 +35,12 @@ function buildSession(overrides: Partial<Session> = {}): Session {
 }
 
 function storeWith(sessions: readonly Session[]): SessionStore {
-  return createInMemorySessionStore({ status: 'ready', categories: CATEGORIES, sessions });
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: CATEGORIES,
+    sessions,
+    tasks: [],
+  });
 }
 
 function tabBarState(activeTabName: string, routeNames = TAB_DEFINITIONS.map((tab) => tab.name)) {

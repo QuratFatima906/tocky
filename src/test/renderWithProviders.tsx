@@ -10,7 +10,7 @@ const SAFE_AREA_METRICS = {
   insets: { top: 59, left: 0, right: 0, bottom: 34 },
 };
 
-const EMPTY_STORE = { status: 'ready', categories: [], sessions: [] } as const;
+const EMPTY_STORE = { status: 'ready', categories: [], sessions: [], tasks: [] } as const;
 
 export function renderWithProviders(
   element: ReactElement,

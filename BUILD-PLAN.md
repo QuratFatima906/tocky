@@ -317,16 +317,28 @@ Weeks start Monday. `summariseWeek` builds the seven days, both totals, the
 ranking, the longest day and the session stats in one pass, and a week that
 spans a clock change still covers seven local days.
 
-### C8 · Tasks
+### C8 · Tasks — **done**
 
-- [ ] Header count ("3 of 7 done today"), add button
-- [ ] Category filter chips
-- [ ] Active-task card showing live tracked time
-- [ ] Open tasks: checkbox · title · estimate · category chip
-- [ ] Completed section with tracked time
-- [ ] Tap task → start a linked session
-- [ ] "End the session too?" when completing a task with a running linked session
-- [ ] States: empty · loading skeleton
+- [x] Header count ("1 of 5 done"), add button
+- [x] Category filter chips, shown only when more than one category is in use
+- [x] A task being tracked shows its live time and is ringed in the accent colour
+- [x] Open tasks: checkbox · title · estimate or tracked time · category chip
+- [x] Completed section with tracked time
+- [x] Tap task → start a linked session, asking first if one is already running
+- [x] "End the session too?" when completing a task with a running linked session
+- [x] States: empty · nothing-in-this-category · loading skeleton
+- [x] C6's **Linked task** meta row, now that there is a task to name
+
+**"done today" became "done".** Tasks are not day-scoped -- they carry a
+`createdAt`, not a day -- so counting "today" would have meant inventing a rule
+about when a task belongs to a day. The count follows the filter instead.
+
+**No separate active-task card.** The design floats the tracked task above the
+list; the row it already has says "Tracking now · 12m" and wears an accent ring,
+which is the same information without a second component that can disagree.
+
+`tasks` joins the store snapshot, `estimateSeconds` is chosen from chips rather
+than typed, and sessions started from a task carry its `linkedTaskId`.
 
 ### C9 · Onboarding
 

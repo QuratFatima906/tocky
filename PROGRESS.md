@@ -33,8 +33,8 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 | C5  | History screen           | ☑      |
 | C6  | Session detail & editing | ☑      |
 | C7  | Insights screen          | ☑      |
-| C8  | **Tasks screen — next**  | ☐      |
-| C9  | Onboarding               | ☐      |
+| C8  | Tasks screen             | ☑      |
+| C9  | **Onboarding — next**    | ☐      |
 | C10 | Settings & categories    | ☐      |
 
 ## Milestones D–F
@@ -54,7 +54,7 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Current state
 
-- `main` is green: **453 tests**, typecheck / lint / format clean.
+- `main` is green: **488 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.

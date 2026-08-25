@@ -30,7 +30,12 @@ function buildSession(overrides: Partial<Session> & { id: string }): Session {
 }
 
 function storeWith(sessions: readonly Session[]): SessionStore {
-  return createInMemorySessionStore({ status: 'ready', categories: DEFAULT_CATEGORIES, sessions });
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: DEFAULT_CATEGORIES,
+    sessions,
+    tasks: [],
+  });
 }
 
 async function renderHistory(store: SessionStore) {

@@ -2,7 +2,7 @@ import { act, fireEvent, screen } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 
 import { createInMemorySessionStore, DEFAULT_CATEGORIES, type SessionStore } from '@/data';
-import { findActiveSession, isRunning, type Session } from '@/domain';
+import { findActiveSession, isRunning, type Session, type Task } from '@/domain';
 import { SessionDetailScreen } from '@/features/sessionDetail/SessionDetailScreen';
 import { renderWithProviders } from '@/test/renderWithProviders';
 
@@ -24,8 +24,13 @@ const SESSION: Session = {
 const onBack = jest.fn();
 const onResumed = jest.fn();
 
-function storeWith(sessions: readonly Session[]): SessionStore {
-  return createInMemorySessionStore({ status: 'ready', categories: DEFAULT_CATEGORIES, sessions });
+function storeWith(sessions: readonly Session[], tasks: readonly Task[] = []): SessionStore {
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: DEFAULT_CATEGORIES,
+    sessions,
+    tasks,
+  });
 }
 
 async function renderDetail(store: SessionStore = storeWith([SESSION]), sessionId = SESSION.id) {
@@ -112,6 +117,26 @@ describe('what the detail shows', () => {
     await renderDetail(storeWith([{ ...SESSION, note: 'Rebuilt the controls' }]));
 
     expect(screen.getByText('Rebuilt the controls')).toBeTruthy();
+  });
+
+  it('names the task a session was started from', async () => {
+    const task: Task = {
+      id: 'task-1',
+      title: 'Ship the timer redesign',
+      categoryId: 'work',
+      estimateSeconds: null,
+      createdAt: NOW - 3 * HOUR,
+      completedAt: null,
+    };
+    await renderDetail(storeWith([{ ...SESSION, linkedTaskId: 'task-1' }], [task]));
+
+    expect(screen.getByLabelText('Linked task: Ship the timer redesign')).toBeTruthy();
+  });
+
+  it('leaves the linked-task row out when the session stands alone', async () => {
+    await renderDetail();
+
+    expect(screen.queryByText('Linked task')).toBeNull();
   });
 
   it('says so plainly when the session no longer exists', async () => {

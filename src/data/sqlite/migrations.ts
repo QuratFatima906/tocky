@@ -46,7 +46,22 @@ const seedDefaultCategories: Migration = (database) => {
   });
 };
 
-const MIGRATIONS: readonly Migration[] = [createTables, seedDefaultCategories];
+const createTasks: Migration = (database) => {
+  database.execute(`
+    create table tasks (
+      id text primary key not null,
+      title text not null,
+      categoryId text not null references categories (id),
+      estimateSeconds integer,
+      createdAt integer not null,
+      completedAt integer
+    );
+
+    create index tasks_completedAt on tasks (completedAt);
+  `);
+};
+
+const MIGRATIONS: readonly Migration[] = [createTables, seedDefaultCategories, createTasks];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;
 
