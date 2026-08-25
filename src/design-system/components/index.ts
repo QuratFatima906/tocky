@@ -17,6 +17,8 @@ export type { PressableScaleProps } from './PressableScale';
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarProps } from './ProgressBar';
 export { Screen } from './Screen';
+export { Skeleton } from './Skeleton';
+export type { SkeletonProps } from './Skeleton';
 export type { ScreenProps } from './Screen';
 export { Card, Surface } from './Surface';
 export type { SurfaceProps } from './Surface';

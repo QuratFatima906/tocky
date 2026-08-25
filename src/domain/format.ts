@@ -76,6 +76,10 @@ function formatDayAndMonth(timestamp: number, locale?: string): string {
   return new Date(timestamp).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 }
 
+export function dayGroupHeading(timestamp: number, now: number, locale?: string): string {
+  return DAYS_NAMED_RELATIVELY[daysBetween(timestamp, now)] ?? formatDayHeading(timestamp, locale);
+}
+
 export function formatDayHeading(timestamp: number, locale?: string): string {
   const weekday = new Date(timestamp).toLocaleDateString(locale, { weekday: 'long' });
 
