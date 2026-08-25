@@ -3,8 +3,16 @@ export {
   findActiveSession,
   groupSessionsByDay,
   mostRecentlyStarted,
+  summariseWeek,
 } from './aggregate';
-export { dayRange, daysBetween, sameClockTimeOnPreviousDay, startOfDay } from './calendar';
+export {
+  dayRange,
+  daysBetween,
+  sameClockTimeOnPreviousDay,
+  startOfDay,
+  startOfWeek,
+  weekRange,
+} from './calendar';
 export {
   findSessionTimeProblem,
   isPaused,
@@ -18,12 +26,14 @@ export type { SessionTimeProblem } from './duration';
 export {
   dayGroupHeading,
   formatClockTime,
+  formatComparedToLastWeek,
   formatComparedToYesterday,
   formatDayHeading,
   formatDuration,
   formatDurationForSpeech,
   formatElapsed,
   formatSessionRange,
+  formatWeekday,
   greetingForHour,
   relativeDayLabel,
 } from './format';
@@ -36,4 +46,6 @@ export type {
   Pause,
   Session,
   TimeRange,
+  WeekDay,
+  WeekSummary,
 } from './types';

@@ -293,15 +293,29 @@ Touching ends is allowed: one session may end exactly where the next begins.
 
 `discardActiveSession` became `deleteSession(id)`, which the Timer now uses too.
 
-### C7 · Insights
+### C7 · Insights — **done**
 
-- [ ] Week switcher with disabled forward chevron on the current week
-- [ ] Total with week-over-week delta
-- [ ] Daily stacked bar chart, category-colored, tallest day tagged
-- [ ] Quick stats: streak · sessions · average block
-- [ ] By-category ranking
-- [ ] Owl insight callout
-- [ ] States: not-enough-data (<2 tracked days) · loading skeleton
+- [x] Week switcher with disabled forward chevron on the current week
+- [x] Total with week-over-week delta
+- [x] Daily stacked bar chart, category-coloured, tallest day tagged
+- [x] Quick stats: sessions · average block · longest session
+- [x] By-category ranking with share
+- [x] Owl insight callout
+- [x] States: not-enough-data (<2 tracked days) · loading skeleton
+
+**No streak.** The plan and the design both had a "Streak · 12 days" tile, and
+the locked decisions name streaks explicitly. Longest session took its place:
+descriptive, with no chain to protect.
+
+**No verdicts anywhere.** The design's delta is a green up-arrow and "18% vs
+last week", which reads as a score. It says "6h 00m less than last week" now,
+in the same grey as everything else. The callout says "Monday had the most
+tracked" rather than the design's "your deepest day … mornings are when you
+focus best".
+
+Weeks start Monday. `summariseWeek` builds the seven days, both totals, the
+ranking, the longest day and the session stats in one pass, and a week that
+spans a clock change still covers seven local days.
 
 ### C8 · Tasks
 

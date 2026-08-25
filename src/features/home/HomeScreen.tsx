@@ -2,7 +2,7 @@ import { View } from 'react-native';
 
 import { Screen, Skeleton, Text, useTheme } from '@/design-system';
 
-import { CategoryBreakdown } from './components/CategoryBreakdown';
+import { CategoryBreakdown } from '../categories/CategoryBreakdown';
 import { EmptyDay } from './components/EmptyDay';
 import { HomeGreeting } from './components/HomeGreeting';
 import { SessionRow } from './components/SessionRow';
@@ -59,6 +59,7 @@ export function HomeScreen({
 
           {hasTrackedTime ? (
             <CategoryBreakdown
+              title="Breakdown"
               categoryTotals={today.categoryTotals}
               onSelectCategory={onOpenCategory}
             />

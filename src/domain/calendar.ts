@@ -15,6 +15,21 @@ export function startOfDay(timestamp: number, dayOffset = 0): number {
   ).getTime();
 }
 
+const DAYS_PER_WEEK = 7;
+
+/** Weeks start on Monday, which is what the daily chart reads left to right. */
+export function startOfWeek(timestamp: number, weekOffset = 0): number {
+  const mondayIsZero = (new Date(timestamp).getDay() + 6) % DAYS_PER_WEEK;
+
+  return startOfDay(timestamp, weekOffset * DAYS_PER_WEEK - mondayIsZero);
+}
+
+export function weekRange(timestamp: number, weekOffset = 0): TimeRange {
+  const start = startOfWeek(timestamp, weekOffset);
+
+  return { start, end: startOfDay(start, DAYS_PER_WEEK) };
+}
+
 export function dayRange(timestamp: number, dayOffset = 0): TimeRange {
   return { start: startOfDay(timestamp, dayOffset), end: startOfDay(timestamp, dayOffset + 1) };
 }

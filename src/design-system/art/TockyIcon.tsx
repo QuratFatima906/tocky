@@ -26,6 +26,7 @@ export const TOCKY_ICON_NAMES = [
   'more',
   'search',
   'back',
+  'forward',
   'delete',
 ] as const;
 
@@ -266,6 +267,12 @@ function IconGlyph({ name, color }: { name: TockyIconName; color: string }) {
     case 'back':
       return (
         <G rotation={90} origin="12, 12">
+          <Chevron color={color} />
+        </G>
+      );
+    case 'forward':
+      return (
+        <G rotation={-90} origin="12, 12">
           <Chevron color={color} />
         </G>
       );

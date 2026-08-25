@@ -50,6 +50,12 @@ export function formatComparedToYesterday(deltaSeconds: number): string {
   return `${sign}${formatDuration(Math.abs(deltaSeconds))} vs yesterday`;
 }
 
+export function formatComparedToLastWeek(deltaSeconds: number): string {
+  if (Math.abs(deltaSeconds) < SECONDS_PER_MINUTE) return 'same as last week';
+
+  return `${formatDuration(Math.abs(deltaSeconds))} ${deltaSeconds > 0 ? 'more' : 'less'} than last week`;
+}
+
 export function formatClockTime(timestamp: number, locale?: string): string {
   return new Date(timestamp).toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
 }
@@ -80,10 +86,12 @@ export function dayGroupHeading(timestamp: number, now: number, locale?: string)
   return DAYS_NAMED_RELATIVELY[daysBetween(timestamp, now)] ?? formatDayHeading(timestamp, locale);
 }
 
-export function formatDayHeading(timestamp: number, locale?: string): string {
-  const weekday = new Date(timestamp).toLocaleDateString(locale, { weekday: 'long' });
+export function formatWeekday(timestamp: number, locale?: string): string {
+  return new Date(timestamp).toLocaleDateString(locale, { weekday: 'long' });
+}
 
-  return `${weekday}, ${formatDayAndMonth(timestamp, locale)}`;
+export function formatDayHeading(timestamp: number, locale?: string): string {
+  return `${formatWeekday(timestamp, locale)}, ${formatDayAndMonth(timestamp, locale)}`;
 }
 
 export function greetingForHour(hour: number): string {

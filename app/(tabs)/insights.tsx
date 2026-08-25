@@ -1,5 +1,9 @@
-import { ComingSoonScreen } from '@/features/navigation/ComingSoonScreen';
+import { useRouter } from 'expo-router';
+
+import { InsightsScreen } from '@/features/insights/InsightsScreen';
 
 export default function InsightsRoute() {
-  return <ComingSoonScreen title="Insights" promise="Track a few days to unlock your patterns." />;
+  const router = useRouter();
+
+  return <InsightsScreen onSelectCategory={() => router.push('/(tabs)/history')} />;
 }
