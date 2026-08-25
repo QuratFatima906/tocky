@@ -1,5 +1,11 @@
 import { forwardRef, type ReactNode } from 'react';
-import { Pressable, type PressableProps, type View, type ViewStyle } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  type PressableProps,
+  type View,
+  type ViewStyle,
+} from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -24,11 +30,18 @@ export const PressableScale = forwardRef<View, PressableScaleProps>(function Pre
   const theme = useTheme();
   const pressProgress = useSharedValue(0);
   const pressDuration = theme.motion.duration('instant');
+  // The animated style is applied last and would otherwise overwrite whatever
+  // opacity the caller set -- which is how every disabled button lost its dimming.
+  const callerOpacity = StyleSheet.flatten(style)?.opacity;
+  const restingOpacity = typeof callerOpacity === 'number' ? callerOpacity : 1;
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: 1 - pressProgress.value * (1 - PRESSED_SCALE) }],
-    opacity: 1 - pressProgress.value * (1 - PRESSED_OPACITY),
-  })) as AnimatedStyle<ViewStyle>;
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ scale: 1 - pressProgress.value * (1 - PRESSED_SCALE) }],
+      opacity: restingOpacity * (1 - pressProgress.value * (1 - PRESSED_OPACITY)),
+    }),
+    [restingOpacity],
+  ) as AnimatedStyle<ViewStyle>;
 
   return (
     <AnimatedPressable

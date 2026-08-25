@@ -109,6 +109,291 @@ exports[`TockyIcon renders add with stable geometry 1`] = `
 </RNCSafeAreaProvider>
 `;
 
+exports[`TockyIcon renders check with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-check"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGDefs>
+            <RNSVGMask
+              fill={
+                {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+              height={24}
+              maskContentUnits={1}
+              maskType={0}
+              maskUnits={1}
+              name="check"
+              width={24}
+              x={0}
+              y={0}
+            >
+              <RNSVGRect
+                fill={
+                  {
+                    "payload": 4294967295,
+                    "type": 0,
+                  }
+                }
+                height={24}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+                width={24}
+                x={0}
+                y={0}
+              />
+              <RNSVGPath
+                d="M7.8 12.4 L10.8 15.4 L16.4 9"
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={
+                  {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth={2.2}
+              />
+            </RNSVGMask>
+          </RNSVGDefs>
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+            mask="check"
+          >
+            <RNSVGCircle
+              cx={12}
+              cy={12}
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              r={9}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders close with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-close"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              0.7071067811865476,
+              0.7071067811865475,
+              -0.7071067811865475,
+              0.7071067811865476,
+              11.999999999999998,
+              -4.970562748477143,
+            ]
+          }
+        >
+          <RNSVGGroup
+            fill={
+              {
+                "payload": 4278190080,
+                "type": 0,
+              }
+            }
+          >
+            <RNSVGRect
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              height={16}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              rx={1.3}
+              width={2.6}
+              x={10.7}
+              y={4}
+            />
+            <RNSVGRect
+              fill={
+                {
+                  "payload": 4287397352,
+                  "type": 0,
+                }
+              }
+              height={2.6}
+              propList={
+                [
+                  "fill",
+                ]
+              }
+              rx={1.3}
+              width={16}
+              x={4}
+              y={10.7}
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
 exports[`TockyIcon renders creative with stable geometry 1`] = `
 <RNCSafeAreaProvider
   onInsetsChange={[Function]}

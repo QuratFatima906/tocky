@@ -198,14 +198,22 @@ screen with no data is not a screen.
 **Deferred to their own chunks:** the tab bar and the `+` entry point (C1),
 "See all" → History (C5), tapping the mini-bar through to Timer (C4).
 
-### C3 · New session (modal)
+### C3 · New session (modal) — **done, bar the slice**
 
-- [ ] Category grid with selected ring + check
-- [ ] Optional label field
-- [ ] Pinned "Start {Category} session" button, disabled until a category is chosen
-- [ ] Dismiss cancels, tracking nothing
-- [ ] Switch-confirm when a session is already active
-- [ ] **End-to-end slice: start → Timer → end → saved → Home updates**
+- [x] Category grid with selected ring + check
+- [x] Optional label field
+- [x] Pinned "Start {Category} session" button, disabled until a category is chosen
+- [x] Dismiss cancels, tracking nothing
+- [x] Switch-confirm when a session is already active
+- [x] `startSession` on the store contract: ends whatever runs at the same instant
+      the new session starts, so a switch leaves no untracked gap and no overlap
+- [x] Client-generated UUIDs (`expo-crypto`), mocked in `jest.setup.ts` because its
+      native module silently returns `undefined` under Jest
+- [ ] **End-to-end slice: start → Timer → end → saved → Home updates** — needs the
+      Timer, so it closes with C4
+
+Starting a session dismisses the modal back to Home, where the "Now tracking" bar
+picks it up. It will route to the Timer once C4 exists.
 
 ### C4 · Timer
 

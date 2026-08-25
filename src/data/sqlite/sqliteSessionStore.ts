@@ -1,6 +1,6 @@
 import { findActiveSession, isPaused, type Category, type Pause, type Session } from '@/domain';
 
-import type { SessionStore, SessionStoreSnapshot } from '../sessionStore';
+import { newSession, type SessionStore, type SessionStoreSnapshot } from '../sessionStore';
 import type { SqliteDatabase } from './database';
 import { migrateToLatestSchema } from './migrations';
 
@@ -44,6 +44,28 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
     },
 
     getSnapshot: () => snapshot,
+
+    startSession(input) {
+      const active = findActiveSession(snapshot.sessions);
+      const session = newSession(input);
+
+      database.inTransaction(() => {
+        if (active !== null) {
+          database.run('update sessions set endedAt = ? where id = ?', [input.at, active.id]);
+          database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
+            input.at,
+            active.id,
+          ]);
+        }
+
+        database.run(
+          `insert into sessions (id, categoryId, label, startedAt, endedAt, linkedTaskId, note)
+           values (?, ?, ?, ?, null, null, null)`,
+          [session.id, session.categoryId, session.label, session.startedAt],
+        );
+      });
+      reloadAndNotify();
+    },
 
     pauseActiveSession(at) {
       const active = findActiveSession(snapshot.sessions);

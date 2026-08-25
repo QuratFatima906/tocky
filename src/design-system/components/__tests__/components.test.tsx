@@ -1,4 +1,5 @@
 import { act, fireEvent, screen } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
 
 import { INCLUDING_HIDDEN, renderWithProviders } from '@/test/renderWithProviders';
 
@@ -93,6 +94,16 @@ describe('Button', () => {
     await act(async () => fireEvent.press(button));
     expect(onPress).not.toHaveBeenCalled();
     expect(button.props.accessibilityState.disabled).toBe(true);
+  });
+
+  it('looks disabled, not just behaves disabled', async () => {
+    await renderWithProviders(<Button label="Start" disabled onPress={jest.fn()} />);
+
+    const { opacity } = StyleSheet.flatten(
+      screen.getByRole('button', { name: 'Start' }).props.style,
+    );
+
+    expect(opacity).toBeLessThan(1);
   });
 
   it('reports busy and blocks presses while loading', async () => {
