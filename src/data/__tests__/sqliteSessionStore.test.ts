@@ -95,6 +95,19 @@ describe('the Tocky schema', () => {
     );
   });
 
+  it('upgrades an install that already holds data, without disturbing it', () => {
+    const database = databaseHolding([FINISHED_SESSION]);
+    const versionBeforeSettings = LATEST_SCHEMA_VERSION - 1;
+
+    database.execute(`drop table settings; pragma user_version = ${versionBeforeSettings}`);
+    const upgraded = createSqliteSessionStore(database);
+
+    expect(schemaVersionOf(database)).toBe(LATEST_SCHEMA_VERSION);
+    expect(upgraded.getSnapshot().sessions).toHaveLength(1);
+    expect(upgraded.getSnapshot().categories).toEqual(DEFAULT_CATEGORIES);
+    expect(upgraded.getSnapshot().hasCompletedOnboarding).toBe(false);
+  });
+
   it('refuses a session that belongs to no category', () => {
     const database = databaseHolding([]);
 
@@ -114,6 +127,14 @@ describe('createSqliteSessionStore', () => {
     expect(reopened.getSnapshot().sessions[0]!.pauses).toEqual([
       { startedAt: CONTRACT_NOW, endedAt: null },
     ]);
+  });
+
+  it('still knows onboarding is done after the app is relaunched', () => {
+    const database = databaseHolding([]);
+
+    createSqliteSessionStore(database).completeOnboarding();
+
+    expect(createSqliteSessionStore(database).getSnapshot().hasCompletedOnboarding).toBe(true);
   });
 
   it('hands back the newest session first', () => {

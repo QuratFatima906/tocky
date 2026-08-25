@@ -11,7 +11,11 @@ import { TAB_DEFINITIONS, TockyTabBar } from '@/features/navigation/TockyTabBar'
 import { renderWithProviders } from '@/test/renderWithProviders';
 
 const mockBack = jest.fn();
-jest.mock('expo-router', () => ({ useRouter: () => ({ back: mockBack }) }));
+const mockReplace = jest.fn();
+const mockCanGoBack = jest.fn(() => true);
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ back: mockBack, canGoBack: mockCanGoBack, replace: mockReplace }),
+}));
 
 const NOW = new Date(2026, 7, 19, 12, 0).getTime();
 const MINUTE = 60_000;
@@ -459,6 +463,8 @@ describe('bottom chrome clearance', () => {
 describe('ComingSoonScreen', () => {
   beforeEach(() => {
     mockBack.mockClear();
+    mockReplace.mockClear();
+    mockCanGoBack.mockReturnValue(true);
   });
 
   it('names the screen and what it will become', async () => {
@@ -498,5 +504,26 @@ describe('ComingSoonScreen', () => {
     });
 
     expect(mockBack).toHaveBeenCalled();
+  });
+
+  it('goes home rather than nowhere when there is nothing to go back to', async () => {
+    mockCanGoBack.mockReturnValue(false);
+
+    await renderWithProviders(
+      <BottomChromeProvider>
+        <ComingSoonScreen
+          title="Sign in"
+          promise="Accounts arrive later."
+          dismissLabel="Back to Tocky"
+        />
+      </BottomChromeProvider>,
+    );
+
+    await act(async () => {
+      fireEvent.press(screen.getByLabelText('Back to Tocky'));
+    });
+
+    expect(mockBack).not.toHaveBeenCalled();
+    expect(mockReplace).toHaveBeenCalledWith('/');
   });
 });

@@ -31,7 +31,12 @@ export function ComingSoonScreen({
           {promise}
         </Text>
         {dismissLabel !== undefined && (
-          <Button label={dismissLabel} variant="secondary" size="small" onPress={router.back} />
+          <Button
+            label={dismissLabel}
+            variant="secondary"
+            size="small"
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+          />
         )}
       </View>
     </Screen>

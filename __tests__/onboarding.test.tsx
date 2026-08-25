@@ -1,5 +1,5 @@
-import { act, fireEvent, screen, within } from '@testing-library/react-native';
-import { Dimensions } from 'react-native';
+import { act, configure, fireEvent, screen, within } from '@testing-library/react-native';
+import { AccessibilityInfo, Dimensions, ScrollView } from 'react-native';
 
 import { createInMemorySessionStore, type SessionStore } from '@/data';
 import { OnboardingScreen } from '@/features/onboarding/OnboardingScreen';
@@ -24,9 +24,23 @@ async function renderOnboarding(): Promise<SessionStore> {
   return store;
 }
 
+let scrollTo: jest.SpyInstance;
+let announce: jest.SpyInstance;
+
 beforeEach(() => {
   onSignIn.mockClear();
+  scrollTo = jest.spyOn(ScrollView.prototype, 'scrollTo').mockImplementation(() => {});
+  announce = jest.spyOn(AccessibilityInfo, 'announceForAccessibility').mockImplementation(() => {});
 });
+
+afterEach(() => {
+  scrollTo.mockRestore();
+  announce.mockRestore();
+});
+
+// Off-screen panes are deliberately hidden from VoiceOver, and asserting on
+// them is the point of most of these tests.
+configure({ defaultIncludeHiddenElements: true });
 
 function pane(index: number) {
   return within(screen.getByTestId(`onboarding-pane-${index}`));
@@ -50,7 +64,6 @@ describe('onboarding', () => {
   it('opens on the first pane', async () => {
     await renderOnboarding();
 
-    expect(screen.getByTestId('onboarding-pager').props.contentOffset?.x ?? 0).toBe(0);
     expect(pane(0).getByText('Where did your day go?')).toBeOnTheScreen();
     expect(pane(0).getByLabelText('Step 1 of 3')).toBeOnTheScreen();
   });
@@ -61,6 +74,33 @@ describe('onboarding', () => {
     expect(pane(0).getByText('Meet Tocky')).toBeOnTheScreen();
     expect(pane(1).getByText('One tap')).toBeOnTheScreen();
     expect(pane(2).getByText('Insights')).toBeOnTheScreen();
+  });
+
+  it('scrolls the pager to the pane the dots claim, not just the dots', async () => {
+    await renderOnboarding();
+
+    await press(pane(0).getByLabelText('Next'));
+
+    expect(scrollTo).toHaveBeenCalledWith({ x: PANE_WIDTH, animated: true });
+    expect(pane(0).getByLabelText('Step 2 of 3')).toBeOnTheScreen();
+  });
+
+  it('tells a screen reader which pane it landed on', async () => {
+    await renderOnboarding();
+
+    await press(pane(0).getByLabelText('Next'));
+
+    expect(announce).toHaveBeenCalledWith(
+      expect.stringContaining('Pick a category, start the clock.'),
+    );
+    expect(announce).toHaveBeenCalledWith(expect.stringContaining('Step 2 of 3'));
+  });
+
+  it('keeps panes the reader is not on out of the way', async () => {
+    await renderOnboarding();
+
+    expect(screen.getByTestId('onboarding-pane-0').props.accessibilityElementsHidden).toBe(false);
+    expect(screen.getByTestId('onboarding-pane-2').props.accessibilityElementsHidden).toBe(true);
   });
 
   it('moves the dot indicator on when Next is pressed', async () => {
