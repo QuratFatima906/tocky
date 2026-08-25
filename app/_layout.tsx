@@ -5,7 +5,12 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { createSqliteSessionStore, openTockyDatabase, SessionStoreProvider } from '@/data';
+import {
+  createSqliteSessionStore,
+  openTockyDatabase,
+  SessionStoreProvider,
+  useSessionStoreSnapshot,
+} from '@/data';
 import { ThemeProvider, ToastProvider, useAppFonts, useTheme } from '@/design-system';
 
 export const unstable_settings = { anchor: '(tabs)' };
@@ -16,6 +21,8 @@ const sessionStore = createSqliteSessionStore(openTockyDatabase());
 
 function ThemedApp() {
   const theme = useTheme();
+  const { status, hasCompletedOnboarding } = useSessionStoreSnapshot();
+  const isPastOnboarding = status !== 'ready' || hasCompletedOnboarding;
 
   return (
     <>
@@ -26,10 +33,18 @@ function ThemedApp() {
           contentStyle: { backgroundColor: theme.color.background },
         }}
       >
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="new-session" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="timer" />
-        <Stack.Screen name="session/[id]" />
+        <Stack.Protected guard={isPastOnboarding}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="new-session" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="timer" />
+          <Stack.Screen name="session/[id]" />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!isPastOnboarding}>
+          <Stack.Screen name="onboarding" />
+        </Stack.Protected>
+
+        <Stack.Screen name="sign-in" />
       </Stack>
     </>
   );

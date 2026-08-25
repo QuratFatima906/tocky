@@ -11,6 +11,8 @@ import { newSession, newTask, type SessionStore, type SessionStoreSnapshot } fro
 import type { SqliteDatabase } from './database';
 import { migrateToLatestSchema } from './migrations';
 
+const ONBOARDING_COMPLETED_KEY = 'onboardingCompleted';
+
 type CategoryRow = {
   id: string;
   name: string;
@@ -138,6 +140,16 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
       reloadAndNotify();
     },
 
+    completeOnboarding() {
+      if (snapshot.hasCompletedOnboarding) return;
+
+      database.run('insert or replace into settings (key, value) values (?, ?)', [
+        ONBOARDING_COMPLETED_KEY,
+        'true',
+      ]);
+      reloadAndNotify();
+    },
+
     noteActiveSession(note) {
       const active = findActiveSession(snapshot.sessions);
       if (active === null || active.note === note) return;
@@ -195,7 +207,12 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
     )
     .map<Task>((row) => ({ ...row }));
 
-  return { status: 'ready', categories, sessions, tasks };
+  const hasCompletedOnboarding =
+    database.all<{ value: string }>('select value from settings where key = ?', [
+      ONBOARDING_COMPLETED_KEY,
+    ]).length > 0;
+
+  return { status: 'ready', categories, sessions, tasks, hasCompletedOnboarding };
 }
 
 function groupPausesBySessionId(rows: readonly PauseRow[]): Map<string, Pause[]> {

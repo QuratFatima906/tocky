@@ -22,6 +22,7 @@ describe('createInMemorySessionStore', () => {
       categories: DEFAULT_CATEGORIES,
       sessions: [FINISHED_SESSION],
       tasks: [],
+      hasCompletedOnboarding: false,
     });
   });
 

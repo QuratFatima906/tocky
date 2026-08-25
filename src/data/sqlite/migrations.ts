@@ -61,7 +61,21 @@ const createTasks: Migration = (database) => {
   `);
 };
 
-const MIGRATIONS: readonly Migration[] = [createTables, seedDefaultCategories, createTasks];
+const createSettings: Migration = (database) => {
+  database.execute(`
+    create table settings (
+      key text primary key not null,
+      value text not null
+    );
+  `);
+};
+
+const MIGRATIONS: readonly Migration[] = [
+  createTables,
+  seedDefaultCategories,
+  createTasks,
+  createSettings,
+];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;
 
