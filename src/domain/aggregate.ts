@@ -1,5 +1,5 @@
 import { dayRange, startOfDay, weekRange } from './calendar';
-import { overlapsRange, sessionSecondsInRange } from './duration';
+import { overlapsRange, sessionSecondsInRange, UNBOUNDED_RANGE } from './duration';
 import type {
   Category,
   CategoryTotal,
@@ -7,6 +7,7 @@ import type {
   DaySessionEntry,
   DaySessions,
   Session,
+  Task,
   TimeRange,
   WeekDay,
   WeekSummary,
@@ -137,4 +138,20 @@ function longestOf(days: readonly WeekDay[]): WeekDay | null {
         : longest,
     null,
   );
+}
+
+export function trackedSecondsForTask(
+  task: Task,
+  sessions: readonly Session[],
+  now: number,
+): number {
+  return sessions
+    .filter((session) => session.linkedTaskId === task.id)
+    .reduce((total, session) => total + sessionSecondsInRange(session, UNBOUNDED_RANGE, now), 0);
+}
+
+export function sessionTrackingTask(task: Task, sessions: readonly Session[]): Session | null {
+  const active = findActiveSession(sessions);
+
+  return active !== null && active.linkedTaskId === task.id ? active : null;
 }

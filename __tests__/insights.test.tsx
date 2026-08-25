@@ -32,7 +32,12 @@ function tracked(id: string, dayOfMonth: number, hours: number, categoryId = 'wo
 }
 
 function storeWith(sessions: readonly Session[]): SessionStore {
-  return createInMemorySessionStore({ status: 'ready', categories: DEFAULT_CATEGORIES, sessions });
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: DEFAULT_CATEGORIES,
+    sessions,
+    tasks: [],
+  });
 }
 
 const A_FULL_WEEK: readonly Session[] = [

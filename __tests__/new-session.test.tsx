@@ -28,6 +28,7 @@ function storeWith(sessions: readonly Session[]): SessionStore {
     status: 'ready',
     categories: DEFAULT_CATEGORIES,
     sessions,
+    tasks: [],
   });
 }
 

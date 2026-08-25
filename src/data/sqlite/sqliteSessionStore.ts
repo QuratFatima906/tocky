@@ -1,6 +1,13 @@
-import { findActiveSession, isPaused, type Category, type Pause, type Session } from '@/domain';
+import {
+  findActiveSession,
+  isPaused,
+  type Category,
+  type Pause,
+  type Session,
+  type Task,
+} from '@/domain';
 
-import { newSession, type SessionStore, type SessionStoreSnapshot } from '../sessionStore';
+import { newSession, newTask, type SessionStore, type SessionStoreSnapshot } from '../sessionStore';
 import type { SqliteDatabase } from './database';
 import { migrateToLatestSchema } from './migrations';
 
@@ -23,6 +30,15 @@ type SessionRow = {
 };
 
 type PauseRow = { sessionId: string; startedAt: number; endedAt: number | null };
+
+type TaskRow = {
+  id: string;
+  title: string;
+  categoryId: string;
+  estimateSeconds: number | null;
+  createdAt: number;
+  completedAt: number | null;
+};
 
 export function createSqliteSessionStore(database: SqliteDatabase): SessionStore {
   migrateToLatestSchema(database);
@@ -60,8 +76,8 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
 
         database.run(
           `insert into sessions (id, categoryId, label, startedAt, endedAt, linkedTaskId, note)
-           values (?, ?, ?, ?, null, null, null)`,
-          [session.id, session.categoryId, session.label, session.startedAt],
+           values (?, ?, ?, ?, null, ?, null)`,
+          [session.id, session.categoryId, session.label, session.startedAt, session.linkedTaskId],
         );
       });
       reloadAndNotify();
@@ -100,6 +116,25 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
           where id = ?`,
         [edit.categoryId, edit.label, edit.startedAt, edit.endedAt, edit.note, sessionId],
       );
+      reloadAndNotify();
+    },
+
+    addTask(input) {
+      const task = newTask(input);
+
+      database.run(
+        `insert into tasks (id, title, categoryId, estimateSeconds, createdAt, completedAt)
+         values (?, ?, ?, ?, ?, null)`,
+        [task.id, task.title, task.categoryId, task.estimateSeconds, task.createdAt],
+      );
+      reloadAndNotify();
+    },
+
+    setTaskCompleted(taskId, completedAt) {
+      const existing = snapshot.tasks.find((task) => task.id === taskId);
+      if (existing === undefined || existing.completedAt === completedAt) return;
+
+      database.run('update tasks set completedAt = ? where id = ?', [completedAt, taskId]);
       reloadAndNotify();
     },
 
@@ -152,7 +187,15 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
     .all<CategoryRow>('select id, name, icon, color, isArchived from categories order by rowid')
     .map<Category>((row) => ({ ...row, isArchived: row.isArchived === 1 }));
 
-  return { status: 'ready', categories, sessions };
+  const tasks = database
+    .all<TaskRow>(
+      `select id, title, categoryId, estimateSeconds, createdAt, completedAt
+         from tasks
+        order by createdAt desc`,
+    )
+    .map<Task>((row) => ({ ...row }));
+
+  return { status: 'ready', categories, sessions, tasks };
 }
 
 function groupPausesBySessionId(rows: readonly PauseRow[]): Map<string, Pause[]> {

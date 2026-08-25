@@ -25,7 +25,12 @@ const onSwitchCategory = jest.fn();
 const onEnded = jest.fn();
 
 function storeWith(sessions: readonly Session[]): SessionStore {
-  return createInMemorySessionStore({ status: 'ready', categories: DEFAULT_CATEGORIES, sessions });
+  return createInMemorySessionStore({
+    status: 'ready',
+    categories: DEFAULT_CATEGORIES,
+    sessions,
+    tasks: [],
+  });
 }
 
 async function renderTimer(store: SessionStore = storeWith([RUNNING_SESSION])) {

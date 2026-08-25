@@ -61,13 +61,14 @@ function SessionDetail({
   const theme = useTheme();
   const store = useSessionStore();
   const showToast = useToast();
-  const { sessions, categories } = useSessionStoreSnapshot();
+  const { sessions, categories, tasks } = useSessionStoreSnapshot();
   const [isEditing, setIsEditing] = useState(false);
 
   const stillRunning = isRunning(session);
   const now = useNow(stillRunning ? ELAPSED_TICK_MS : null);
   const category = categories.find((candidate) => candidate.id === session.categoryId);
   const seconds = sessionSeconds(session, now);
+  const linkedTask = tasks.find((task) => task.id === session.linkedTaskId);
 
   function saveEdit(edit: SessionEdit): void {
     store.editSession(session.id, edit);
@@ -192,6 +193,7 @@ function SessionDetail({
               value={session.endedAt === null ? 'Still running' : formatClockTime(session.endedAt)}
             />
             <MetaRow name="Pauses" value={describePauses(session, now)} />
+            {linkedTask !== undefined && <MetaRow name="Linked task" value={linkedTask.title} />}
           </Surface>
 
           {session.note !== null && (

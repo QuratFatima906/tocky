@@ -3,7 +3,9 @@ export {
   findActiveSession,
   groupSessionsByDay,
   mostRecentlyStarted,
+  sessionTrackingTask,
   summariseWeek,
+  trackedSecondsForTask,
 } from './aggregate';
 export {
   dayRange,
@@ -45,6 +47,7 @@ export type {
   DaySessions,
   Pause,
   Session,
+  Task,
   TimeRange,
   WeekDay,
   WeekSummary,

@@ -1,5 +1,9 @@
-import { ComingSoonScreen } from '@/features/navigation/ComingSoonScreen';
+import { useRouter } from 'expo-router';
+
+import { TasksScreen } from '@/features/tasks/TasksScreen';
 
 export default function TasksRoute() {
-  return <ComingSoonScreen title="Tasks" promise="Plan work here, then track it in one tap." />;
+  const router = useRouter();
+
+  return <TasksScreen onTrackingStarted={() => router.push('/timer')} />;
 }
