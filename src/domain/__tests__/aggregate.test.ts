@@ -3,6 +3,7 @@ import {
   findActiveSession,
   groupSessionsByDay,
   mostRecentlyStarted,
+  summariseWeek,
 } from '../aggregate';
 import { dayRange, startOfDay } from '../calendar';
 import type { Category, Session } from '../types';
@@ -290,5 +291,131 @@ describe('groupSessionsByDay', () => {
     const total = days.reduce((sum, day) => sum + day.totalSeconds, 0);
 
     expect(total).toBe(25 * 3600);
+  });
+});
+
+describe('summariseWeek', () => {
+  const WEDNESDAY = new Date(2026, 7, 19, 12, 0).getTime();
+  const MONDAY = new Date(2026, 7, 17, 0, 0).getTime();
+  const ONE_HOUR = 3_600_000;
+
+  function tracked(id: string, dayOffset: number, hours: number, categoryId = 'work'): Session {
+    const startedAt = new Date(2026, 7, 17 + dayOffset, 9, 0).getTime();
+
+    return {
+      id,
+      categoryId,
+      label: null,
+      startedAt,
+      endedAt: startedAt + hours * ONE_HOUR,
+      pauses: [],
+      linkedTaskId: null,
+      note: null,
+    };
+  }
+
+  it('lays the week out as seven days, Monday first', () => {
+    const { days } = summariseWeek([], CATEGORIES, MONDAY, WEDNESDAY);
+
+    expect(days).toHaveLength(7);
+    expect(days[0]!.dayStart).toBe(MONDAY);
+    expect(days[6]!.dayStart).toBe(new Date(2026, 7, 23, 0, 0).getTime());
+  });
+
+  it('totals the week from the days that explain it', () => {
+    const summary = summariseWeek(
+      [tracked('a', 0, 2), tracked('b', 2, 3)],
+      CATEGORIES,
+      MONDAY,
+      WEDNESDAY,
+    );
+
+    expect(summary.totalSeconds).toBe(5 * 3600);
+    expect(summary.totalSeconds).toBe(
+      summary.days.reduce((total, day) => total + day.breakdown.totalSeconds, 0),
+    );
+  });
+
+  it('compares against the week before, not the days before', () => {
+    const lastWeek = tracked('last', -7, 4);
+    const summary = summariseWeek([tracked('a', 0, 2), lastWeek], CATEGORIES, MONDAY, WEDNESDAY);
+
+    expect(summary.previousWeekSeconds).toBe(4 * 3600);
+  });
+
+  it('names the longest day of the week', () => {
+    const summary = summariseWeek(
+      [tracked('a', 0, 2), tracked('b', 2, 6), tracked('c', 3, 1)],
+      CATEGORIES,
+      MONDAY,
+      WEDNESDAY,
+    );
+
+    expect(summary.longestDay!.dayStart).toBe(new Date(2026, 7, 19, 0, 0).getTime());
+    expect(summary.longestDay!.breakdown.totalSeconds).toBe(6 * 3600);
+  });
+
+  it('has no longest day when the week is empty', () => {
+    expect(summariseWeek([], CATEGORIES, MONDAY, WEDNESDAY).longestDay).toBeNull();
+  });
+
+  it('counts sessions, their average and the longest of them', () => {
+    const summary = summariseWeek(
+      [tracked('a', 0, 2), tracked('b', 2, 4)],
+      CATEGORIES,
+      MONDAY,
+      WEDNESDAY,
+    );
+
+    expect(summary.sessionCount).toBe(2);
+    expect(summary.averageBlockSeconds).toBe(3 * 3600);
+    expect(summary.longestSessionSeconds).toBe(4 * 3600);
+  });
+
+  it('averages nothing rather than dividing by zero', () => {
+    const summary = summariseWeek([], CATEGORIES, MONDAY, WEDNESDAY);
+
+    expect(summary.averageBlockSeconds).toBe(0);
+    expect(summary.sessionCount).toBe(0);
+  });
+
+  it('counts the days that had anything on them', () => {
+    const summary = summariseWeek(
+      [tracked('a', 0, 2), tracked('b', 0, 1), tracked('c', 4, 1)],
+      CATEGORIES,
+      MONDAY,
+      WEDNESDAY,
+    );
+
+    expect(summary.trackedDayCount).toBe(2);
+  });
+
+  it('ranks the week by category', () => {
+    const summary = summariseWeek(
+      [tracked('a', 0, 2, 'work'), tracked('b', 1, 5, 'learning')],
+      CATEGORIES,
+      MONDAY,
+      WEDNESDAY,
+    );
+
+    expect(summary.categoryTotals.map((total) => total.category.id)).toEqual(['learning', 'work']);
+  });
+
+  it('leaves out the part of a session that belongs to another week', () => {
+    const startedAt = new Date(2026, 7, 16, 22, 0).getTime();
+    const acrossTheBoundary: Session = {
+      id: 'across',
+      categoryId: 'work',
+      label: null,
+      startedAt,
+      endedAt: startedAt + 4 * ONE_HOUR,
+      pauses: [],
+      linkedTaskId: null,
+      note: null,
+    };
+
+    const summary = summariseWeek([acrossTheBoundary], CATEGORIES, MONDAY, WEDNESDAY);
+
+    expect(summary.totalSeconds).toBe(2 * 3600);
   });
 });

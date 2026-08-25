@@ -45,6 +45,24 @@ export type DaySessions = {
   readonly entries: readonly DaySessionEntry[];
 };
 
+export type WeekDay = {
+  readonly dayStart: number;
+  readonly breakdown: DayBreakdown;
+};
+
+export type WeekSummary = {
+  readonly range: TimeRange;
+  readonly totalSeconds: number;
+  readonly previousWeekSeconds: number;
+  readonly days: readonly WeekDay[];
+  readonly categoryTotals: readonly CategoryTotal[];
+  readonly longestDay: WeekDay | null;
+  readonly sessionCount: number;
+  readonly averageBlockSeconds: number;
+  readonly longestSessionSeconds: number;
+  readonly trackedDayCount: number;
+};
+
 export type DayBreakdown = {
   readonly totalSeconds: number;
   readonly categoryTotals: readonly CategoryTotal[];

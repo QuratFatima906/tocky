@@ -1,5 +1,5 @@
-import { dayRange, startOfDay } from './calendar';
-import { sessionSecondsInRange } from './duration';
+import { dayRange, startOfDay, weekRange } from './calendar';
+import { overlapsRange, sessionSecondsInRange } from './duration';
 import type {
   Category,
   CategoryTotal,
@@ -8,6 +8,8 @@ import type {
   DaySessions,
   Session,
   TimeRange,
+  WeekDay,
+  WeekSummary,
 } from './types';
 
 export function breakdownForRange(
@@ -88,4 +90,51 @@ export function groupSessionsByDay(
       totalSeconds: entries.reduce((total, entry) => total + entry.seconds, 0),
       entries: [...entries].sort((first, second) => second.startedAtInDay - first.startedAtInDay),
     }));
+}
+
+const DAYS_PER_WEEK = 7;
+
+export function summariseWeek(
+  sessions: readonly Session[],
+  categories: readonly Category[],
+  weekStart: number,
+  now: number,
+): WeekSummary {
+  const range = weekRange(weekStart);
+  const days = Array.from({ length: DAYS_PER_WEEK }, (_, dayOffset) => ({
+    dayStart: startOfDay(range.start, dayOffset),
+    breakdown: breakdownForRange(sessions, categories, dayRange(range.start, dayOffset), now),
+  }));
+
+  const withinWeek = sessions.filter((session) => overlapsRange(session, range, now));
+  const secondsWithinWeek = withinWeek.map((session) => sessionSecondsInRange(session, range, now));
+  const totalSeconds = days.reduce((total, day) => total + day.breakdown.totalSeconds, 0);
+
+  return {
+    range,
+    totalSeconds,
+    previousWeekSeconds: breakdownForRange(sessions, categories, weekRange(weekStart, -1), now)
+      .totalSeconds,
+    days,
+    categoryTotals: breakdownForRange(sessions, categories, range, now).categoryTotals,
+    longestDay: longestOf(days),
+    sessionCount: withinWeek.length,
+    averageBlockSeconds: withinWeek.length === 0 ? 0 : Math.floor(totalSeconds / withinWeek.length),
+    longestSessionSeconds: secondsWithinWeek.reduce(
+      (longest, seconds) => Math.max(longest, seconds),
+      0,
+    ),
+    trackedDayCount: days.filter((day) => day.breakdown.totalSeconds > 0).length,
+  };
+}
+
+function longestOf(days: readonly WeekDay[]): WeekDay | null {
+  return days.reduce<WeekDay | null>(
+    (longest, day) =>
+      day.breakdown.totalSeconds > 0 &&
+      (longest === null || day.breakdown.totalSeconds > longest.breakdown.totalSeconds)
+        ? day
+        : longest,
+    null,
+  );
 }
