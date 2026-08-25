@@ -1,5 +1,9 @@
-import { ComingSoonScreen } from '@/features/navigation/ComingSoonScreen';
+import { useRouter } from 'expo-router';
+
+import { HistoryScreen } from '@/features/history/HistoryScreen';
 
 export default function HistoryRoute() {
-  return <ComingSoonScreen title="History" promise="Your tracked sessions will show up here." />;
+  const router = useRouter();
+
+  return <HistoryScreen onOpenSession={(sessionId) => router.push(`/session/${sessionId}`)} />;
 }

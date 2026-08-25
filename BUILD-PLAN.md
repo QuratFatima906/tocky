@@ -246,13 +246,26 @@ ever both ended and paused.
 **Design system gained** `TextField` (promoted from C3's label field on second
 use), `ToastProvider`/`useToast`, and the `collapse` and `more` glyphs.
 
-### C5 · History
+### C5 · History — **done**
 
-- [ ] Day groups (Today · Yesterday · dated) with daily totals
-- [ ] Session rows: start time · category tile · title · duration
-- [ ] Search/filter by category, label, and date
-- [ ] Lazy-load by day
-- [ ] States: empty · loading skeleton
+- [x] Day groups (Today · Yesterday · dated) with daily totals
+- [x] Session rows: start time · category tile · title · duration
+- [x] Search/filter by category, label, and date
+- [x] Virtualised by day
+- [x] States: empty · nothing-matched · nothing-on-these-days · loading skeleton
+
+`groupSessionsByDay` splits every session at local midnight, so a session that
+ran past midnight appears under both days for exactly the time it spent in each
+while the record itself stays whole. Asserted against a 25-hour fall-back day.
+
+**One search field instead of three filters.** It matches label, category name,
+day heading and note, so "health" filters by category and "yesterday" filters by
+date without a date picker — which would have needed a native module, and
+`pod install` is still broken.
+
+**Virtualised, not paginated.** A `FlatList` of days already renders only what is
+on screen, and a day holds a handful of sessions. Lazy-loading pages of days
+would be machinery for a list that does not need it yet.
 
 ### C6 · Session detail & editing
 

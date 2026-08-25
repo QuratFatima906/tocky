@@ -1,11 +1,10 @@
 import { View } from 'react-native';
 
-import { Screen, Text, useTheme } from '@/design-system';
+import { Screen, Skeleton, Text, useTheme } from '@/design-system';
 
 import { CategoryBreakdown } from './components/CategoryBreakdown';
 import { EmptyDay } from './components/EmptyDay';
 import { HomeGreeting } from './components/HomeGreeting';
-import { HomeSkeleton } from './components/HomeSkeleton';
 import { SessionRow } from './components/SessionRow';
 import { TrackedTodayCard } from './components/TrackedTodayCard';
 import { useHomeSnapshot } from './useHomeSnapshot';
@@ -16,6 +15,8 @@ export type HomeScreenProps = {
   onOpenSession?: (sessionId: string) => void;
   onOpenCategory?: (categoryId: string) => void;
 };
+
+const HOME_SKELETON_HEIGHTS = [56, 168, 72, 72, 72];
 
 const noop = () => {};
 
@@ -43,7 +44,11 @@ export function HomeScreen({
       <HomeGreeting greeting={greeting} name={userName} now={now} onOpenProfile={onOpenProfile} />
 
       {isLoading ? (
-        <HomeSkeleton />
+        <Skeleton
+          heights={HOME_SKELETON_HEIGHTS}
+          accessibilityLabel="Loading your day"
+          testID="home-skeleton"
+        />
       ) : (
         <>
           <TrackedTodayCard

@@ -33,6 +33,18 @@ export type CategoryTotal = {
   readonly share: number;
 };
 
+export type DaySessionEntry = {
+  readonly session: Session;
+  readonly seconds: number;
+  readonly startedAtInDay: number;
+};
+
+export type DaySessions = {
+  readonly dayStart: number;
+  readonly totalSeconds: number;
+  readonly entries: readonly DaySessionEntry[];
+};
+
 export type DayBreakdown = {
   readonly totalSeconds: number;
   readonly categoryTotals: readonly CategoryTotal[];

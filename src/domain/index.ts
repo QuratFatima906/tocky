@@ -1,4 +1,9 @@
-export { breakdownForRange, findActiveSession, mostRecentlyStarted } from './aggregate';
+export {
+  breakdownForRange,
+  findActiveSession,
+  groupSessionsByDay,
+  mostRecentlyStarted,
+} from './aggregate';
 export { dayRange, daysBetween, sameClockTimeOnPreviousDay, startOfDay } from './calendar';
 export {
   isPaused,
@@ -9,6 +14,7 @@ export {
   UNBOUNDED_RANGE,
 } from './duration';
 export {
+  dayGroupHeading,
   formatClockTime,
   formatComparedToYesterday,
   formatDayHeading,
@@ -19,4 +25,13 @@ export {
   greetingForHour,
   relativeDayLabel,
 } from './format';
-export type { Category, CategoryTotal, DayBreakdown, Pause, Session, TimeRange } from './types';
+export type {
+  Category,
+  CategoryTotal,
+  DayBreakdown,
+  DaySessionEntry,
+  DaySessions,
+  Pause,
+  Session,
+  TimeRange,
+} from './types';

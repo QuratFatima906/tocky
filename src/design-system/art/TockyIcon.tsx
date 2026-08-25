@@ -24,6 +24,7 @@ export const TOCKY_ICON_NAMES = [
   'close',
   'collapse',
   'more',
+  'search',
 ] as const;
 
 export type TockyIconName = (typeof TOCKY_ICON_NAMES)[number];
@@ -255,6 +256,19 @@ function IconGlyph({ name, color }: { name: TockyIconName; color: string }) {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      );
+    case 'search':
+      return (
+        <G>
+          <Circle cx={10.5} cy={10.5} r={6.5} fill="none" stroke={color} strokeWidth={2.4} />
+          <Path
+            d="M15.4 15.4 L20.5 20.5"
+            fill="none"
+            stroke={color}
+            strokeWidth={2.4}
+            strokeLinecap="round"
+          />
+        </G>
       );
     case 'more':
       return (
