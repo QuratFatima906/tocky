@@ -2,15 +2,22 @@ import { useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 
 import { useSessionStore, useSessionStoreSnapshot } from '@/data';
-import { Button, IconButton, Screen, Text, useTheme } from '@/design-system';
+import { Button, IconButton, Screen, Text, TextField, useTheme } from '@/design-system';
 import { findActiveSession, type Category } from '@/domain';
 
 import { CategoryPicker } from './CategoryPicker';
-import { SessionLabelField } from './SessionLabelField';
+
+const SESSION_LABEL_MAX_LENGTH = 80;
 
 const noop = () => {};
 
-export function NewSessionScreen({ onDismiss }: { onDismiss: () => void }) {
+export function NewSessionScreen({
+  onDismiss,
+  onStarted,
+}: {
+  onDismiss: () => void;
+  onStarted: () => void;
+}) {
   const theme = useTheme();
   const store = useSessionStore();
   const { categories, sessions } = useSessionStoreSnapshot();
@@ -28,7 +35,7 @@ export function NewSessionScreen({ onDismiss }: { onDismiss: () => void }) {
       label: label.trim() === '' ? null : label.trim(),
       at: Date.now(),
     });
-    onDismiss();
+    onStarted();
   }
 
   function confirmSwitchThenStart(category: Category): void {
@@ -88,7 +95,13 @@ export function NewSessionScreen({ onDismiss }: { onDismiss: () => void }) {
         <Text variant="overline" color="textTertiary" accessibilityRole="header">
           What are you working on?
         </Text>
-        <SessionLabelField label={label} onChangeLabel={setLabel} />
+        <TextField
+          value={label}
+          onChangeText={setLabel}
+          accessibilityLabel="What are you working on?"
+          placeholder="Optional"
+          maxLength={SESSION_LABEL_MAX_LENGTH}
+        />
       </ScrollView>
 
       <Button

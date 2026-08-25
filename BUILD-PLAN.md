@@ -215,16 +215,36 @@ screen with no data is not a screen.
 Starting a session dismisses the modal back to Home, where the "Now tracking" bar
 picks it up. It will route to the Timer once C4 exists.
 
-### C4 · Timer
+### C4 · Timer — **done**
 
-- [ ] Header (collapse · title · ⋯ menu), category pill with label
-- [ ] Progress ring + owl + elapsed numerals + goal
-- [ ] Control cluster: End · Primary (Pause/Start) · Switch
-- [ ] Running vs paused visuals: ring color/dim, owl expression, state label
-- [ ] "Add a note" inline entry
-- [ ] End: confirm-discard under 60s, otherwise save + success toast
-- [ ] Switch: category picker, single confirm, zero time gap
-- [ ] Collapse keeps the session running
+- [x] Header (collapse · title · ⋯ menu), category pill with label
+- [x] Ring + owl + elapsed numerals
+- [x] Control cluster: End · Primary (Pause/Start) · Switch
+- [x] Running vs paused visuals: ring colour/dim, owl expression, state label
+- [x] "Add a note" inline entry
+- [x] End: confirm-discard under 60s, otherwise save + success toast
+- [x] Switch: category picker, single confirm, zero time gap
+- [x] Collapse keeps the session running
+- [x] **End-to-end slice: start → Timer → end → saved → Home updates** — closes C3
+
+**No goal.** The design source draws `Goal · 3h 00m` under the numerals, which
+contradicts the locked decision that Tocky has no goals, targets or scores. The
+locked decision wins. With nothing to fill against, the ring became a clock
+face: one full sweep per hour tracked. Duration you can feel, nothing to fall
+short of.
+
+**Switch reuses the New session modal** rather than growing a second category
+picker. That screen already asks before replacing a running session and already
+starts the new one at the instant the old one ends, which is exactly what the
+switch needs.
+
+**Store:** `endActiveSession`, `discardActiveSession` and `noteActiveSession`
+join the contract, held to the same suite by both implementations. Ending or
+switching away from a paused session closes its open pause, so no session is
+ever both ended and paused.
+
+**Design system gained** `TextField` (promoted from C3's label field on second
+use), `ToastProvider`/`useToast`, and the `collapse` and `more` glyphs.
 
 ### C5 · History
 

@@ -22,3 +22,6 @@ export { Card, Surface } from './Surface';
 export type { SurfaceProps } from './Surface';
 export { Text } from './Text';
 export type { TextProps } from './Text';
+export { TextField } from './TextField';
+export type { TextFieldProps } from './TextField';
+export { ToastProvider, TOAST_VISIBLE_MS, useToast } from './Toast';

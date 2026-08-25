@@ -394,6 +394,92 @@ exports[`TockyIcon renders close with stable geometry 1`] = `
 </RNCSafeAreaProvider>
 `;
 
+exports[`TockyIcon renders collapse with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-collapse"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGPath
+          d="M6 10 L12 16 L18 10"
+          fill={null}
+          propList={
+            [
+              "fill",
+              "stroke",
+              "strokeWidth",
+              "strokeLinecap",
+              "strokeLinejoin",
+            ]
+          }
+          stroke={
+            {
+              "payload": 4287397352,
+              "type": 0,
+            }
+          }
+          strokeLinecap={1}
+          strokeLinejoin={1}
+          strokeWidth={2.6}
+        />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
 exports[`TockyIcon renders creative with stable geometry 1`] = `
 <RNCSafeAreaProvider
   onInsetsChange={[Function]}
@@ -1382,6 +1468,127 @@ exports[`TockyIcon renders learning with stable geometry 1`] = `
               y={4}
             />
           </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders more with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-more"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGCircle
+            cx={5.5}
+            cy={12}
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2}
+          />
+          <RNSVGCircle
+            cx={12}
+            cy={12}
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2}
+          />
+          <RNSVGCircle
+            cx={18.5}
+            cy={12}
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            propList={
+              [
+                "fill",
+              ]
+            }
+            r={2}
+          />
         </RNSVGGroup>
       </RNSVGGroup>
     </RNSVGSvgView>

@@ -67,6 +67,39 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
       reloadAndNotify();
     },
 
+    endActiveSession(at) {
+      const active = findActiveSession(snapshot.sessions);
+      if (active === null) return;
+
+      database.inTransaction(() => {
+        database.run('update sessions set endedAt = ? where id = ?', [at, active.id]);
+        database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
+          at,
+          active.id,
+        ]);
+      });
+      reloadAndNotify();
+    },
+
+    discardActiveSession() {
+      const active = findActiveSession(snapshot.sessions);
+      if (active === null) return;
+
+      database.inTransaction(() => {
+        database.run('delete from pauses where sessionId = ?', [active.id]);
+        database.run('delete from sessions where id = ?', [active.id]);
+      });
+      reloadAndNotify();
+    },
+
+    noteActiveSession(note) {
+      const active = findActiveSession(snapshot.sessions);
+      if (active === null || active.note === note) return;
+
+      database.run('update sessions set note = ? where id = ?', [note, active.id]);
+      reloadAndNotify();
+    },
+
     pauseActiveSession(at) {
       const active = findActiveSession(snapshot.sessions);
       if (active === null || isPaused(active)) return;

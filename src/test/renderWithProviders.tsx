@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createInMemorySessionStore, SessionStoreProvider, type SessionStore } from '@/data';
-import { ThemeProvider, type ThemePreference } from '@/design-system';
+import { ThemeProvider, ToastProvider, type ThemePreference } from '@/design-system';
 
 const SAFE_AREA_METRICS = {
   frame: { x: 0, y: 0, width: 390, height: 844 },
@@ -22,7 +22,9 @@ export function renderWithProviders(
   return render(
     <SafeAreaProvider initialMetrics={SAFE_AREA_METRICS}>
       <ThemeProvider initialPreference={theme}>
-        <SessionStoreProvider store={store}>{element}</SessionStoreProvider>
+        <SessionStoreProvider store={store}>
+          <ToastProvider>{element}</ToastProvider>
+        </SessionStoreProvider>
       </ThemeProvider>
     </SafeAreaProvider>,
   );
