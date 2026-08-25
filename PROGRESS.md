@@ -61,15 +61,16 @@ source of truth for state the data already carries.
 
 ## Current state
 
-- `main` is green: **488 tests**, typecheck / lint / format clean.
+- `main` is green: **504 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.
-- Every screen in Milestone C except onboarding and settings is built and
-  verified on the simulator against the real SQLite database.
+- Every screen in Milestone C except settings is built and verified on the
+  simulator against the real SQLite database.
 - The core loop closes end to end: pick a category → timer → end → the session
   lands on Home, History and Insights, and survives a relaunch.
-- Sessions, categories and tasks persist in SQLite at schema version 3.
+- Sessions, categories, tasks and the onboarding flag persist in SQLite at
+  schema version 4.
 - Jest runs pinned to `America/New_York` so local-time and DST bugs
   cannot hide behind a UTC test machine.
 
