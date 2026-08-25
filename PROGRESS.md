@@ -18,7 +18,7 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 | #   | Chunk                          | Status | Notes          |
 | --- | ------------------------------ | ------ | -------------- |
-| B1  | Local persistence (SQLite)     | ☐      |                |
+| B1  | Local persistence (SQLite)     | ☑      |                |
 | B2  | Domain: duration & aggregation | ☑      | landed with C2 |
 | B3  | Timer engine                   | ☐      |                |
 
@@ -54,7 +54,7 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Current state
 
-- `main` is green: **250 tests**, typecheck / lint / format clean.
+- `main` is green: **281 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.

@@ -89,16 +89,21 @@ Deferred until a screen demands them: `ProgressRing`, `Toast`, `Sheet`,
 
 ## Milestone B — Data & domain
 
-### B1 · Local persistence
+### B1 · Local persistence — **done**
 
-- [ ] `expo-sqlite` setup with versioned migrations
-- [ ] Tables: `categories`, `sessions`, `pauses`, `tasks`, `prefs`, `sync_queue`
-- [ ] Indexes on `sessions(startedAt)`, `sessions(categoryId)`
-- [ ] Client-generated UUIDs
-- [ ] Repository layer (`CategoryRepository`, `SessionRepository`, `TaskRepository`,
-      `PrefsRepository`) behind interfaces
-- [ ] Seed the 6 default categories on first run
-- [ ] Integration tests against an in-memory database
+- [x] `expo-sqlite` setup with versioned migrations keyed on `pragma user_version`
+- [x] Tables: `categories`, `sessions`, `pauses`
+- [x] Indexes on `sessions(startedAt)`, `sessions(categoryId)`, `pauses(sessionId)`
+- [x] Seed the 6 default categories on first run, as a migration so it can never run twice
+- [x] Integration tests against a real in-memory database (`node:sqlite`)
+- [x] One contract suite both stores must satisfy, so the SQLite store is a drop-in
+      for the in-memory one every screen test uses
+
+**Cut, with the reason:** `tasks` and `prefs` tables wait for C8 and C10, and
+`sync_queue` for F — a table no code reads is a schema to migrate for nothing.
+Repository interfaces were cut too: C2 already chose one `SessionStore` contract
+over split repositories, and B1 implements that same contract in SQL. Client-
+generated UUIDs land in C3, with the first code that creates a session.
 
 ### B2 · Domain: duration & aggregation (pure, no React)
 

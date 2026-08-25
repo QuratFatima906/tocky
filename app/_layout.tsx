@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { createDevSeedSnapshot, createInMemorySessionStore, SessionStoreProvider } from '@/data';
+import { createSqliteSessionStore, openTockyDatabase, SessionStoreProvider } from '@/data';
 import { ThemeProvider, useAppFonts, useTheme } from '@/design-system';
 
 export const unstable_settings = { anchor: '(tabs)' };
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-const sessionStore = createInMemorySessionStore(createDevSeedSnapshot(Date.now()));
+const sessionStore = createSqliteSessionStore(openTockyDatabase());
 
 function ThemedApp() {
   const theme = useTheme();
