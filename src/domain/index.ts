@@ -6,6 +6,7 @@ export {
 } from './aggregate';
 export { dayRange, daysBetween, sameClockTimeOnPreviousDay, startOfDay } from './calendar';
 export {
+  findSessionTimeProblem,
   isPaused,
   isRunning,
   overlapsRange,
@@ -13,6 +14,7 @@ export {
   sessionSecondsInRange,
   UNBOUNDED_RANGE,
 } from './duration';
+export type { SessionTimeProblem } from './duration';
 export {
   dayGroupHeading,
   formatClockTime,

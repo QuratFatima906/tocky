@@ -87,7 +87,7 @@ function RunningTimer({
   }
 
   function discardSession(): void {
-    store.discardActiveSession();
+    store.deleteSession(session.id);
     showToast('Session discarded');
     onEnded();
   }

@@ -199,23 +199,71 @@ export function describeSessionStoreContract(
       expect(store.getSnapshot().sessions).toHaveLength(1);
     });
 
-    it('discards the running session outright, pauses and all', () => {
+    it('deletes a session outright, pauses and all', () => {
       const store = createStore([ACTIVE_SESSION, FINISHED_SESSION]);
 
       store.pauseActiveSession(CONTRACT_NOW - MINUTE);
-      store.discardActiveSession();
+      store.deleteSession(ACTIVE_SESSION.id);
 
       expect(store.getSnapshot().sessions.map((session) => session.id)).toEqual([
         FINISHED_SESSION.id,
       ]);
     });
 
-    it('never discards a session that has already ended', () => {
+    it('deletes a session that has already ended, when asked for it by name', () => {
+      const store = createStore([ACTIVE_SESSION, FINISHED_SESSION]);
+
+      store.deleteSession(FINISHED_SESSION.id);
+
+      expect(store.getSnapshot().sessions.map((session) => session.id)).toEqual([
+        ACTIVE_SESSION.id,
+      ]);
+    });
+
+    it('ignores a delete for a session it does not have', () => {
+      const store = createStore([FINISHED_SESSION]);
+      const before = store.getSnapshot();
+
+      store.deleteSession('never-existed');
+
+      expect(store.getSnapshot()).toBe(before);
+    });
+
+    it('edits every field the user can change, and leaves the rest alone', () => {
       const store = createStore([FINISHED_SESSION]);
 
-      store.discardActiveSession();
+      store.editSession(FINISHED_SESSION.id, {
+        categoryId: 'health',
+        label: 'Lunch walk',
+        startedAt: CONTRACT_NOW - 30 * MINUTE,
+        endedAt: CONTRACT_NOW,
+        note: 'Longer than planned',
+      });
 
-      expect(store.getSnapshot().sessions).toHaveLength(1);
+      expect(store.getSnapshot().sessions[0]).toMatchObject({
+        id: FINISHED_SESSION.id,
+        categoryId: 'health',
+        label: 'Lunch walk',
+        startedAt: CONTRACT_NOW - 30 * MINUTE,
+        endedAt: CONTRACT_NOW,
+        note: 'Longer than planned',
+        pauses: FINISHED_SESSION.pauses,
+      });
+    });
+
+    it('ignores an edit for a session it does not have', () => {
+      const store = createStore([FINISHED_SESSION]);
+      const before = store.getSnapshot();
+
+      store.editSession('never-existed', {
+        categoryId: 'health',
+        label: null,
+        startedAt: CONTRACT_NOW,
+        endedAt: null,
+        note: null,
+      });
+
+      expect(store.getSnapshot()).toBe(before);
     });
 
     it('notes the running session, and clears the note again', () => {

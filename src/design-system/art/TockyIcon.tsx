@@ -25,6 +25,8 @@ export const TOCKY_ICON_NAMES = [
   'collapse',
   'more',
   'search',
+  'back',
+  'delete',
 ] as const;
 
 export type TockyIconName = (typeof TOCKY_ICON_NAMES)[number];
@@ -60,6 +62,19 @@ function CutoutGlyph({
       </Defs>
       <G mask={`url(#${maskId})`}>{children}</G>
     </G>
+  );
+}
+
+function Chevron({ color }: { color: string }) {
+  return (
+    <Path
+      d="M6 10 L12 16 L18 10"
+      fill="none"
+      stroke={color}
+      strokeWidth={2.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   );
 }
 
@@ -247,15 +262,34 @@ function IconGlyph({ name, color }: { name: TockyIconName; color: string }) {
         </G>
       );
     case 'collapse':
+      return <Chevron color={color} />;
+    case 'back':
       return (
-        <Path
-          d="M6 10 L12 16 L18 10"
-          fill="none"
-          stroke={color}
-          strokeWidth={2.6}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <G rotation={90} origin="12, 12">
+          <Chevron color={color} />
+        </G>
+      );
+    case 'delete':
+      return (
+        <G>
+          <Rect x={4} y={5.6} width={16} height={2.4} rx={1.2} fill={color} />
+          <Path
+            d="M6.6 8.6 L7.5 19.2 Q7.6 20.8 9.2 20.8 L14.8 20.8 Q16.4 20.8 16.5 19.2 L17.4 8.6"
+            fill="none"
+            stroke={color}
+            strokeWidth={2.2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <Path
+            d="M9.4 5.6 V4.2 Q9.4 3 10.6 3 L13.4 3 Q14.6 3 14.6 4.2 V5.6"
+            fill="none"
+            stroke={color}
+            strokeWidth={2.2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </G>
       );
     case 'search':
       return (

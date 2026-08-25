@@ -1,11 +1,19 @@
-import { ComingSoonScreen } from '@/features/navigation/ComingSoonScreen';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+
+import { SessionDetailScreen } from '@/features/sessionDetail/SessionDetailScreen';
 
 export default function SessionDetailRoute() {
+  const router = useRouter();
+  const { id } = useLocalSearchParams<{ id: string }>();
+
   return (
-    <ComingSoonScreen
-      title="Session"
-      promise="Session details and editing land here."
-      dismissLabel="Back"
+    <SessionDetailScreen
+      sessionId={id}
+      onBack={router.back}
+      onResumed={() => {
+        router.back();
+        router.push('/timer');
+      }}
     />
   );
 }

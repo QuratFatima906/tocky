@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { useSessionStore, useSessionStoreSnapshot } from '@/data';
 import { Button, IconButton, Screen, Text, TextField, useTheme } from '@/design-system';
 import { findActiveSession, type Category } from '@/domain';
 
-import { CategoryPicker } from './CategoryPicker';
+import { CategoryPicker } from '../categories/CategoryPicker';
+import { confirmSwitchToCategory } from '../categories/confirmSwitchToCategory';
 
 const SESSION_LABEL_MAX_LENGTH = 80;
 
@@ -39,14 +40,11 @@ export function NewSessionScreen({
   }
 
   function confirmSwitchThenStart(category: Category): void {
-    Alert.alert(
-      `Switch to ${category.name}?`,
-      `Your ${runningCategory?.name ?? 'current'} session ends the moment ${category.name} starts, so no time goes untracked.`,
-      [
-        { text: 'Keep tracking', style: 'cancel' },
-        { text: 'Switch', onPress: () => startSession(category) },
-      ],
-    );
+    confirmSwitchToCategory({
+      from: runningCategory,
+      to: category,
+      onConfirm: () => startSession(category),
+    });
   }
 
   const start =

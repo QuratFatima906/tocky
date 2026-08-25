@@ -51,3 +51,29 @@ export function isPaused(session: Session): boolean {
 export function overlapsRange(session: Session, range: TimeRange, now: number): boolean {
   return overlapMilliseconds(session.startedAt, session.endedAt ?? now, range) > 0;
 }
+
+export type SessionTimeProblem = 'endsBeforeItStarts' | 'startsInTheFuture' | 'overlapsAnother';
+
+/**
+ * The rules an edited session has to satisfy before it replaces what was
+ * recorded. Two sessions overlapping would let the same minute be counted
+ * twice, which would quietly make every total above it wrong.
+ */
+export function findSessionTimeProblem(
+  candidate: Pick<Session, 'id' | 'startedAt' | 'endedAt'>,
+  sessions: readonly Session[],
+  now: number,
+): SessionTimeProblem | null {
+  if (candidate.endedAt !== null && candidate.endedAt <= candidate.startedAt) {
+    return 'endsBeforeItStarts';
+  }
+
+  if (candidate.startedAt > now) return 'startsInTheFuture';
+
+  const range: TimeRange = { start: candidate.startedAt, end: candidate.endedAt ?? now };
+  const overlapsAnother = sessions.some(
+    (session) => session.id !== candidate.id && overlapsRange(session, range, now),
+  );
+
+  return overlapsAnother ? 'overlapsAnother' : null;
+}

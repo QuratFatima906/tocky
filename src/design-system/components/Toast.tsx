@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { View } from 'react-native';
 import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,11 +24,23 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState<string | null>(null);
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // One timer, always cleared: a second toast must not be cut short by the
+  // first one's countdown, and neither may fire onto an unmounted screen.
   const showToast = useCallback((nextMessage: string) => {
+    if (hideTimer.current !== null) clearTimeout(hideTimer.current);
+
     setMessage(nextMessage);
-    setTimeout(() => setMessage(null), TOAST_VISIBLE_MS);
+    hideTimer.current = setTimeout(() => setMessage(null), TOAST_VISIBLE_MS);
   }, []);
+
+  useEffect(
+    () => () => {
+      if (hideTimer.current !== null) clearTimeout(hideTimer.current);
+    },
+    [],
+  );
 
   const value = useMemo(() => showToast, [showToast]);
 
