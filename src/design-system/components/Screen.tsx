@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from '../theme/ThemeProvider';
 import type { GradientName, Spacing } from '../tokens';
+import { useBottomChromeHeight } from './BottomChrome';
 
 export type ScreenProps = {
   children: ReactNode;
@@ -29,11 +30,14 @@ export function Screen({
 }: ScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const bottomChromeHeight = useBottomChromeHeight();
 
   const layout: ViewStyle = {
     padding: theme.spacing[padding],
     paddingTop: ((edges.top ?? true) ? insets.top : 0) + theme.spacing[padding],
-    paddingBottom: ((edges.bottom ?? true) ? insets.bottom : 0) + theme.spacing[padding],
+    paddingBottom:
+      ((edges.bottom ?? true) ? Math.max(insets.bottom, bottomChromeHeight) : 0) +
+      theme.spacing[padding],
     ...(gap !== undefined && { gap: theme.spacing[gap] }),
   };
 

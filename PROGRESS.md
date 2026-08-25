@@ -24,18 +24,18 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Milestone C — Screens
 
-| #   | Chunk                       | Status |
-| --- | --------------------------- | ------ |
-| C1  | **Navigation shell — next** | ☐      |
-| C2  | Home screen                 | ☑      |
-| C3  | New session modal           | ☐      |
-| C4  | Timer screen                | ☐      |
-| C5  | History screen              | ☐      |
-| C6  | Session detail & editing    | ☐      |
-| C7  | Insights screen             | ☐      |
-| C8  | Tasks screen                | ☐      |
-| C9  | Onboarding                  | ☐      |
-| C10 | Settings & categories       | ☐      |
+| #   | Chunk                        | Status |
+| --- | ---------------------------- | ------ |
+| C1  | Navigation shell             | ☑      |
+| C2  | Home screen                  | ☑      |
+| C3  | **New session modal — next** | ☐      |
+| C4  | Timer screen                 | ☐      |
+| C5  | History screen               | ☐      |
+| C6  | Session detail & editing     | ☐      |
+| C7  | Insights screen              | ☐      |
+| C8  | Tasks screen                 | ☐      |
+| C9  | Onboarding                   | ☐      |
+| C10 | Settings & categories        | ☐      |
 
 ## Milestones D–F
 
@@ -54,7 +54,7 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Current state
 
-- `main` is green: **226 tests**, typecheck / lint / format clean.
+- `main` is green: **250 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.
@@ -88,12 +88,13 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Log
 
-| Date       | Chunk | What landed                                                                                                                                                                                                                                                                          |
-| ---------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 2026-08-20 | —     | Plan and progress files; design + behavior specs imported                                                                                                                                                                                                                            |
-| 2026-08-20 | A1    | Expo + Expo Router, strict TypeScript, ESLint/Prettier, Jest, CI. Review drove out an iOS privacy manifest, a coverage-threshold CI failure, a duplicated Reanimated Babel plugin, and an unused background mode risking App Store rejection.                                        |
-| 2026-08-20 | A2    | Token layer and theme provider. Review found every semantic colour and category chip failed WCAG AA as text, so colours are now _derived_ readable rather than hand-picked. Line heights became ratios so Dynamic Type scales them. Fixed a font-load hang and a reduce-motion race. |
-| 2026-08-20 | A3a   | 16 icons and 5 owl expressions ported to react-native-svg. Review found cutouts painted white on dark backgrounds; they are now SVG masks, so icons need no knowledge of what sits behind them.                                                                                      |
-| 2026-08-23 | A3b   | Text, Screen, Surface/Card, PressableScale, Button, IconButton. First native build on the simulator. Found test files shipping as routes, and Reanimated 4's removed jest mock.                                                                                                      |
-| 2026-08-23 | —     | Component gallery removed after owner feedback.                                                                                                                                                                                                                                      |
-| 2026-08-24 | C2    | First real screen. Home with domain, in-memory store and dev seed. Found a pause-rounding bug that lost a second per pause, and that comparing today against yesterday's _whole_ day reads as judgement — it now compares against the same point yesterday.                          |
+| Date       | Chunk | What landed                                                                                                                                                                                                                                                                                                                              |
+| ---------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-20 | —     | Plan and progress files; design + behavior specs imported                                                                                                                                                                                                                                                                                |
+| 2026-08-20 | A1    | Expo + Expo Router, strict TypeScript, ESLint/Prettier, Jest, CI. Review drove out an iOS privacy manifest, a coverage-threshold CI failure, a duplicated Reanimated Babel plugin, and an unused background mode risking App Store rejection.                                                                                            |
+| 2026-08-20 | A2    | Token layer and theme provider. Review found every semantic colour and category chip failed WCAG AA as text, so colours are now _derived_ readable rather than hand-picked. Line heights became ratios so Dynamic Type scales them. Fixed a font-load hang and a reduce-motion race.                                                     |
+| 2026-08-20 | A3a   | 16 icons and 5 owl expressions ported to react-native-svg. Review found cutouts painted white on dark backgrounds; they are now SVG masks, so icons need no knowledge of what sits behind them.                                                                                                                                          |
+| 2026-08-23 | A3b   | Text, Screen, Surface/Card, PressableScale, Button, IconButton. First native build on the simulator. Found test files shipping as routes, and Reanimated 4's removed jest mock.                                                                                                                                                          |
+| 2026-08-23 | —     | Component gallery removed after owner feedback.                                                                                                                                                                                                                                                                                          |
+| 2026-08-24 | C1    | Navigation shell. Tab bar with real Liquid Glass via `expo-glass-effect`, already vendored by expo-router so no new native dependency. The mini-bar moved out of Home into a persistent host. Building it surfaced a self-cancelling context bug: a report callback that depended on the state it wrote reset every measurement to zero. |
+| 2026-08-24 | C2    | First real screen. Home with domain, in-memory store and dev seed. Found a pause-rounding bug that lost a second per pause, and that comparing today against yesterday's _whole_ day reads as judgement — it now compares against the same point yesterday.                                                                              |

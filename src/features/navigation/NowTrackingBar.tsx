@@ -17,18 +17,20 @@ const LIVE_DOT_SIZE = 6;
 export function NowTrackingBar({
   session,
   category,
+  isLive = true,
   onOpenTimer,
   onPause,
   onResume,
 }: {
   session: Session;
+  isLive?: boolean;
   category: Category | undefined;
   onOpenTimer: () => void;
   onPause: (at: number) => void;
   onResume: (at: number) => void;
 }) {
   const theme = useTheme();
-  const now = useNow(ELAPSED_TICK_MS);
+  const now = useNow(isLive ? ELAPSED_TICK_MS : null);
   const paused = isPaused(session);
   const elapsedSeconds = sessionSeconds(session, now);
   const categoryName = category?.name ?? 'Uncategorised';

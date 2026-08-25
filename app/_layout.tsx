@@ -8,6 +8,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createDevSeedSnapshot, createInMemorySessionStore, SessionStoreProvider } from '@/data';
 import { ThemeProvider, useAppFonts, useTheme } from '@/design-system';
 
+export const unstable_settings = { anchor: '(tabs)' };
+
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 const sessionStore = createInMemorySessionStore(createDevSeedSnapshot(Date.now()));
@@ -23,7 +25,12 @@ function ThemedApp() {
           headerShown: false,
           contentStyle: { backgroundColor: theme.color.background },
         }}
-      />
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="new-session" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="timer" />
+        <Stack.Screen name="session/[id]" />
+      </Stack>
     </>
   );
 }
