@@ -1,3 +1,5 @@
+import { randomUUID } from 'expo-crypto';
+
 import { findActiveSession, isPaused, type Category, type Session } from '@/domain';
 
 export type SessionStoreSnapshot = {
@@ -6,12 +8,46 @@ export type SessionStoreSnapshot = {
   readonly sessions: readonly Session[];
 };
 
+export type StartSessionInput = {
+  readonly categoryId: string;
+  readonly label: string | null;
+  readonly at: number;
+};
+
 export type SessionStore = {
   subscribe: (onStoreChanged: () => void) => () => void;
   getSnapshot: () => SessionStoreSnapshot;
+  /**
+   * Ends whatever is running at the same instant the new session starts, so
+   * switching category leaves no untracked gap and no overlap.
+   */
+  startSession: (input: StartSessionInput) => void;
   pauseActiveSession: (at: number) => void;
   resumeActiveSession: (at: number) => void;
 };
+
+export function newSession({ categoryId, label, at }: StartSessionInput): Session {
+  return {
+    id: randomUUID(),
+    categoryId,
+    label,
+    startedAt: at,
+    endedAt: null,
+    pauses: [],
+    linkedTaskId: null,
+    note: null,
+  };
+}
+
+function endedAtInstant(session: Session, at: number): Session {
+  return {
+    ...session,
+    endedAt: at,
+    pauses: session.pauses.map((pause) =>
+      pause.endedAt === null ? { ...pause, endedAt: at } : pause,
+    ),
+  };
+}
 
 export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   status: 'loading',
@@ -44,6 +80,21 @@ export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot
     },
 
     getSnapshot: () => snapshot,
+
+    startSession(input) {
+      const active = findActiveSession(snapshot.sessions);
+
+      snapshot = {
+        ...snapshot,
+        sessions: [
+          newSession(input),
+          ...snapshot.sessions.map((session) =>
+            session.id === active?.id ? endedAtInstant(session, input.at) : session,
+          ),
+        ],
+      };
+      listeners.forEach((listener) => listener());
+    },
 
     pauseActiveSession(at) {
       replaceActiveSession((active) =>

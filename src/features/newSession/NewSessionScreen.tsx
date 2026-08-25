@@ -1,0 +1,108 @@
+import { useState } from 'react';
+import { Alert, ScrollView, View } from 'react-native';
+
+import { useSessionStore, useSessionStoreSnapshot } from '@/data';
+import { Button, IconButton, Screen, Text, useTheme } from '@/design-system';
+import { findActiveSession, type Category } from '@/domain';
+
+import { CategoryPicker } from './CategoryPicker';
+import { SessionLabelField } from './SessionLabelField';
+
+const noop = () => {};
+
+export function NewSessionScreen({ onDismiss }: { onDismiss: () => void }) {
+  const theme = useTheme();
+  const store = useSessionStore();
+  const { categories, sessions } = useSessionStoreSnapshot();
+
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [label, setLabel] = useState('');
+
+  const selectedCategory = categories.find((category) => category.id === selectedCategoryId);
+  const activeSession = findActiveSession(sessions);
+  const runningCategory = categories.find((category) => category.id === activeSession?.categoryId);
+
+  function startSession(category: Category): void {
+    store.startSession({
+      categoryId: category.id,
+      label: label.trim() === '' ? null : label.trim(),
+      at: Date.now(),
+    });
+    onDismiss();
+  }
+
+  function confirmSwitchThenStart(category: Category): void {
+    Alert.alert(
+      `Switch to ${category.name}?`,
+      `Your ${runningCategory?.name ?? 'current'} session ends the moment ${category.name} starts, so no time goes untracked.`,
+      [
+        { text: 'Keep tracking', style: 'cancel' },
+        { text: 'Switch', onPress: () => startSession(category) },
+      ],
+    );
+  }
+
+  const start =
+    selectedCategory === undefined
+      ? noop
+      : () => {
+          if (activeSession === null) startSession(selectedCategory);
+          else confirmSwitchThenStart(selectedCategory);
+        };
+
+  return (
+    <Screen gap="lg" testID="new-session-screen">
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: theme.spacing.md }}>
+        <View style={{ flex: 1, gap: theme.spacing.xs }}>
+          <Text variant="title" accessibilityRole="header">
+            Start tracking
+          </Text>
+          <Text variant="bodySmall" color="textSecondary">
+            Pick a category and Tocky starts the clock.
+          </Text>
+        </View>
+
+        <IconButton
+          icon="close"
+          accessibilityLabel="Close"
+          background="surface"
+          onPress={onDismiss}
+        />
+      </View>
+
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.lg }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text variant="overline" color="textTertiary" accessibilityRole="header">
+          Category
+        </Text>
+        <CategoryPicker
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          onSelectCategory={setSelectedCategoryId}
+        />
+
+        <Text variant="overline" color="textTertiary" accessibilityRole="header">
+          What are you working on?
+        </Text>
+        <SessionLabelField label={label} onChangeLabel={setLabel} />
+      </ScrollView>
+
+      <Button
+        size="large"
+        icon="start"
+        fullWidth
+        disabled={selectedCategory === undefined}
+        label={
+          selectedCategory === undefined
+            ? 'Pick a category to start'
+            : `Start ${selectedCategory.name} session`
+        }
+        onPress={start}
+      />
+    </Screen>
+  );
+}

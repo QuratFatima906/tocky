@@ -1,5 +1,5 @@
 import type { SessionStore } from '@/data';
-import { isPaused, sessionSeconds, type Session } from '@/domain';
+import { isPaused, isRunning, sessionSeconds, type Session } from '@/domain';
 
 export const CONTRACT_NOW = new Date(2026, 7, 19, 12, 0).getTime();
 const MINUTE = 60_000;
@@ -95,6 +95,78 @@ export function describeSessionStoreContract(
       store.resumeActiveSession(CONTRACT_NOW);
 
       expect(store.getSnapshot()).toBe(before);
+    });
+
+    it('starts a session that is running, newest first, with its own id', () => {
+      const store = createStore([FINISHED_SESSION]);
+
+      store.startSession({ categoryId: 'learning', label: 'Reading', at: CONTRACT_NOW });
+      const [started, ...rest] = store.getSnapshot().sessions;
+
+      expect(started).toMatchObject({
+        categoryId: 'learning',
+        label: 'Reading',
+        startedAt: CONTRACT_NOW,
+        endedAt: null,
+        pauses: [],
+      });
+      expect(started!.id).not.toBe(FINISHED_SESSION.id);
+      expect(rest.map((session) => session.id)).toEqual([FINISHED_SESSION.id]);
+    });
+
+    it('starts a session with no label at all', () => {
+      const store = createStore([]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+
+      expect(store.getSnapshot().sessions[0]!.label).toBeNull();
+    });
+
+    it('ends the running session at the very instant the next one starts', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW });
+      const { sessions } = store.getSnapshot();
+      const previous = sessions.find((session) => session.id === ACTIVE_SESSION.id)!;
+
+      expect(previous.endedAt).toBe(CONTRACT_NOW);
+      expect(sessions.filter(isRunning)).toHaveLength(1);
+    });
+
+    it('leaves no untracked gap and no overlap between the two', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW });
+      const { sessions } = store.getSnapshot();
+      const previous = sessions.find((session) => session.id === ACTIVE_SESSION.id)!;
+      const started = sessions.find(isRunning)!;
+
+      expect(started.startedAt).toBe(previous.endedAt);
+    });
+
+    it('closes an open pause when the paused session is switched away from', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.pauseActiveSession(CONTRACT_NOW - MINUTE);
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW });
+      const previous = store
+        .getSnapshot()
+        .sessions.find((session) => session.id === ACTIVE_SESSION.id)!;
+
+      expect(previous.pauses).toEqual([
+        { startedAt: CONTRACT_NOW - MINUTE, endedAt: CONTRACT_NOW },
+      ]);
+      expect(sessionSeconds(previous, CONTRACT_NOW + 30 * MINUTE)).toBe(59 * 60);
+    });
+
+    it('notifies subscribers once when a session starts', () => {
+      const store = createStore([ACTIVE_SESSION]);
+      const onStoreChanged = jest.fn();
+      store.subscribe(onStoreChanged);
+
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW });
+
+      expect(onStoreChanged).toHaveBeenCalledTimes(1);
     });
 
     it('leaves finished sessions alone when there is nothing active', () => {

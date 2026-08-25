@@ -20,6 +20,8 @@ export const TOCKY_ICON_NAMES = [
   'switch',
   'add',
   'edit',
+  'check',
+  'close',
 ] as const;
 
 export type TockyIconName = (typeof TOCKY_ICON_NAMES)[number];
@@ -55,6 +57,35 @@ function CutoutGlyph({
       </Defs>
       <G mask={`url(#${maskId})`}>{children}</G>
     </G>
+  );
+}
+
+function Cross({ color }: { color: string }) {
+  return (
+    <G>
+      <Rect x={10.7} y={4} width={2.6} height={16} rx={1.3} fill={color} />
+      <Rect x={4} y={10.7} width={16} height={2.6} rx={1.3} fill={color} />
+    </G>
+  );
+}
+
+function CheckInCircle({ maskId, color }: { maskId: string; color: string }) {
+  return (
+    <CutoutGlyph
+      maskId={maskId}
+      cutouts={
+        <Path
+          d="M7.8 12.4 L10.8 15.4 L16.4 9"
+          fill="none"
+          stroke={MASK_HIDE}
+          strokeWidth={2.2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      }
+    >
+      <Circle cx={12} cy={12} r={9} fill={color} />
+    </CutoutGlyph>
   );
 }
 
@@ -168,23 +199,8 @@ function IconGlyph({ name, color }: { name: TockyIconName; color: string }) {
         </G>
       );
     case 'tasks':
-      return (
-        <CutoutGlyph
-          maskId="tasks"
-          cutouts={
-            <Path
-              d="M7.8 12.4 L10.8 15.4 L16.4 9"
-              fill="none"
-              stroke={MASK_HIDE}
-              strokeWidth={2.2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          }
-        >
-          <Circle cx={12} cy={12} r={9} fill={color} />
-        </CutoutGlyph>
-      );
+    case 'check':
+      return <CheckInCircle maskId={name} color={color} />;
     case 'start':
       return (
         <Polygon
@@ -220,10 +236,11 @@ function IconGlyph({ name, color }: { name: TockyIconName; color: string }) {
         </G>
       );
     case 'add':
+      return <Cross color={color} />;
+    case 'close':
       return (
-        <G>
-          <Rect x={10.7} y={4} width={2.6} height={16} rx={1.3} fill={color} />
-          <Rect x={4} y={10.7} width={16} height={2.6} rx={1.3} fill={color} />
+        <G rotation={45} origin="12, 12">
+          <Cross color={color} />
         </G>
       );
     case 'edit':

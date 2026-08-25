@@ -1,11 +1,9 @@
-import { ComingSoonScreen } from '@/features/navigation/ComingSoonScreen';
+import { useRouter } from 'expo-router';
+
+import { NewSessionScreen } from '@/features/newSession/NewSessionScreen';
 
 export default function NewSessionRoute() {
-  return (
-    <ComingSoonScreen
-      title="New session"
-      promise="Pick a category to start tracking."
-      dismissLabel="Close"
-    />
-  );
+  const router = useRouter();
+
+  return <NewSessionScreen onDismiss={router.back} />;
 }
