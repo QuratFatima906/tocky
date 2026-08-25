@@ -24,18 +24,18 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Milestone C — Screens
 
-| #   | Chunk                        | Status |
-| --- | ---------------------------- | ------ |
-| C1  | Navigation shell             | ☑      |
-| C2  | Home screen                  | ☑      |
-| C3  | New session modal            | ☑      |
-| C4  | **Timer screen — next**      | ☐      |
-| C5  | History screen               | ☐      |
-| C6  | Session detail & editing     | ☐      |
-| C7  | Insights screen              | ☐      |
-| C8  | Tasks screen                 | ☐      |
-| C9  | Onboarding                   | ☐      |
-| C10 | Settings & categories        | ☐      |
+| #   | Chunk                    | Status |
+| --- | ------------------------ | ------ |
+| C1  | Navigation shell         | ☑      |
+| C2  | Home screen              | ☑      |
+| C3  | New session modal        | ☑      |
+| C4  | **Timer screen — next**  | ☐      |
+| C5  | History screen           | ☐      |
+| C6  | Session detail & editing | ☐      |
+| C7  | Insights screen          | ☐      |
+| C8  | Tasks screen             | ☐      |
+| C9  | Onboarding               | ☐      |
+| C10 | Settings & categories    | ☐      |
 
 ## Milestones D–F
 
