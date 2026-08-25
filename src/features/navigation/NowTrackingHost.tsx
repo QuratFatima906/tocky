@@ -1,26 +1,33 @@
 import { View } from 'react-native';
 
 import { useSessionStore, useSessionStoreSnapshot } from '@/data';
-import { useTheme } from '@/design-system';
+import { useBottomChromePartHeight, useReportBottomChrome, useTheme } from '@/design-system';
 import { findActiveSession, type Session } from '@/domain';
 
-import { useBottomChromePartHeight, useReportBottomChrome } from './BottomChrome';
 import { NowTrackingBar } from './NowTrackingBar';
 
-export function NowTrackingHost({ onOpenTimer }: { onOpenTimer: () => void }) {
+export function NowTrackingHost({
+  isLive = true,
+  onOpenTimer,
+}: {
+  isLive?: boolean;
+  onOpenTimer: () => void;
+}) {
   const { sessions } = useSessionStoreSnapshot();
   const activeSession = findActiveSession(sessions);
 
   if (activeSession === null) return null;
 
-  return <PinnedNowTrackingBar session={activeSession} onOpenTimer={onOpenTimer} />;
+  return <PinnedNowTrackingBar session={activeSession} isLive={isLive} onOpenTimer={onOpenTimer} />;
 }
 
 function PinnedNowTrackingBar({
   session,
+  isLive,
   onOpenTimer,
 }: {
   session: Session;
+  isLive: boolean;
   onOpenTimer: () => void;
 }) {
   const theme = useTheme();
@@ -28,6 +35,8 @@ function PinnedNowTrackingBar({
   const { categories } = useSessionStoreSnapshot();
   const reportHeight = useReportBottomChrome('nowTrackingBar');
   const tabBarHeight = useBottomChromePartHeight('tabBar');
+
+  if (tabBarHeight === 0) return null;
 
   return (
     <View
@@ -41,6 +50,7 @@ function PinnedNowTrackingBar({
       }}
     >
       <NowTrackingBar
+        isLive={isLive}
         session={session}
         category={categories.find((category) => category.id === session.categoryId)}
         onOpenTimer={onOpenTimer}

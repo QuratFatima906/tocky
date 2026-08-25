@@ -3,10 +3,9 @@ import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useBottomChromeHeight } from '@/features/navigation/BottomChrome';
-
 import { useTheme } from '../theme/ThemeProvider';
 import type { GradientName, Spacing } from '../tokens';
+import { useBottomChromeHeight } from './BottomChrome';
 
 export type ScreenProps = {
   children: ReactNode;

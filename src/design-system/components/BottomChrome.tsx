@@ -37,10 +37,16 @@ export function BottomChromeProvider({ children }: { children: ReactNode }) {
   return <BottomChromeContext.Provider value={value}>{children}</BottomChromeContext.Provider>;
 }
 
+export const BOTTOM_CHROME_GAP = 8;
+
 export function useBottomChromeHeight(): number {
   const { heightByPart } = useContext(BottomChromeContext);
+  const measuredParts = Object.values(heightByPart).filter((height) => height > 0);
 
-  return Object.values(heightByPart).reduce((total, height) => total + height, 0);
+  return measuredParts.reduce(
+    (total, height, index) => total + height + (index > 0 ? BOTTOM_CHROME_GAP : 0),
+    0,
+  );
 }
 
 export function useBottomChromePartHeight(part: BottomChromePart): number {

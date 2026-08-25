@@ -1,11 +1,21 @@
+import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { Screen, Text, TockyOwl, useTheme } from '@/design-system';
+import { Button, Screen, Text, TockyOwl, useTheme } from '@/design-system';
 
 const OWL_SIZE = 88;
 
-export function ComingSoonScreen({ title, promise }: { title: string; promise: string }) {
+export function ComingSoonScreen({
+  title,
+  promise,
+  dismissLabel,
+}: {
+  title: string;
+  promise: string;
+  dismissLabel?: string;
+}) {
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <Screen gap="xl">
@@ -20,6 +30,9 @@ export function ComingSoonScreen({ title, promise }: { title: string; promise: s
         <Text variant="bodyMedium" color="textSecondary" align="center">
           {promise}
         </Text>
+        {dismissLabel !== undefined && (
+          <Button label={dismissLabel} variant="secondary" size="small" onPress={router.back} />
+        )}
       </View>
     </Screen>
   );

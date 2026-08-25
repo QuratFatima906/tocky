@@ -9,25 +9,29 @@ import {
   TockyIcon,
   radius,
   useTheme,
+  useReportBottomChrome,
   type TockyIconName,
 } from '@/design-system';
-
-import { useReportBottomChrome } from './BottomChrome';
 
 const usesLiquidGlass = isLiquidGlassAvailable();
 
 const TAB_ICON_SIZE = 26;
+const START_BUTTON_ICON_SIZE = 24;
 const START_BUTTON_SIZE = 56;
 const START_BUTTON_LIFT = 6;
-const INACTIVE_OPACITY = 0.5;
+
+export type TabBarRoute = { readonly key: string; readonly name: string };
 
 export type TabBarState = {
   readonly index: number;
-  readonly routes: readonly { readonly name: string }[];
+  readonly routes: readonly TabBarRoute[];
 };
 
 export type TabBarNavigation = {
   readonly navigate: (routeName: string) => void;
+  readonly emit?: (event: { type: 'tabPress'; target: string; canPreventDefault: true }) => {
+    defaultPrevented: boolean;
+  };
 };
 
 export type TabDefinition = {
@@ -57,13 +61,28 @@ export function TockyTabBar({
   const reportHeight = useReportBottomChrome('tabBar');
   const activeRouteName = state.routes[state.index]?.name;
 
-  const tabsBeforeStartButton = TAB_DEFINITIONS.slice(0, 2);
-  const tabsAfterStartButton = TAB_DEFINITIONS.slice(2);
+  const shownTabs = state.routes.flatMap((route) => {
+    const definition = TAB_DEFINITIONS.find((tab) => tab.name === route.name);
+    return definition === undefined ? [] : [{ route, definition }];
+  });
+  const startButtonPosition = Math.ceil(shownTabs.length / 2);
+
+  function selectTab(route: TabBarRoute) {
+    const isActive = route.name === activeRouteName;
+    const pressEvent = navigation.emit?.({
+      type: 'tabPress',
+      target: route.key,
+      canPreventDefault: true,
+    });
+
+    if (!isActive && pressEvent?.defaultPrevented !== true) navigation.navigate(route.name);
+  }
 
   return (
     <GlassView
       {...reportHeight}
       testID="tocky-tab-bar"
+      accessibilityRole="tabbar"
       glassEffectStyle="regular"
       style={{
         position: 'absolute',
@@ -81,12 +100,12 @@ export function TockyTabBar({
         borderTopColor: theme.color.borderSubtle,
       }}
     >
-      {tabsBeforeStartButton.map((tab) => (
+      {shownTabs.slice(0, startButtonPosition).map(({ route, definition }) => (
         <TabButton
-          key={tab.name}
-          tab={tab}
-          isActive={tab.name === activeRouteName}
-          onPress={() => navigation.navigate(tab.name)}
+          key={route.key}
+          tab={definition}
+          isActive={route.name === activeRouteName}
+          onPress={() => selectTab(route)}
         />
       ))}
 
@@ -109,16 +128,16 @@ export function TockyTabBar({
             ...theme.elevation.glow,
           }}
         >
-          <TockyIcon name="add" color={theme.color.textOnAccent} size={TAB_ICON_SIZE} />
+          <TockyIcon name="add" color={theme.color.textOnAccent} size={START_BUTTON_ICON_SIZE} />
         </LinearGradient>
       </PressableScale>
 
-      {tabsAfterStartButton.map((tab) => (
+      {shownTabs.slice(startButtonPosition).map(({ route, definition }) => (
         <TabButton
-          key={tab.name}
-          tab={tab}
-          isActive={tab.name === activeRouteName}
-          onPress={() => navigation.navigate(tab.name)}
+          key={route.key}
+          tab={definition}
+          isActive={route.name === activeRouteName}
+          onPress={() => selectTab(route)}
         />
       ))}
     </GlassView>
@@ -139,7 +158,7 @@ function TabButton({
   return (
     <PressableScale
       accessible
-      accessibilityRole="tab"
+      accessibilityRole="button"
       accessibilityLabel={tab.label}
       accessibilityState={{ selected: isActive }}
       onPress={onPress}
@@ -148,15 +167,14 @@ function TabButton({
         minHeight: MINIMUM_TOUCH_TARGET,
         alignItems: 'center',
         gap: theme.spacing.xs,
-        opacity: isActive ? 1 : INACTIVE_OPACITY,
       }}
     >
       <TockyIcon
         name={tab.icon}
-        color={isActive ? theme.color.accent : theme.color.text}
+        color={isActive ? theme.color.accent : theme.color.textSecondary}
         size={TAB_ICON_SIZE}
       />
-      <Text variant="tabLabel" color={isActive ? 'accent' : 'text'}>
+      <Text variant="tabLabel" color={isActive ? 'accent' : 'textSecondary'}>
         {tab.label}
       </Text>
     </PressableScale>

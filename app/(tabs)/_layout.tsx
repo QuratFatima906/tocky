@@ -1,12 +1,13 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useIsFocused, useRouter } from 'expo-router';
 import { View } from 'react-native';
 
-import { BottomChromeProvider } from '@/features/navigation/BottomChrome';
+import { BottomChromeProvider } from '@/design-system';
 import { NowTrackingHost } from '@/features/navigation/NowTrackingHost';
 import { TAB_DEFINITIONS, TockyTabBar } from '@/features/navigation/TockyTabBar';
 
 export default function TabsLayout() {
   const router = useRouter();
+  const isTabsVisible = useIsFocused();
 
   return (
     <BottomChromeProvider>
@@ -17,7 +18,7 @@ export default function TabsLayout() {
             <TockyTabBar
               state={state}
               navigation={navigation}
-              onStartSession={() => router.push('/new-session')}
+              onStartSession={() => router.navigate('/new-session')}
             />
           )}
         >
@@ -26,7 +27,7 @@ export default function TabsLayout() {
           ))}
         </Tabs>
 
-        <NowTrackingHost onOpenTimer={() => router.push('/timer')} />
+        <NowTrackingHost isLive={isTabsVisible} onOpenTimer={() => router.navigate('/timer')} />
       </View>
     </BottomChromeProvider>
   );

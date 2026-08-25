@@ -1,3 +1,11 @@
+export {
+  BOTTOM_CHROME_GAP,
+  BottomChromeProvider,
+  useBottomChromeHeight,
+  useBottomChromePartHeight,
+  useReportBottomChrome,
+} from './BottomChrome';
+export type { BottomChromePart } from './BottomChrome';
 export { Button } from './Button';
 export type { ButtonProps, ButtonSize, ButtonVariant } from './Button';
 export { CategoryTile, categoryIconName } from './CategoryTile';
