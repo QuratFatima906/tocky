@@ -1,5 +1,6 @@
 import { dayRange } from '../calendar';
 import {
+  findSessionTimeProblem,
   isPaused,
   isRunning,
   overlapsRange,
@@ -192,5 +193,77 @@ describe('overlapsRange', () => {
     const session = buildSession({ startedAt: dayStart - HOUR, endedAt: dayStart });
 
     expect(overlapsRange(session, dayRange(dayStart), now)).toBe(false);
+  });
+});
+
+describe('findSessionTimeProblem', () => {
+  const NOON = new Date(2026, 7, 19, 12, 0).getTime();
+
+  function session(id: string, startedAt: number, endedAt: number | null): Session {
+    return {
+      id,
+      categoryId: 'work',
+      label: null,
+      startedAt,
+      endedAt,
+      pauses: [],
+      linkedTaskId: null,
+      note: null,
+    };
+  }
+
+  const MORNING = session('morning', NOON - 4 * HOUR, NOON - 3 * HOUR);
+
+  it('accepts a session that sits in a gap of its own', () => {
+    const edited = session('edited', NOON - 2 * HOUR, NOON - HOUR);
+
+    expect(findSessionTimeProblem(edited, [MORNING, edited], NOON)).toBeNull();
+  });
+
+  it('refuses a session that ends before it starts', () => {
+    const edited = session('edited', NOON - HOUR, NOON - 2 * HOUR);
+
+    expect(findSessionTimeProblem(edited, [edited], NOON)).toBe('endsBeforeItStarts');
+  });
+
+  it('refuses a session of no length at all', () => {
+    const edited = session('edited', NOON - HOUR, NOON - HOUR);
+
+    expect(findSessionTimeProblem(edited, [edited], NOON)).toBe('endsBeforeItStarts');
+  });
+
+  it('refuses a session that has not happened yet', () => {
+    const edited = session('edited', NOON + HOUR, NOON + 2 * HOUR);
+
+    expect(findSessionTimeProblem(edited, [edited], NOON)).toBe('startsInTheFuture');
+  });
+
+  it('refuses a session that overlaps another, since the minute would be counted twice', () => {
+    const edited = session('edited', NOON - 4 * HOUR - 1800_000, NOON - 3 * HOUR - 1800_000);
+
+    expect(findSessionTimeProblem(edited, [MORNING, edited], NOON)).toBe('overlapsAnother');
+  });
+
+  it('refuses a session that swallows another whole', () => {
+    const edited = session('edited', NOON - 5 * HOUR, NOON - HOUR);
+
+    expect(findSessionTimeProblem(edited, [MORNING, edited], NOON)).toBe('overlapsAnother');
+  });
+
+  it('lets a session end exactly where the next one begins', () => {
+    const edited = session('edited', NOON - 5 * HOUR, NOON - 4 * HOUR);
+
+    expect(findSessionTimeProblem(edited, [MORNING, edited], NOON)).toBeNull();
+  });
+
+  it('never counts the session against itself', () => {
+    expect(findSessionTimeProblem(MORNING, [MORNING], NOON)).toBeNull();
+  });
+
+  it('counts a still-running session as occupying the time up to now', () => {
+    const running = session('running', NOON - 2 * HOUR, null);
+    const edited = session('edited', NOON - HOUR, NOON - 1800_000);
+
+    expect(findSessionTimeProblem(edited, [running, edited], NOON)).toBe('overlapsAnother');
   });
 });

@@ -109,6 +109,111 @@ exports[`TockyIcon renders add with stable geometry 1`] = `
 </RNCSafeAreaProvider>
 `;
 
+exports[`TockyIcon renders back with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-back"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+          matrix={
+            [
+              6.123233995736766e-17,
+              1,
+              -1,
+              6.123233995736766e-17,
+              24,
+              0,
+            ]
+          }
+        >
+          <RNSVGPath
+            d="M6 10 L12 16 L18 10"
+            fill={null}
+            propList={
+              [
+                "fill",
+                "stroke",
+                "strokeWidth",
+                "strokeLinecap",
+                "strokeLinejoin",
+              ]
+            }
+            stroke={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            strokeLinecap={1}
+            strokeLinejoin={1}
+            strokeWidth={2.6}
+          />
+        </RNSVGGroup>
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
 exports[`TockyIcon renders check with stable geometry 1`] = `
 <RNCSafeAreaProvider
   onInsetsChange={[Function]}
@@ -552,6 +657,141 @@ exports[`TockyIcon renders creative with stable geometry 1`] = `
             ]
           }
         />
+      </RNSVGGroup>
+    </RNSVGSvgView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`TockyIcon renders delete with stable geometry 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    accessibilityElementsHidden={true}
+    aria-hidden={true}
+    importantForAccessibility="no-hide-descendants"
+    style={
+      {
+        "height": 24,
+        "width": 24,
+      }
+    }
+    testID="tocky-icon-delete"
+  >
+    <RNSVGSvgView
+      align="xMidYMid"
+      bbHeight={24}
+      bbWidth={24}
+      focusable={false}
+      height={24}
+      meetOrSlice={0}
+      minX={0}
+      minY={0}
+      style={
+        [
+          {
+            "backgroundColor": "transparent",
+            "borderWidth": 0,
+          },
+          {
+            "flex": 0,
+            "height": 24,
+            "width": 24,
+          },
+        ]
+      }
+      vbHeight={24}
+      vbWidth={24}
+      width={24}
+    >
+      <RNSVGGroup
+        fill={
+          {
+            "payload": 4278190080,
+            "type": 0,
+          }
+        }
+      >
+        <RNSVGGroup
+          fill={
+            {
+              "payload": 4278190080,
+              "type": 0,
+            }
+          }
+        >
+          <RNSVGRect
+            fill={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            height={2.4}
+            propList={
+              [
+                "fill",
+              ]
+            }
+            rx={1.2}
+            width={16}
+            x={4}
+            y={5.6}
+          />
+          <RNSVGPath
+            d="M6.6 8.6 L7.5 19.2 Q7.6 20.8 9.2 20.8 L14.8 20.8 Q16.4 20.8 16.5 19.2 L17.4 8.6"
+            fill={null}
+            propList={
+              [
+                "fill",
+                "stroke",
+                "strokeWidth",
+                "strokeLinecap",
+                "strokeLinejoin",
+              ]
+            }
+            stroke={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            strokeLinecap={1}
+            strokeLinejoin={1}
+            strokeWidth={2.2}
+          />
+          <RNSVGPath
+            d="M9.4 5.6 V4.2 Q9.4 3 10.6 3 L13.4 3 Q14.6 3 14.6 4.2 V5.6"
+            fill={null}
+            propList={
+              [
+                "fill",
+                "stroke",
+                "strokeWidth",
+                "strokeLinecap",
+                "strokeLinejoin",
+              ]
+            }
+            stroke={
+              {
+                "payload": 4287397352,
+                "type": 0,
+              }
+            }
+            strokeLinecap={1}
+            strokeLinejoin={1}
+            strokeWidth={2.2}
+          />
+        </RNSVGGroup>
       </RNSVGGroup>
     </RNSVGSvgView>
   </View>

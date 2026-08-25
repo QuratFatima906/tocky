@@ -25,9 +25,18 @@ export type SessionStore = {
   pauseActiveSession: (at: number) => void;
   resumeActiveSession: (at: number) => void;
   endActiveSession: (at: number) => void;
-  /** Removes the running session outright. Only ever from an explicit choice. */
-  discardActiveSession: () => void;
+  /** Removes a session outright. Only ever from an explicit choice. */
+  deleteSession: (sessionId: string) => void;
+  editSession: (sessionId: string, edit: SessionEdit) => void;
   noteActiveSession: (note: string | null) => void;
+};
+
+export type SessionEdit = {
+  readonly categoryId: string;
+  readonly label: string | null;
+  readonly startedAt: number;
+  readonly endedAt: number | null;
+  readonly note: string | null;
 };
 
 export function newSession({ categoryId, label, at }: StartSessionInput): Session {
@@ -104,13 +113,25 @@ export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot
       replaceActiveSession((active) => endedAtInstant(active, at));
     },
 
-    discardActiveSession() {
-      const active = findActiveSession(snapshot.sessions);
-      if (active === null) return;
+    deleteSession(sessionId) {
+      if (!snapshot.sessions.some((session) => session.id === sessionId)) return;
 
       snapshot = {
         ...snapshot,
-        sessions: snapshot.sessions.filter((session) => session.id !== active.id),
+        sessions: snapshot.sessions.filter((session) => session.id !== sessionId),
+      };
+      listeners.forEach((listener) => listener());
+    },
+
+    editSession(sessionId, edit) {
+      const existing = snapshot.sessions.find((session) => session.id === sessionId);
+      if (existing === undefined) return;
+
+      snapshot = {
+        ...snapshot,
+        sessions: snapshot.sessions.map((session) =>
+          session.id === sessionId ? { ...session, ...edit } : session,
+        ),
       };
       listeners.forEach((listener) => listener());
     },

@@ -267,15 +267,31 @@ date without a date picker — which would have needed a native module, and
 on screen, and a day holds a handful of sessions. Lazy-loading pages of days
 would be machinery for a list that does not need it yet.
 
-### C6 · Session detail & editing
+### C6 · Session detail & editing — **done**
 
-- [ ] Owl hero, category pill, title, duration, date and range
-- [ ] Meta rows: Started · Ended · Pauses (count + total) · Linked task
-- [ ] Note card
-- [ ] Resume → new session with the same category/label
-- [ ] Delete with confirm; blocked while the session is active
-- [ ] Edit: category, label, start/end, note
-- [ ] Validation: end ≤ start blocked inline; overlap disallowed
+- [x] Owl hero, category pill, title, duration, date and range
+- [x] Meta rows: Started · Ended · Pauses (count + total)
+- [x] Note card
+- [x] Resume → new session with the same category/label, asking first if one runs
+- [x] Delete with confirm; blocked while the session is active
+- [x] Edit: category, label, start/end, note
+- [x] Validation: end ≤ start blocked inline; overlap disallowed; no future starts
+
+**No time picker.** Editing start and end uses ±5 / ±15 minute nudges instead.
+A picker needs `@react-native-community/datetimepicker`, and `pod install` is
+still broken; typing a time would mean parsing locale-formatted strings, which
+is a bug farm. Nudges also fit the real job — correcting a session you forgot
+to stop. Swap for a picker once pods are fixed.
+
+**Linked task row deferred to C8.** There is no tasks table yet, so the row
+could only ever print a raw uuid.
+
+`findSessionTimeProblem` is the domain rule: a session may not end before it
+starts, may not start in the future, and may not overlap another — otherwise
+the same minute is counted twice and every total above it is quietly wrong.
+Touching ends is allowed: one session may end exactly where the next begins.
+
+`discardActiveSession` became `deleteSession(id)`, which the Timer now uses too.
 
 ### C7 · Insights
 
