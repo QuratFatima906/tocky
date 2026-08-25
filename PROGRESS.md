@@ -24,18 +24,18 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Milestone C — Screens
 
-| #   | Chunk                    | Status |
-| --- | ------------------------ | ------ |
-| C1  | Navigation shell         | ☑      |
-| C2  | Home screen              | ☑      |
-| C3  | New session modal        | ☑      |
-| C4  | **Timer screen — next**  | ☐      |
-| C5  | History screen           | ☐      |
-| C6  | Session detail & editing | ☐      |
-| C7  | Insights screen          | ☐      |
-| C8  | Tasks screen             | ☐      |
-| C9  | Onboarding               | ☐      |
-| C10 | Settings & categories    | ☐      |
+| #   | Chunk                     | Status |
+| --- | ------------------------- | ------ |
+| C1  | Navigation shell          | ☑      |
+| C2  | Home screen               | ☑      |
+| C3  | New session modal         | ☑      |
+| C4  | Timer screen              | ☑      |
+| C5  | **History screen — next** | ☐      |
+| C6  | Session detail & editing  | ☐      |
+| C7  | Insights screen           | ☐      |
+| C8  | Tasks screen              | ☐      |
+| C9  | Onboarding                | ☐      |
+| C10 | Settings & categories     | ☐      |
 
 ## Milestones D–F
 
@@ -54,7 +54,7 @@ Legend: ☐ not started · ◐ in progress · ☑ merged · ✕ cancelled
 
 ## Current state
 
-- `main` is green: **311 tests**, typecheck / lint / format clean.
+- `main` is green: **351 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.

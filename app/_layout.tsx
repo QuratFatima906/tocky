@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createSqliteSessionStore, openTockyDatabase, SessionStoreProvider } from '@/data';
-import { ThemeProvider, useAppFonts, useTheme } from '@/design-system';
+import { ThemeProvider, ToastProvider, useAppFonts, useTheme } from '@/design-system';
 
 export const unstable_settings = { anchor: '(tabs)' };
 
@@ -49,7 +49,9 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <ThemeProvider>
           <SessionStoreProvider store={sessionStore}>
-            <ThemedApp />
+            <ToastProvider>
+              <ThemedApp />
+            </ToastProvider>
           </SessionStoreProvider>
         </ThemeProvider>
       </SafeAreaProvider>

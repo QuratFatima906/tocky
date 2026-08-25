@@ -1,11 +1,15 @@
-import { ComingSoonScreen } from '@/features/navigation/ComingSoonScreen';
+import { useRouter } from 'expo-router';
+
+import { TimerScreen } from '@/features/timer/TimerScreen';
 
 export default function TimerRoute() {
+  const router = useRouter();
+
   return (
-    <ComingSoonScreen
-      title="Timer"
-      promise="Your running session will live here."
-      dismissLabel="Back to Home"
+    <TimerScreen
+      onCollapse={router.back}
+      onSwitchCategory={() => router.push('/new-session')}
+      onEnded={router.back}
     />
   );
 }

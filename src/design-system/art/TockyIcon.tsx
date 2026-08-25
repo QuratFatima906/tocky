@@ -22,6 +22,8 @@ export const TOCKY_ICON_NAMES = [
   'edit',
   'check',
   'close',
+  'collapse',
+  'more',
 ] as const;
 
 export type TockyIconName = (typeof TOCKY_ICON_NAMES)[number];
@@ -241,6 +243,25 @@ function IconGlyph({ name, color }: { name: TockyIconName; color: string }) {
       return (
         <G rotation={45} origin="12, 12">
           <Cross color={color} />
+        </G>
+      );
+    case 'collapse':
+      return (
+        <Path
+          d="M6 10 L12 16 L18 10"
+          fill="none"
+          stroke={color}
+          strokeWidth={2.6}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      );
+    case 'more':
+      return (
+        <G>
+          <Circle cx={5.5} cy={12} r={2} fill={color} />
+          <Circle cx={12} cy={12} r={2} fill={color} />
+          <Circle cx={18.5} cy={12} r={2} fill={color} />
         </G>
       );
     case 'edit':

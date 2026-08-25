@@ -21,6 +21,7 @@ const RUNNING_WORK_SESSION: Session = {
 };
 
 const onDismiss = jest.fn();
+const onStarted = jest.fn();
 
 function storeWith(sessions: readonly Session[]): SessionStore {
   return createInMemorySessionStore({
@@ -31,7 +32,9 @@ function storeWith(sessions: readonly Session[]): SessionStore {
 }
 
 async function renderNewSession(store: SessionStore = storeWith([])) {
-  await renderWithProviders(<NewSessionScreen onDismiss={onDismiss} />, { store });
+  await renderWithProviders(<NewSessionScreen onDismiss={onDismiss} onStarted={onStarted} />, {
+    store,
+  });
   return store;
 }
 
@@ -44,6 +47,7 @@ async function press(label: string) {
 beforeEach(() => {
   jest.useFakeTimers({ now: NOW });
   onDismiss.mockClear();
+  onStarted.mockClear();
 });
 
 afterEach(() => {
@@ -121,7 +125,17 @@ describe('the start button', () => {
       startedAt: NOW,
       endedAt: null,
     });
-    expect(onDismiss).toHaveBeenCalled();
+    expect(onStarted).toHaveBeenCalled();
+  });
+
+  it('hands off to the timer rather than just closing', async () => {
+    await renderNewSession();
+
+    await press('Health');
+    await press('Start Health session');
+
+    expect(onStarted).toHaveBeenCalled();
+    expect(onDismiss).not.toHaveBeenCalled();
   });
 });
 
@@ -182,7 +196,7 @@ describe('starting while another session runs', () => {
 
     expect(alert).toHaveBeenCalled();
     expect(store.getSnapshot().sessions).toHaveLength(1);
-    expect(onDismiss).not.toHaveBeenCalled();
+    expect(onStarted).not.toHaveBeenCalled();
   });
 
   it('names both sides of the switch, and promises no lost time', async () => {
@@ -236,6 +250,6 @@ describe('starting while another session runs', () => {
     expect(previous.endedAt).toBe(NOW);
     expect(started.startedAt).toBe(NOW);
     expect(sessions.filter(isRunning)).toHaveLength(1);
-    expect(onDismiss).toHaveBeenCalled();
+    expect(onStarted).toHaveBeenCalled();
   });
 });

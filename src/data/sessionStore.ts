@@ -24,6 +24,10 @@ export type SessionStore = {
   startSession: (input: StartSessionInput) => void;
   pauseActiveSession: (at: number) => void;
   resumeActiveSession: (at: number) => void;
+  endActiveSession: (at: number) => void;
+  /** Removes the running session outright. Only ever from an explicit choice. */
+  discardActiveSession: () => void;
+  noteActiveSession: (note: string | null) => void;
 };
 
 export function newSession({ categoryId, label, at }: StartSessionInput): Session {
@@ -94,6 +98,25 @@ export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot
         ],
       };
       listeners.forEach((listener) => listener());
+    },
+
+    endActiveSession(at) {
+      replaceActiveSession((active) => endedAtInstant(active, at));
+    },
+
+    discardActiveSession() {
+      const active = findActiveSession(snapshot.sessions);
+      if (active === null) return;
+
+      snapshot = {
+        ...snapshot,
+        sessions: snapshot.sessions.filter((session) => session.id !== active.id),
+      };
+      listeners.forEach((listener) => listener());
+    },
+
+    noteActiveSession(note) {
+      replaceActiveSession((active) => (active.note === note ? active : { ...active, note }));
     },
 
     pauseActiveSession(at) {

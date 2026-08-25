@@ -169,6 +169,86 @@ export function describeSessionStoreContract(
       expect(onStoreChanged).toHaveBeenCalledTimes(1);
     });
 
+    it('ends the running session at the moment it was told', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.endActiveSession(CONTRACT_NOW);
+      const ended = store.getSnapshot().sessions[0]!;
+
+      expect(ended.endedAt).toBe(CONTRACT_NOW);
+      expect(isRunning(ended)).toBe(false);
+      expect(sessionSeconds(ended, CONTRACT_NOW + 30 * MINUTE)).toBe(60 * 60);
+    });
+
+    it('closes an open pause when the paused session ends, rather than leaving it hanging', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.pauseActiveSession(CONTRACT_NOW - MINUTE);
+      store.endActiveSession(CONTRACT_NOW);
+      const ended = store.getSnapshot().sessions[0]!;
+
+      expect(ended.pauses).toEqual([{ startedAt: CONTRACT_NOW - MINUTE, endedAt: CONTRACT_NOW }]);
+      expect(isPaused(ended)).toBe(false);
+    });
+
+    it('keeps the ended session in history rather than dropping it', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.endActiveSession(CONTRACT_NOW);
+
+      expect(store.getSnapshot().sessions).toHaveLength(1);
+    });
+
+    it('discards the running session outright, pauses and all', () => {
+      const store = createStore([ACTIVE_SESSION, FINISHED_SESSION]);
+
+      store.pauseActiveSession(CONTRACT_NOW - MINUTE);
+      store.discardActiveSession();
+
+      expect(store.getSnapshot().sessions.map((session) => session.id)).toEqual([
+        FINISHED_SESSION.id,
+      ]);
+    });
+
+    it('never discards a session that has already ended', () => {
+      const store = createStore([FINISHED_SESSION]);
+
+      store.discardActiveSession();
+
+      expect(store.getSnapshot().sessions).toHaveLength(1);
+    });
+
+    it('notes the running session, and clears the note again', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.noteActiveSession('Deep in the schema');
+      expect(store.getSnapshot().sessions[0]!.note).toBe('Deep in the schema');
+
+      store.noteActiveSession(null);
+      expect(store.getSnapshot().sessions[0]!.note).toBeNull();
+    });
+
+    it('does not churn subscribers when the note has not changed', () => {
+      const store = createStore([ACTIVE_SESSION]);
+      const onStoreChanged = jest.fn();
+      store.subscribe(onStoreChanged);
+
+      store.noteActiveSession('Same');
+      store.noteActiveSession('Same');
+
+      expect(onStoreChanged).toHaveBeenCalledTimes(1);
+    });
+
+    it('has nothing to end, discard or note when nothing is running', () => {
+      const store = createStore([FINISHED_SESSION]);
+      const before = store.getSnapshot();
+
+      store.endActiveSession(CONTRACT_NOW);
+      store.noteActiveSession('Ignored');
+
+      expect(store.getSnapshot()).toBe(before);
+    });
+
     it('leaves finished sessions alone when there is nothing active', () => {
       const store = createStore([FINISHED_SESSION]);
       const before = store.getSnapshot();
