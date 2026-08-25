@@ -380,6 +380,29 @@ export function describeSessionStoreContract(
       expect(store.getSnapshot().sessions[0]!.linkedTaskId).toBeNull();
     });
 
+    it('starts out having never shown onboarding', () => {
+      expect(createStore([]).getSnapshot().hasCompletedOnboarding).toBe(false);
+    });
+
+    it('remembers that onboarding is done', () => {
+      const store = createStore([]);
+
+      store.completeOnboarding();
+
+      expect(store.getSnapshot().hasCompletedOnboarding).toBe(true);
+    });
+
+    it('does not churn subscribers when onboarding is already done', () => {
+      const store = createStore([]);
+      store.completeOnboarding();
+      const onStoreChanged = jest.fn();
+      store.subscribe(onStoreChanged);
+
+      store.completeOnboarding();
+
+      expect(onStoreChanged).not.toHaveBeenCalled();
+    });
+
     it('leaves finished sessions alone when there is nothing active', () => {
       const store = createStore([FINISHED_SESSION]);
       const before = store.getSnapshot();

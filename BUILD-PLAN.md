@@ -340,12 +340,21 @@ which is the same information without a second component that can disagree.
 `tasks` joins the store snapshot, `estimateSeconds` is chosen from chips rather
 than typed, and sessions started from a task carry its `linkedTaskId`.
 
-### C9 · Onboarding
+### C9 · Onboarding — **done**
 
-- [ ] Three-pane pager with dot indicator and skip
-- [ ] Pane 1 Meet Tocky · 2 One tap · 3 Insights + privacy
-- [ ] "Get started" → Home; "I already have an account" → sign-in
-- [ ] Shown once; persisted completion flag
+- [x] Three-pane pager with dot indicator and skip
+- [x] Pane 1 Meet Tocky · 2 One tap · 3 Insights + privacy
+- [x] "Get started" → Home; "I already have an account" → sign-in
+- [x] Shown once; persisted completion flag, stored in a new SQLite
+      `settings` table so it survives reinstalls of the JS bundle
+
+Leaving onboarding by any door — Get started, Skip, or the sign-in link —
+marks it complete, so the panes never reappear. `Stack.Protected` gates the
+whole tab tree on the flag rather than redirecting after mount, which avoids a
+flash of Home before onboarding.
+
+Sign-in is a placeholder: accounts and sync are P1, and the locked "no account
+wall" decision means nothing behind it is required to use Tocky.
 
 ### C10 · Settings
 

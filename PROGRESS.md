@@ -31,18 +31,18 @@ source of truth for state the data already carries.
 
 ## Milestone C — Screens
 
-| #   | Chunk                    | Status |
-| --- | ------------------------ | ------ |
-| C1  | Navigation shell         | ☑      |
-| C2  | Home screen              | ☑      |
-| C3  | New session modal        | ☑      |
-| C4  | Timer screen             | ☑      |
-| C5  | History screen           | ☑      |
-| C6  | Session detail & editing | ☑      |
-| C7  | Insights screen          | ☑      |
-| C8  | Tasks screen             | ☑      |
-| C9  | **Onboarding — next**    | ☐      |
-| C10 | Settings & categories    | ☐      |
+| #   | Chunk                            | Status |
+| --- | -------------------------------- | ------ |
+| C1  | Navigation shell                 | ☑      |
+| C2  | Home screen                      | ☑      |
+| C3  | New session modal                | ☑      |
+| C4  | Timer screen                     | ☑      |
+| C5  | History screen                   | ☑      |
+| C6  | Session detail & editing         | ☑      |
+| C7  | Insights screen                  | ☑      |
+| C8  | Tasks screen                     | ☑      |
+| C9  | Onboarding                       | ☑      |
+| C10 | **Settings & categories — next** | ☐      |
 
 ## Milestones D–F
 
@@ -61,15 +61,16 @@ source of truth for state the data already carries.
 
 ## Current state
 
-- `main` is green: **488 tests**, typecheck / lint / format clean.
+- `main` is green: **504 tests**, typecheck / lint / format clean.
 - App builds and runs on **iPhone 17 Pro, iOS 26.5** (`npm run ios`).
 - `main` is branch-protected: PR required, `Verify` check required,
   `enforce_admins: true`. Direct pushes are rejected.
-- Every screen in Milestone C except onboarding and settings is built and
-  verified on the simulator against the real SQLite database.
+- Every screen in Milestone C except settings is built and verified on the
+  simulator against the real SQLite database.
 - The core loop closes end to end: pick a category → timer → end → the session
   lands on Home, History and Insights, and survives a relaunch.
-- Sessions, categories and tasks persist in SQLite at schema version 3.
+- Sessions, categories, tasks and the onboarding flag persist in SQLite at
+  schema version 4.
 - Jest runs pinned to `America/New_York` so local-time and DST bugs
   cannot hide behind a UTC test machine.
 
@@ -119,4 +120,5 @@ source of truth for state the data already carries.
 | 2026-08-25 | C5    | History. `groupSessionsByDay` splits sessions at local midnight, asserted against a 25-hour day. One search field matches label, category, day heading and note, so "yesterday" filters by date without a date picker. A `SectionList` cannot wrap a section's items in one card; a `FlatList` over days can.                                                                        |
 | 2026-08-25 | C6    | Session detail and editing — the first screen that changes recorded data. `findSessionTimeProblem` refuses an end before its start, a start in the future, and any overlap, since two sessions sharing a minute make every total above them wrong. Editing times uses nudges, not a picker, because `pod install` is still broken.                                                   |
 | 2026-08-25 | C7    | Insights. Two more collisions with the locked decisions: the streak tile is gone, and the green up-arrow delta became "6h 00m less than last week" in plain grey. Weeks start Monday and a week containing a clock change still covers seven local days.                                                                                                                             |
+| 2026-08-25 | C9    | Onboarding. Three panes gated by `Stack.Protected` on a flag persisted in a new SQLite `settings` table. The pager was opening on the second pane while the dots said the first — invisible to tests, because a `ScrollView` does not scroll under jest. Added the sign-in door the design and flows both call for; leaving by any door retires the panes.                           |
 | 2026-08-25 | C8    | Tasks, and the first state shared between two records. Completing a tracked task asks what to do with the session; starting one over a running session asks too, through the same confirmation three screens now share. Closed C6's linked-task row. A horizontal `ScrollView` in a column stretches to fill it.                                                                     |

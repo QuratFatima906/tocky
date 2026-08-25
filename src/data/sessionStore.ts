@@ -7,7 +7,15 @@ export type SessionStoreSnapshot = {
   readonly categories: readonly Category[];
   readonly sessions: readonly Session[];
   readonly tasks: readonly Task[];
+  readonly hasCompletedOnboarding: boolean;
 };
+
+/**
+ * Mirrors SQLite's "no row recorded yet": a snapshot that says nothing about
+ * onboarding has not been through it.
+ */
+export type SessionStoreSeed = Omit<SessionStoreSnapshot, 'hasCompletedOnboarding'> &
+  Partial<Pick<SessionStoreSnapshot, 'hasCompletedOnboarding'>>;
 
 export type AddTaskInput = {
   readonly title: string;
@@ -40,6 +48,8 @@ export type SessionStore = {
   noteActiveSession: (note: string | null) => void;
   addTask: (input: AddTaskInput) => void;
   setTaskCompleted: (taskId: string, completedAt: number | null) => void;
+  /** Retires the intro panes for good. Onboarding is shown once per install. */
+  completeOnboarding: () => void;
 };
 
 export type SessionEdit = {
@@ -89,10 +99,11 @@ export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   categories: [],
   sessions: [],
   tasks: [],
+  hasCompletedOnboarding: false,
 };
 
-export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot): SessionStore {
-  let snapshot = initialSnapshot;
+export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore {
+  let snapshot: SessionStoreSnapshot = { hasCompletedOnboarding: false, ...seed };
   const listeners = new Set<() => void>();
 
   function replaceActiveSession(update: (active: Session) => Session): void {
@@ -177,6 +188,13 @@ export function createInMemorySessionStore(initialSnapshot: SessionStoreSnapshot
 
     noteActiveSession(note) {
       replaceActiveSession((active) => (active.note === note ? active : { ...active, note }));
+    },
+
+    completeOnboarding() {
+      if (snapshot.hasCompletedOnboarding) return;
+
+      snapshot = { ...snapshot, hasCompletedOnboarding: true };
+      listeners.forEach((listener) => listener());
     },
 
     pauseActiveSession(at) {
