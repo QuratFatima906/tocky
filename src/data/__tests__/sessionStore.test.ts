@@ -23,6 +23,8 @@ describe('createInMemorySessionStore', () => {
       sessions: [FINISHED_SESSION],
       tasks: [],
       hasCompletedOnboarding: false,
+      profileName: null,
+      themePreference: 'system',
     });
   });
 

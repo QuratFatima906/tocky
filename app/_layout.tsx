@@ -38,6 +38,7 @@ function ThemedApp() {
           <Stack.Screen name="new-session" options={{ presentation: 'modal' }} />
           <Stack.Screen name="timer" />
           <Stack.Screen name="session/[id]" />
+          <Stack.Screen name="settings" />
         </Stack.Protected>
 
         <Stack.Protected guard={!isPastOnboarding}>
@@ -62,7 +63,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <ThemeProvider>
+        <ThemeProvider initialPreference={sessionStore.getSnapshot().themePreference}>
           <SessionStoreProvider store={sessionStore}>
             <ToastProvider>
               <ThemedApp />

@@ -1,5 +1,6 @@
 import { randomUUID } from 'expo-crypto';
 
+import type { ThemePreference } from '@/design-system';
 import { findActiveSession, isPaused, type Category, type Session, type Task } from '@/domain';
 
 export type SessionStoreSnapshot = {
@@ -8,14 +9,19 @@ export type SessionStoreSnapshot = {
   readonly sessions: readonly Session[];
   readonly tasks: readonly Task[];
   readonly hasCompletedOnboarding: boolean;
+  readonly profileName: string | null;
+  readonly themePreference: ThemePreference;
 };
 
+/** Everything the `settings` table holds, rather than a table of its own. */
+type StoredSetting = 'hasCompletedOnboarding' | 'profileName' | 'themePreference';
+
 /**
- * Mirrors SQLite's "no row recorded yet": a snapshot that says nothing about
- * onboarding has not been through it.
+ * Mirrors SQLite's "no row recorded yet": a snapshot that says nothing about a
+ * setting has never had one written.
  */
-export type SessionStoreSeed = Omit<SessionStoreSnapshot, 'hasCompletedOnboarding'> &
-  Partial<Pick<SessionStoreSnapshot, 'hasCompletedOnboarding'>>;
+export type SessionStoreSeed = Omit<SessionStoreSnapshot, StoredSetting> &
+  Partial<Pick<SessionStoreSnapshot, StoredSetting>>;
 
 export type AddTaskInput = {
   readonly title: string;
@@ -50,6 +56,9 @@ export type SessionStore = {
   setTaskCompleted: (taskId: string, completedAt: number | null) => void;
   /** Retires the intro panes for good. Onboarding is shown once per install. */
   completeOnboarding: () => void;
+  /** An empty name clears it, rather than greeting the user with blank space. */
+  setProfileName: (name: string) => void;
+  setThemePreference: (preference: ThemePreference) => void;
 };
 
 export type SessionEdit = {
@@ -84,6 +93,11 @@ export function newTask({ title, categoryId, estimateSeconds, at }: AddTaskInput
   };
 }
 
+export function trimmedNameOrNull(name: string): string | null {
+  const trimmed = name.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
 function endedAtInstant(session: Session, at: number): Session {
   return {
     ...session,
@@ -100,10 +114,17 @@ export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   sessions: [],
   tasks: [],
   hasCompletedOnboarding: false,
+  profileName: null,
+  themePreference: 'system',
 };
 
 export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore {
-  let snapshot: SessionStoreSnapshot = { hasCompletedOnboarding: false, ...seed };
+  let snapshot: SessionStoreSnapshot = {
+    hasCompletedOnboarding: false,
+    profileName: null,
+    themePreference: 'system',
+    ...seed,
+  };
   const listeners = new Set<() => void>();
 
   function replaceActiveSession(update: (active: Session) => Session): void {
@@ -194,6 +215,21 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
       if (snapshot.hasCompletedOnboarding) return;
 
       snapshot = { ...snapshot, hasCompletedOnboarding: true };
+      listeners.forEach((listener) => listener());
+    },
+
+    setProfileName(name) {
+      const profileName = trimmedNameOrNull(name);
+      if (snapshot.profileName === profileName) return;
+
+      snapshot = { ...snapshot, profileName };
+      listeners.forEach((listener) => listener());
+    },
+
+    setThemePreference(themePreference) {
+      if (snapshot.themePreference === themePreference) return;
+
+      snapshot = { ...snapshot, themePreference };
       listeners.forEach((listener) => listener());
     },
 

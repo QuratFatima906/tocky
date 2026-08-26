@@ -84,6 +84,7 @@ export function TockyTabBar({
       testID="tocky-tab-bar"
       accessibilityRole="tabbar"
       glassEffectStyle="regular"
+      colorScheme={theme.scheme}
       style={{
         position: 'absolute',
         left: 0,
