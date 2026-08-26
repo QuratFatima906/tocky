@@ -56,6 +56,17 @@ describeSessionStoreContract('createSqliteSessionStore', (sessions) =>
   createSqliteSessionStore(databaseHolding(sessions)),
 );
 
+/** The last schema that shipped before settings and category ordering. */
+const TASKS_ONLY_SCHEMA_VERSION = 3;
+
+function rewindToTasksOnlySchema(database: SqliteDatabase): void {
+  database.execute(`
+    drop table settings;
+    alter table categories drop column sortOrder;
+    pragma user_version = ${TASKS_ONLY_SCHEMA_VERSION}
+  `);
+}
+
 describe('the Tocky schema', () => {
   it('migrates an empty database to the current version', () => {
     const database = createNodeSqliteDatabase();
@@ -97,9 +108,8 @@ describe('the Tocky schema', () => {
 
   it('upgrades an install that already holds data, without disturbing it', () => {
     const database = databaseHolding([FINISHED_SESSION]);
-    const versionBeforeSettings = LATEST_SCHEMA_VERSION - 1;
 
-    database.execute(`drop table settings; pragma user_version = ${versionBeforeSettings}`);
+    rewindToTasksOnlySchema(database);
     const upgraded = createSqliteSessionStore(database);
 
     expect(schemaVersionOf(database)).toBe(LATEST_SCHEMA_VERSION);
