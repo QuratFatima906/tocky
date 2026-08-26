@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { AccessibilityInfo } from 'react-native';
 import {
   ScrollView,
   useWindowDimensions,
@@ -73,7 +74,7 @@ const PANES: readonly Pane[] = [
   {
     eyebrow: 'Insights',
     title: 'See where your hours land.',
-    body: 'Every week Tocky shows your patterns — gently, no scoreboards. Your data stays on your device, always.',
+    body: 'Every week Tocky shows your patterns — gently. Your data stays on your device.',
     gradient: 'heroBlush',
     owl: 'happy',
     illustration: 'hours',
@@ -94,10 +95,15 @@ export function OnboardingScreen({
   function showPane(index: number): void {
     setPaneIndex(index);
     pager.current?.scrollTo({ x: index * width, animated: true });
+    announcePane(index);
   }
 
   function syncPaneToScroll(event: NativeSyntheticEvent<NativeScrollEvent>): void {
-    setPaneIndex(Math.round(event.nativeEvent.contentOffset.x / width));
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (index === paneIndex) return;
+
+    setPaneIndex(index);
+    announcePane(index);
   }
 
   return (
@@ -111,10 +117,15 @@ export function OnboardingScreen({
       testID="onboarding-pager"
     >
       {PANES.map((pane, index) => (
-        <View key={pane.eyebrow} style={{ width }}>
+        <View
+          key={pane.eyebrow}
+          testID={`onboarding-pane-${index}`}
+          accessibilityElementsHidden={index !== paneIndex}
+          importantForAccessibility={index === paneIndex ? 'auto' : 'no-hide-descendants'}
+          style={{ width }}
+        >
           <OnboardingPane
             pane={pane}
-            paneIndex={index}
             isLastPane={index === PANES.length - 1}
             onSkip={onDone}
             onNext={() => showPane(index + 1)}
@@ -130,7 +141,6 @@ export function OnboardingScreen({
 
 function OnboardingPane({
   pane,
-  paneIndex,
   activePaneIndex,
   isLastPane,
   onSkip,
@@ -139,7 +149,6 @@ function OnboardingPane({
   onSignIn,
 }: {
   pane: Pane;
-  paneIndex: number;
   activePaneIndex: number;
   isLastPane: boolean;
   onSkip: () => void;
@@ -151,10 +160,10 @@ function OnboardingPane({
 
   return (
     <Screen
+      scrollable
       gradient={pane.gradient}
       gap="xl"
-      contentStyle={{ justifyContent: 'space-between' }}
-      testID={`onboarding-pane-${paneIndex}`}
+      contentStyle={{ flexGrow: 1, justifyContent: 'space-between' }}
     >
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
         {!isLastPane && <Button label="Skip" variant="ghost" size="small" onPress={onSkip} />}
@@ -265,6 +274,13 @@ function HoursBars() {
   );
 }
 
+function announcePane(index: number): void {
+  const pane = PANES[index];
+  if (pane === undefined) return;
+
+  AccessibilityInfo.announceForAccessibility(`${pane.title} Step ${index + 1} of ${PANES.length}.`);
+}
+
 function PaneDots({ activeIndex }: { activeIndex: number }) {
   const theme = useTheme();
 
@@ -272,6 +288,7 @@ function PaneDots({ activeIndex }: { activeIndex: number }) {
     <View
       accessibilityRole="progressbar"
       accessibilityLabel={`Step ${activeIndex + 1} of ${PANES.length}`}
+      accessibilityValue={{ min: 1, max: PANES.length, now: activeIndex + 1 }}
       style={{ flexDirection: 'row', justifyContent: 'center', gap: theme.spacing.sm }}
     >
       {PANES.map((pane, index) => (
