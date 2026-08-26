@@ -385,11 +385,24 @@ sign out of.
 and `pod install` is still broken, so none can be installed. They are on the
 screen, marked Soon, so the shape of Settings is right when they land.
 
-### C10b · Manage categories
+### C10b · Manage categories — **done**
 
-- [ ] Category CRUD on the store contract, both implementations
-- [ ] Add / edit / reorder / archive
-- [ ] Delete blocked when sessions exist -- archive instead
+- [x] Category CRUD on the store contract, both implementations
+- [x] Add / edit / reorder / archive / restore
+- [x] Delete offered only when nothing points at the category; archive instead
+
+**Reorder is buttons, not drag.** No drag-and-drop list is installed, and
+`pod install` is broken, so move up / move down carry the order — the same
+call C6 made when a time picker was unavailable. `sortOrder` is a fifth
+migration; categories were ordered by insertion until they could be moved.
+
+**Delete and archive are never both offered.** A category with a session or a
+task against it shows archive only, so there is no path to a confirm dialog
+that would have to refuse. The store refuses regardless — the screen decides
+what to show, the contract decides what is allowed.
+
+**Archiving keeps history.** An archived category keeps every session it ever
+held and leaves the picker. Restoring puts it back.
 
 ### C10c · Export & reminders — blocked on `pod install`
 

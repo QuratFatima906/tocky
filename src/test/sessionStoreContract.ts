@@ -448,6 +448,97 @@ export function describeSessionStoreContract(
       expect(onStoreChanged).not.toHaveBeenCalled();
     });
 
+    it('adds a category at the end, where it was put', () => {
+      const store = createStore([]);
+      const before = store.getSnapshot().categories.length;
+
+      store.addCategory({ name: '  Reading  ', icon: 'learning', color: '#2FBFA0' });
+      const categories = store.getSnapshot().categories;
+
+      expect(categories).toHaveLength(before + 1);
+      expect(categories[before]?.name).toBe('Reading');
+      expect(categories[before]?.isArchived).toBe(false);
+    });
+
+    it('edits a category everywhere at once', () => {
+      const store = createStore([]);
+      const target = store.getSnapshot().categories[0]!;
+
+      store.editCategory(target.id, { name: 'Deep work', icon: 'work', color: '#8C7DE8' });
+
+      expect(store.getSnapshot().categories[0]).toMatchObject({
+        id: target.id,
+        name: 'Deep work',
+        color: '#8C7DE8',
+      });
+    });
+
+    it('archives a category without losing it', () => {
+      const store = createStore([]);
+      const target = store.getSnapshot().categories[0]!;
+
+      store.setCategoryArchived(target.id, true);
+
+      expect(store.getSnapshot().categories.find((c) => c.id === target.id)?.isArchived).toBe(true);
+    });
+
+    it('rearranges categories into the order it was handed', () => {
+      const store = createStore([]);
+      const [first, second] = store.getSnapshot().categories;
+
+      store.reorderCategories([second!.id, first!.id]);
+      const categories = store.getSnapshot().categories;
+
+      expect(categories[0]?.id).toBe(second!.id);
+      expect(categories[1]?.id).toBe(first!.id);
+    });
+
+    it('keeps unnamed categories after the ones it was given', () => {
+      const store = createStore([]);
+      const all = store.getSnapshot().categories;
+      const last = all[all.length - 1]!;
+
+      store.reorderCategories([last.id]);
+
+      expect(store.getSnapshot().categories).toHaveLength(all.length);
+      expect(store.getSnapshot().categories[0]?.id).toBe(last.id);
+    });
+
+    it('deletes a category nothing points at', () => {
+      const store = createStore([]);
+      store.addCategory({ name: 'Spare', icon: 'personal', color: '#F2B21E' });
+      const spare = store.getSnapshot().categories.at(-1)!;
+
+      store.deleteCategory(spare.id);
+
+      expect(store.getSnapshot().categories.some((c) => c.id === spare.id)).toBe(false);
+    });
+
+    it('refuses to delete a category a session still belongs to', () => {
+      const store = createStore([FINISHED_SESSION]);
+      const inUse = FINISHED_SESSION.categoryId;
+
+      store.deleteCategory(inUse);
+
+      expect(store.getSnapshot().categories.some((c) => c.id === inUse)).toBe(true);
+      expect(store.getSnapshot().sessions).toHaveLength(1);
+    });
+
+    it('refuses to delete a category a task still belongs to', () => {
+      const store = createStore([]);
+      const target = store.getSnapshot().categories[0]!;
+      store.addTask({
+        title: 'Ship it',
+        categoryId: target.id,
+        estimateSeconds: null,
+        at: CONTRACT_NOW,
+      });
+
+      store.deleteCategory(target.id);
+
+      expect(store.getSnapshot().categories.some((c) => c.id === target.id)).toBe(true);
+    });
+
     it('leaves finished sessions alone when there is nothing active', () => {
       const store = createStore([FINISHED_SESSION]);
       const before = store.getSnapshot();

@@ -4,8 +4,9 @@ export {
   useSessionStore,
   useSessionStoreSnapshot,
 } from './SessionStoreProvider';
-export { createInMemorySessionStore, LOADING_SNAPSHOT } from './sessionStore';
+export { createInMemorySessionStore, isCategoryInUse, LOADING_SNAPSHOT } from './sessionStore';
 export type {
+  CategoryDraft,
   SessionEdit,
   SessionStore,
   SessionStoreSeed,

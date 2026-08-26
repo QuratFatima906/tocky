@@ -9,6 +9,8 @@ import {
 } from '@/domain';
 
 import {
+  isCategoryInUse,
+  newCategory,
   newSession,
   newTask,
   trimmedNameOrNull,
@@ -30,6 +32,7 @@ type CategoryRow = {
   icon: string;
   color: string;
   isArchived: number;
+  sortOrder: number;
 };
 
 type SessionRow = {
@@ -168,6 +171,61 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
       reloadAndNotify();
     },
 
+    addCategory(draft) {
+      const category = newCategory(draft);
+      const nextOrder =
+        database.all<{ nextOrder: number }>(
+          'select coalesce(max(sortOrder), 0) + 1 as nextOrder from categories',
+        )[0]?.nextOrder ?? 1;
+
+      database.run(
+        `insert into categories (id, name, icon, color, isArchived, sortOrder)
+         values (?, ?, ?, ?, 0, ?)`,
+        [category.id, category.name, category.icon, category.color, nextOrder],
+      );
+      reloadAndNotify();
+    },
+
+    editCategory(categoryId, draft) {
+      if (!snapshot.categories.some((category) => category.id === categoryId)) return;
+
+      database.run('update categories set name = ?, icon = ?, color = ? where id = ?', [
+        draft.name.trim(),
+        draft.icon,
+        draft.color,
+        categoryId,
+      ]);
+      reloadAndNotify();
+    },
+
+    setCategoryArchived(categoryId, isArchived) {
+      const existing = snapshot.categories.find((category) => category.id === categoryId);
+      if (existing === undefined || existing.isArchived === isArchived) return;
+
+      database.run('update categories set isArchived = ? where id = ?', [
+        isArchived ? 1 : 0,
+        categoryId,
+      ]);
+      reloadAndNotify();
+    },
+
+    reorderCategories(orderedCategoryIds) {
+      database.inTransaction(() => {
+        orderedCategoryIds.forEach((categoryId, index) => {
+          database.run('update categories set sortOrder = ? where id = ?', [index, categoryId]);
+        });
+      });
+      reloadAndNotify();
+    },
+
+    deleteCategory(categoryId) {
+      if (isCategoryInUse(categoryId, snapshot)) return;
+      if (!snapshot.categories.some((category) => category.id === categoryId)) return;
+
+      database.run('delete from categories where id = ?', [categoryId]);
+      reloadAndNotify();
+    },
+
     setThemePreference(preference) {
       if (snapshot.themePreference === preference) return;
 
@@ -221,8 +279,15 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
     .map<Session>((row) => ({ ...row, pauses: pausesBySessionId.get(row.id) ?? [] }));
 
   const categories = database
-    .all<CategoryRow>('select id, name, icon, color, isArchived from categories order by rowid')
-    .map<Category>((row) => ({ ...row, isArchived: row.isArchived === 1 }));
+    .all<CategoryRow>(
+      `select id, name, icon, color, isArchived, sortOrder
+         from categories
+        order by sortOrder, rowid`,
+    )
+    .map<Category>(({ sortOrder: _sortOrder, ...row }) => ({
+      ...row,
+      isArchived: row.isArchived === 1,
+    }));
 
   const tasks = database
     .all<TaskRow>(

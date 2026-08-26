@@ -70,11 +70,18 @@ const createSettings: Migration = (database) => {
   `);
 };
 
+/** Categories were ordered by insertion until they could be rearranged. */
+const orderCategories: Migration = (database) => {
+  database.execute('alter table categories add column sortOrder integer not null default 0');
+  database.execute('update categories set sortOrder = rowid');
+};
+
 const MIGRATIONS: readonly Migration[] = [
   createTables,
   seedDefaultCategories,
   createTasks,
   createSettings,
+  orderCategories,
 ];
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS.length;
