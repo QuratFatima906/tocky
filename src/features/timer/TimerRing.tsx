@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { Text, TockyOwl, useTheme } from '@/design-system';
-import { formatDurationForSpeech, formatElapsed } from '@/domain';
+import { formatDurationForSpeech, formatElapsed, IMPLAUSIBLY_LONG_SECONDS } from '@/domain';
 
 const RING_SIZE = 288;
 const RING_STROKE = 18;
@@ -60,7 +60,7 @@ export function TimerRing({
         ]}
       >
         <TockyOwl
-          expression={isPaused ? 'sleepy' : 'curious'}
+          expression={owlExpressionFor(elapsedSeconds, isPaused)}
           bodyColor={ringColor}
           size={OWL_SIZE}
         />
@@ -76,4 +76,11 @@ export function TimerRing({
       </View>
     </View>
   );
+}
+
+/** The same threshold that makes Tocky ask about the session — §6.1 wants the
+ *  owl to have noticed too, rather than staying curious for two days. */
+function owlExpressionFor(elapsedSeconds: number, isPaused: boolean) {
+  if (isPaused) return 'sleepy';
+  return elapsedSeconds >= IMPLAUSIBLY_LONG_SECONDS ? 'surprised' : 'curious';
 }

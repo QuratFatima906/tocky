@@ -1,6 +1,8 @@
 import { dayRange } from '../calendar';
 import {
+  findRunningSessionProblem,
   findSessionTimeProblem,
+  IMPLAUSIBLY_LONG_SECONDS,
   isPaused,
   isRunning,
   overlapsRange,
@@ -11,6 +13,7 @@ import type { Pause, Session } from '../types';
 
 const MINUTE = 60_000;
 const HOUR = 60 * MINUTE;
+const NOON = new Date(2026, 7, 19, 12, 0).getTime();
 
 function buildSession(overrides: Partial<Session> = {}): Session {
   return {
@@ -197,8 +200,6 @@ describe('overlapsRange', () => {
 });
 
 describe('findSessionTimeProblem', () => {
-  const NOON = new Date(2026, 7, 19, 12, 0).getTime();
-
   function session(id: string, startedAt: number, endedAt: number | null): Session {
     return {
       id,
@@ -265,5 +266,85 @@ describe('findSessionTimeProblem', () => {
     const edited = session('edited', NOON - HOUR, NOON - 1800_000);
 
     expect(findSessionTimeProblem(edited, [running, edited], NOON)).toBe('overlapsAnother');
+  });
+});
+
+describe('findRunningSessionProblem', () => {
+  const RUNNING: Session = {
+    id: 'running',
+    categoryId: 'work',
+    label: null,
+    startedAt: NOON - 2 * HOUR,
+    endedAt: null,
+    pauses: [],
+    linkedTaskId: null,
+    note: null,
+  };
+
+  it('finds nothing wrong with a session of an ordinary length', () => {
+    expect(findRunningSessionProblem(RUNNING, NOON)).toBeNull();
+  });
+
+  it('has nothing to say about a session that already ended', () => {
+    const ended = { ...RUNNING, startedAt: NOON - 40 * HOUR, endedAt: NOON };
+
+    expect(findRunningSessionProblem(ended, NOON)).toBeNull();
+  });
+
+  it('notices a session still running after a working day', () => {
+    const overnight = { ...RUNNING, startedAt: NOON - 9 * HOUR };
+
+    expect(findRunningSessionProblem(overnight, NOON)).toBe('runsImplausiblyLong');
+  });
+
+  it('holds its tongue right up to the threshold', () => {
+    const exactly = { ...RUNNING, startedAt: NOON - IMPLAUSIBLY_LONG_SECONDS * 1000 };
+
+    expect(findRunningSessionProblem(exactly, NOON)).toBe('runsImplausiblyLong');
+    expect(
+      findRunningSessionProblem({ ...exactly, startedAt: exactly.startedAt + 1000 }, NOON),
+    ).toBeNull();
+  });
+
+  it('leaves a paused session alone, however long it has been sitting there', () => {
+    const pausedThrough = {
+      ...RUNNING,
+      startedAt: NOON - 40 * HOUR,
+      pauses: [{ startedAt: NOON - 39 * HOUR, endedAt: null }],
+    };
+
+    expect(findRunningSessionProblem(pausedThrough, NOON)).toBeNull();
+  });
+
+  it('counts tracked time, so hours spent paused never push it over', () => {
+    const mostlyPaused = {
+      ...RUNNING,
+      startedAt: NOON - 40 * HOUR,
+      pauses: [{ startedAt: NOON - 39 * HOUR, endedAt: NOON - HOUR }],
+    };
+
+    expect(findRunningSessionProblem(mostlyPaused, NOON)).toBeNull();
+  });
+
+  it('still calls out a broken clock on a session that is paused', () => {
+    const paused = {
+      ...RUNNING,
+      startedAt: NOON + HOUR,
+      pauses: [{ startedAt: NOON + 2 * HOUR, endedAt: null }],
+    };
+
+    expect(findRunningSessionProblem(paused, NOON)).toBe('startsInTheFuture');
+  });
+
+  it('notices a session that starts after the moment it is read', () => {
+    const fromTheFuture = { ...RUNNING, startedAt: NOON + HOUR };
+
+    expect(findRunningSessionProblem(fromTheFuture, NOON)).toBe('startsInTheFuture');
+  });
+
+  it('reports the clock before the length, since the length cannot be trusted', () => {
+    const both = { ...RUNNING, startedAt: NOON + 40 * HOUR };
+
+    expect(findRunningSessionProblem(both, NOON)).toBe('startsInTheFuture');
   });
 });
