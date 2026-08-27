@@ -1,10 +1,11 @@
 import { View } from 'react-native';
 
-import { PressableScale, Surface, Text, TockyIcon, useTheme } from '@/design-system';
+import { IconButton, PressableScale, Surface, Text, TockyIcon, useTheme } from '@/design-system';
 import { formatDuration, type Category, type Task } from '@/domain';
 
 const CHECKBOX_SIZE = 26;
 const TRACKING_DOT_SIZE = 6;
+const CATEGORY_PILL_MAX_WIDTH = '32%';
 
 export function TaskRow({
   task,
@@ -13,6 +14,7 @@ export function TaskRow({
   isTracking,
   onToggleCompleted,
   onStartTracking,
+  onDelete,
 }: {
   task: Task;
   category: Category | undefined;
@@ -20,6 +22,7 @@ export function TaskRow({
   isTracking: boolean;
   onToggleCompleted: () => void;
   onStartTracking: () => void;
+  onDelete: () => void;
 }) {
   const theme = useTheme();
   const isCompleted = task.completedAt !== null;
@@ -98,13 +101,26 @@ export function TaskRow({
           style={{
             paddingVertical: theme.spacing.xs,
             paddingHorizontal: theme.spacing.md,
+            // The title has flex: 1, so it grows into what is left over — and
+            // an unbounded pill claims its full content width first, which
+            // crushed "Draft the quarterly..." down to "Draft t...". The
+            // category is the least important thing on the row, so it is the
+            // one that gets a ceiling and truncates.
+            maxWidth: CATEGORY_PILL_MAX_WIDTH,
           }}
         >
-          <Text variant="captionSmall" color="textSecondary">
+          <Text variant="captionSmall" color="textSecondary" numberOfLines={1}>
             {category.name}
           </Text>
         </Surface>
       )}
+
+      <IconButton
+        icon="delete"
+        accessibilityLabel={`Delete ${task.title}`}
+        iconColor="errorText"
+        onPress={onDelete}
+      />
     </Surface>
   );
 }

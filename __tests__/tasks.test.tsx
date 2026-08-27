@@ -369,3 +369,159 @@ describe('filtering by category', () => {
     expect(screen.queryByLabelText('Show All')).toBeNull();
   });
 });
+
+describe('deleting a task', () => {
+  const TASK = buildTask({ id: 'a', title: 'Write release notes' });
+
+  function linkedSession(overrides: Partial<Session> = {}): Session {
+    return {
+      id: 'linked',
+      categoryId: 'work',
+      label: 'Write release notes',
+      startedAt: NOW - 45 * MINUTE,
+      endedAt: NOW - 15 * MINUTE,
+      pauses: [],
+      linkedTaskId: 'a',
+      note: null,
+      ...overrides,
+    };
+  }
+
+  it('asks first, and changes nothing while the question is open', async () => {
+    const alert = alertSpy();
+    const store = await renderTasks(storeWith([TASK], [linkedSession()]));
+
+    await press('Delete Write release notes');
+
+    expect(alert).toHaveBeenCalledTimes(1);
+    expect(store.getSnapshot().tasks).toHaveLength(1);
+  });
+
+  it('says the tracked time is kept, because it is', async () => {
+    const alert = alertSpy();
+    await renderTasks(storeWith([TASK], [linkedSession()]));
+
+    await press('Delete Write release notes');
+
+    const [title, message] = alert.mock.calls[0]!;
+    expect(title).toBe('Delete "Write release notes"?');
+    expect(message).toBe('1 session tracked against it will be kept in your history.');
+  });
+
+  it('counts the sessions rather than guessing at them', async () => {
+    const alert = alertSpy();
+    await renderTasks(
+      storeWith([TASK], [linkedSession(), linkedSession({ id: 'second', label: null })]),
+    );
+
+    await press('Delete Write release notes');
+
+    expect(alert.mock.calls[0]![1]).toBe(
+      '2 sessions tracked against it will be kept in your history.',
+    );
+  });
+
+  it('says plainly when there is nothing to keep', async () => {
+    const alert = alertSpy();
+    await renderTasks(storeWith([TASK]));
+
+    await press('Delete Write release notes');
+
+    expect(alert.mock.calls[0]![1]).toBe('Nothing has been tracked against it yet.');
+  });
+
+  it('warns that a session running now carries on without it', async () => {
+    const alert = alertSpy();
+    await renderTasks(storeWith([TASK], [linkedSession({ endedAt: null })]));
+
+    await press('Delete Write release notes');
+
+    expect(alert.mock.calls[0]![1]).toContain('The one running now carries on.');
+  });
+
+  it('keeps the session and lets go of the link once confirmed', async () => {
+    const alert = alertSpy();
+    const store = await renderTasks(storeWith([TASK], [linkedSession()]));
+
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+    const [session] = store.getSnapshot().sessions;
+
+    expect(store.getSnapshot().tasks).toEqual([]);
+    expect(session).toMatchObject({
+      id: 'linked',
+      linkedTaskId: null,
+      label: 'Write release notes',
+    });
+  });
+
+  it('leaves everything alone when the question is declined', async () => {
+    const alert = alertSpy();
+    const store = await renderTasks(storeWith([TASK], [linkedSession()]));
+
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Cancel');
+
+    expect(store.getSnapshot().tasks).toHaveLength(1);
+    expect(store.getSnapshot().sessions[0]!.linkedTaskId).toBe('a');
+  });
+
+  it('can delete a task that is already completed', async () => {
+    const alert = alertSpy();
+    const store = await renderTasks(storeWith([buildTask({ id: 'a', completedAt: NOW })]));
+
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    expect(store.getSnapshot().tasks).toEqual([]);
+  });
+});
+
+describe('the category filter when a category empties', () => {
+  const WORK_TASK = buildTask({ id: 'w', title: 'Write release notes', categoryId: 'work' });
+  const HEALTH_TASK = buildTask({ id: 'h', title: 'Go for a run', categoryId: 'health' });
+
+  it('does not strand the user in a category that no longer has anything', async () => {
+    const alert = alertSpy();
+    const store = await renderTasks(storeWith([WORK_TASK, HEALTH_TASK]));
+
+    await press('Show Work');
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    // The chip row hides itself once one category is left, so a filter still
+    // pointing at Work would take every remaining task down with it.
+    expect(store.getSnapshot().tasks).toHaveLength(1);
+    expect(screen.getByText('Go for a run')).toBeOnTheScreen();
+    expect(screen.queryByText('Nothing in this category.')).toBeNull();
+  });
+
+  it('counts what is left, rather than counting nothing', async () => {
+    const alert = alertSpy();
+    await renderTasks(storeWith([WORK_TASK, HEALTH_TASK]));
+
+    await press('Show Work');
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    expect(screen.getByText('0 of 1 done')).toBeOnTheScreen();
+  });
+
+  it('keeps a filter that still has something in it', async () => {
+    const alert = alertSpy();
+    await renderTasks(
+      storeWith([
+        WORK_TASK,
+        buildTask({ id: 'w2', title: 'Second one', categoryId: 'work' }),
+        HEALTH_TASK,
+      ]),
+    );
+
+    await press('Show Work');
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    expect(screen.getByText('Second one')).toBeOnTheScreen();
+    expect(screen.queryByText('Go for a run')).toBeNull();
+  });
+});

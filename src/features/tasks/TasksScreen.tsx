@@ -10,9 +10,11 @@ import {
   Text,
   TockyOwl,
   useTheme,
+  useToast,
 } from '@/design-system';
 import {
   findActiveSession,
+  isRunning,
   sessionTrackingTask,
   trackedSecondsForTask,
   type Category,
@@ -33,17 +35,28 @@ const ALL_CATEGORIES = 'all';
 export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => void }) {
   const theme = useTheme();
   const store = useSessionStore();
+  const showToast = useToast();
   const { status, tasks, sessions, categories } = useSessionStoreSnapshot();
   const now = useNow(TRACKED_TICK_MS);
   const [isAdding, setIsAdding] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<string>(ALL_CATEGORIES);
 
+  // A filter naming a category with nothing left in it is not a filter, it is
+  // a dead end: the chip row hides itself once one category is left, taking
+  // the way back to All with it, and every remaining task with it. Deleting a
+  // task is the first thing that can empty a category, so this is derived
+  // rather than reset on delete — whatever empties one, the screen recovers.
+  const activeFilter =
+    categoryFilter !== ALL_CATEGORIES && tasks.some((task) => task.categoryId === categoryFilter)
+      ? categoryFilter
+      : ALL_CATEGORIES;
+
   const visibleTasks = useMemo(
     () =>
-      categoryFilter === ALL_CATEGORIES
+      activeFilter === ALL_CATEGORIES
         ? tasks
-        : tasks.filter((task) => task.categoryId === categoryFilter),
-    [tasks, categoryFilter],
+        : tasks.filter((task) => task.categoryId === activeFilter),
+    [tasks, activeFilter],
   );
 
   const openTasks = visibleTasks.filter((task) => task.completedAt === null);
@@ -77,6 +90,21 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
       to: category,
       onConfirm: track,
     });
+  }
+
+  function confirmDelete(task: Task): void {
+    const tracked = sessions.filter((session) => session.linkedTaskId === task.id);
+
+    Alert.alert(`Delete "${task.title}"?`, deleteWarningFor(tracked), [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          if (store.deleteTask(task.id)) showToast(`Deleted "${task.title}"`);
+        },
+      },
+    ]);
   }
 
   function toggleCompleted(task: Task, at: number): void {
@@ -153,14 +181,14 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
         >
           <FilterChip
             name="All"
-            isSelected={categoryFilter === ALL_CATEGORIES}
+            isSelected={activeFilter === ALL_CATEGORIES}
             onPress={() => setCategoryFilter(ALL_CATEGORIES)}
           />
           {usedCategories.map((category) => (
             <FilterChip
               key={category.id}
               name={category.name}
-              isSelected={categoryFilter === category.id}
+              isSelected={activeFilter === category.id}
               onPress={() => setCategoryFilter(category.id)}
             />
           ))}
@@ -193,6 +221,7 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
             now={now}
             onToggleCompleted={() => toggleCompleted(task, Date.now())}
             onStartTracking={() => startTracking(task)}
+            onDelete={() => confirmDelete(task)}
           />
         ))}
 
@@ -216,6 +245,7 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
             now={now}
             onToggleCompleted={() => toggleCompleted(task, Date.now())}
             onStartTracking={() => startTracking(task)}
+            onDelete={() => confirmDelete(task)}
           />
         ))}
 
@@ -243,6 +273,7 @@ function TaskRowForTask({
   now,
   onToggleCompleted,
   onStartTracking,
+  onDelete,
 }: {
   task: Task;
   categories: readonly Category[];
@@ -250,6 +281,7 @@ function TaskRowForTask({
   now: number;
   onToggleCompleted: () => void;
   onStartTracking: () => void;
+  onDelete: () => void;
 }) {
   return (
     <TaskRow
@@ -259,6 +291,7 @@ function TaskRowForTask({
       isTracking={sessionTrackingTask(task, sessions) !== null}
       onToggleCompleted={onToggleCompleted}
       onStartTracking={onStartTracking}
+      onDelete={onDelete}
     />
   );
 }
@@ -293,4 +326,20 @@ function FilterChip({
       </Text>
     </PressableScale>
   );
+}
+
+/**
+ * Says out loud what survives. Time tracked against a task was really spent,
+ * so it stays in History with the label it holds — only the link to the task
+ * goes. A session still running is worth naming separately, because it carries
+ * on running and the row that showed it is about to disappear.
+ */
+function deleteWarningFor(tracked: readonly Session[]): string {
+  if (tracked.length === 0) return 'Nothing has been tracked against it yet.';
+
+  const stillRunning = tracked.some((session) => isRunning(session));
+  const count = tracked.length === 1 ? '1 session' : `${tracked.length} sessions`;
+  const kept = `${count} tracked against it will be kept in your history.`;
+
+  return stillRunning ? `${kept} The one running now carries on.` : kept;
 }
