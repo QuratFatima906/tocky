@@ -1,5 +1,9 @@
+import { useRouter } from 'expo-router';
+
 import { SettingsScreen } from '@/features/settings/SettingsScreen';
 
 export default function SettingsRoute() {
-  return <SettingsScreen />;
+  const router = useRouter();
+
+  return <SettingsScreen onManageCategories={() => router.push('/categories')} />;
 }

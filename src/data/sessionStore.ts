@@ -23,6 +23,12 @@ type StoredSetting = 'hasCompletedOnboarding' | 'profileName' | 'themePreference
 export type SessionStoreSeed = Omit<SessionStoreSnapshot, StoredSetting> &
   Partial<Pick<SessionStoreSnapshot, StoredSetting>>;
 
+export type CategoryDraft = {
+  readonly name: string;
+  readonly icon: string;
+  readonly color: string;
+};
+
 export type AddTaskInput = {
   readonly title: string;
   readonly categoryId: string;
@@ -59,6 +65,13 @@ export type SessionStore = {
   /** An empty name clears it, rather than greeting the user with blank space. */
   setProfileName: (name: string) => void;
   setThemePreference: (preference: ThemePreference) => void;
+  addCategory: (draft: CategoryDraft) => void;
+  editCategory: (categoryId: string, draft: CategoryDraft) => void;
+  /** Archiving keeps a category's history readable; only the picker loses it. */
+  setCategoryArchived: (categoryId: string, isArchived: boolean) => void;
+  reorderCategories: (orderedCategoryIds: readonly string[]) => void;
+  /** Refused outright while anything still points at it. Archive instead. */
+  deleteCategory: (categoryId: string) => void;
 };
 
 export type SessionEdit = {
@@ -82,6 +95,20 @@ export function newSession({ categoryId, label, at, linkedTaskId }: StartSession
   };
 }
 
+export function newCategory({ name, icon, color }: CategoryDraft): Category {
+  return { id: randomUUID(), name: name.trim(), icon, color, isArchived: false };
+}
+
+export function isCategoryInUse(
+  categoryId: string,
+  snapshot: Pick<SessionStoreSnapshot, 'sessions' | 'tasks'>,
+): boolean {
+  return (
+    snapshot.sessions.some((session) => session.categoryId === categoryId) ||
+    snapshot.tasks.some((task) => task.categoryId === categoryId)
+  );
+}
+
 export function newTask({ title, categoryId, estimateSeconds, at }: AddTaskInput): Task {
   return {
     id: randomUUID(),
@@ -96,6 +123,18 @@ export function newTask({ title, categoryId, estimateSeconds, at }: AddTaskInput
 export function trimmedNameOrNull(name: string): string | null {
   const trimmed = name.trim();
   return trimmed === '' ? null : trimmed;
+}
+
+/** Ids not named keep their relative order, after the ones that were. */
+export function reordered(
+  categories: readonly Category[],
+  orderedCategoryIds: readonly string[],
+): readonly Category[] {
+  const named = orderedCategoryIds
+    .map((id) => categories.find((category) => category.id === id))
+    .filter((category): category is Category => category !== undefined);
+
+  return [...named, ...categories.filter((category) => !named.includes(category))];
 }
 
 function endedAtInstant(session: Session, at: number): Session {
@@ -230,6 +269,54 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
       if (snapshot.themePreference === themePreference) return;
 
       snapshot = { ...snapshot, themePreference };
+      listeners.forEach((listener) => listener());
+    },
+
+    addCategory(draft) {
+      snapshot = { ...snapshot, categories: [...snapshot.categories, newCategory(draft)] };
+      listeners.forEach((listener) => listener());
+    },
+
+    editCategory(categoryId, draft) {
+      if (!snapshot.categories.some((category) => category.id === categoryId)) return;
+
+      snapshot = {
+        ...snapshot,
+        categories: snapshot.categories.map((category) =>
+          category.id === categoryId
+            ? { ...category, ...draft, name: draft.name.trim() }
+            : category,
+        ),
+      };
+      listeners.forEach((listener) => listener());
+    },
+
+    setCategoryArchived(categoryId, isArchived) {
+      const existing = snapshot.categories.find((category) => category.id === categoryId);
+      if (existing === undefined || existing.isArchived === isArchived) return;
+
+      snapshot = {
+        ...snapshot,
+        categories: snapshot.categories.map((category) =>
+          category.id === categoryId ? { ...category, isArchived } : category,
+        ),
+      };
+      listeners.forEach((listener) => listener());
+    },
+
+    reorderCategories(orderedCategoryIds) {
+      snapshot = { ...snapshot, categories: reordered(snapshot.categories, orderedCategoryIds) };
+      listeners.forEach((listener) => listener());
+    },
+
+    deleteCategory(categoryId) {
+      if (isCategoryInUse(categoryId, snapshot)) return;
+      if (!snapshot.categories.some((category) => category.id === categoryId)) return;
+
+      snapshot = {
+        ...snapshot,
+        categories: snapshot.categories.filter((category) => category.id !== categoryId),
+      };
       listeners.forEach((listener) => listener());
     },
 

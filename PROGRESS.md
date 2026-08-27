@@ -31,20 +31,20 @@ source of truth for state the data already carries.
 
 ## Milestone C — Screens
 
-| #    | Chunk                        | Status |
-| ---- | ---------------------------- | ------ |
-| C1   | Navigation shell             | ☑      |
-| C2   | Home screen                  | ☑      |
-| C3   | New session modal            | ☑      |
-| C4   | Timer screen                 | ☑      |
-| C5   | History screen               | ☑      |
-| C6   | Session detail & editing     | ☑      |
-| C7   | Insights screen              | ☑      |
-| C8   | Tasks screen                 | ☑      |
-| C9   | Onboarding                   | ☑      |
-| C10a | Settings shell & profile     | ☑      |
-| C10b | **Manage categories — next** | ☐      |
-| C10c | Export & reminders           | ☐      |
+| #    | Chunk                            | Status |
+| ---- | -------------------------------- | ------ |
+| C1   | Navigation shell                 | ☑      |
+| C2   | Home screen                      | ☑      |
+| C3   | New session modal                | ☑      |
+| C4   | Timer screen                     | ☑      |
+| C5   | History screen                   | ☑      |
+| C6   | Session detail & editing         | ☑      |
+| C7   | Insights screen                  | ☑      |
+| C8   | Tasks screen                     | ☑      |
+| C9   | Onboarding                       | ☑      |
+| C10a | Settings shell & profile         | ☑      |
+| C10b | Manage categories                | ☑      |
+| C10c | **Export & reminders — blocked** | ☐      |
 
 ## Milestones D–F
 
@@ -71,8 +71,8 @@ source of truth for state the data already carries.
   simulator against the real SQLite database.
 - The core loop closes end to end: pick a category → timer → end → the session
   lands on Home, History and Insights, and survives a relaunch.
-- Sessions, categories, tasks and the onboarding flag persist in SQLite at
-  schema version 4.
+- Sessions, categories, tasks and preferences persist in SQLite at schema
+  version 5.
 - Jest runs pinned to `America/New_York` so local-time and DST bugs
   cannot hide behind a UTC test machine.
 
