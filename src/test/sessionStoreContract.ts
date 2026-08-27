@@ -482,6 +482,27 @@ export function describeSessionStoreContract(
       expect(store.getSnapshot().profileName).toBeNull();
     });
 
+    it('has not asked about any session to begin with', () => {
+      expect(createStore([ACTIVE_SESSION]).getSnapshot().askedAboutSessionId).toBeNull();
+    });
+
+    it('writes down which session it has already asked about', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.setAskedAboutSession(ACTIVE_SESSION.id);
+
+      expect(store.getSnapshot().askedAboutSessionId).toBe(ACTIVE_SESSION.id);
+    });
+
+    it('clears the answer rather than storing a session that is gone', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.setAskedAboutSession(ACTIVE_SESSION.id);
+      store.setAskedAboutSession(null);
+
+      expect(store.getSnapshot().askedAboutSessionId).toBeNull();
+    });
+
     it('remembers a theme preference', () => {
       const store = createStore([]);
 

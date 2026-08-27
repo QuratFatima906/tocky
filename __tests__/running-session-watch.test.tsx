@@ -25,12 +25,16 @@ function running(overrides: Partial<Session> = {}): Session {
   };
 }
 
-function storeWith(sessions: readonly Session[]): SessionStore {
+function storeWith(
+  sessions: readonly Session[],
+  askedAboutSessionId: string | null = null,
+): SessionStore {
   return createInMemorySessionStore({
     status: 'ready',
     categories: DEFAULT_CATEGORIES,
     sessions,
     tasks: [],
+    askedAboutSessionId,
   });
 }
 
@@ -137,10 +141,10 @@ describe('a session still running after a working day', () => {
     expect(store.getSnapshot().sessions[0]!.endedAt).toBe(NOW);
   });
 
-  it('opens the session itself when the user would rather fix the time', async () => {
+  it('opens the session itself when the user would rather edit it', async () => {
     await renderWatch(storeWith([OVERNIGHT]));
 
-    await tapAlertButton(alert, 'Fix the time');
+    await tapAlertButton(alert, 'Edit the session');
 
     expect(onEditSession).toHaveBeenCalledWith(OVERNIGHT.id);
   });
@@ -152,6 +156,28 @@ describe('a session still running after a working day', () => {
     await foreground();
 
     expect(alert).toHaveBeenCalledTimes(1);
+  });
+
+  it('writes the answer down rather than only remembering it', async () => {
+    const store = await renderWatch(storeWith([OVERNIGHT]));
+
+    expect(store.getSnapshot().askedAboutSessionId).toBe(OVERNIGHT.id);
+  });
+
+  it('does not ask again on a relaunch, which is when it would ask most', async () => {
+    // A force-quit and reopen: the same data on disk, everything held in
+    // memory gone. Only the written-down answer stands between them.
+    await renderWatch(storeWith([OVERNIGHT], OVERNIGHT.id));
+
+    expect(alert).not.toHaveBeenCalled();
+  });
+
+  it('forgets the answer once the session it was about is over', async () => {
+    const store = await renderWatch(storeWith([OVERNIGHT]));
+
+    await tapAlertButton(alert, 'End it now');
+
+    expect(store.getSnapshot().askedAboutSessionId).toBeNull();
   });
 
   it('asks again about a different session that runs just as long', async () => {
@@ -167,6 +193,21 @@ describe('a session still running after a working day', () => {
   });
 });
 
+describe('a session that is paused', () => {
+  const PAUSED = running({
+    startedAt: NOW - 39 * HOUR,
+    pauses: [{ startedAt: NOW - 30 * HOUR, endedAt: null }],
+  });
+
+  it('is never asked about, because it is running away with nothing', async () => {
+    await renderWatch(storeWith([PAUSED]));
+
+    await foreground();
+
+    expect(alert).not.toHaveBeenCalled();
+  });
+});
+
 describe('a session that starts in the future', () => {
   const FROM_THE_FUTURE = running({ startedAt: NOW + 3 * HOUR });
 
@@ -178,12 +219,23 @@ describe('a session that starts in the future', () => {
     expect(message).toContain('device clock');
   });
 
-  it('does not offer to end it, which would record nothing at all', async () => {
+  it('offers nothing it cannot carry out: no ending, and no nudging by fifteen minutes', async () => {
     await renderWatch(storeWith([FROM_THE_FUTURE]));
 
     const [, , buttons] = alert.mock.calls[0]!;
     const labels = (buttons as { text?: string }[]).map((button) => button.text);
-    expect(labels).toEqual(['Fix the time', 'Keep tracking']);
+    expect(labels).toEqual(['Start it now', 'Keep tracking']);
+  });
+
+  it('starts counting again from now, since the elapsed time is unknowable', async () => {
+    const store = await renderWatch(storeWith([FROM_THE_FUTURE]));
+
+    await tapAlertButton(alert, 'Start it now');
+    const repaired = store.getSnapshot().sessions[0]!;
+
+    expect(repaired.startedAt).toBe(NOW);
+    expect(repaired.endedAt).toBeNull();
+    expect(repaired.categoryId).toBe(FROM_THE_FUTURE.categoryId);
   });
 
   it('leaves the session exactly as recorded', async () => {

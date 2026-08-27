@@ -24,6 +24,7 @@ import { migrateToLatestSchema } from './migrations';
 const ONBOARDING_COMPLETED_KEY = 'onboardingCompleted';
 const PROFILE_NAME_KEY = 'profileName';
 const THEME_PREFERENCE_KEY = 'themePreference';
+const ASKED_ABOUT_SESSION_KEY = 'askedAboutSessionId';
 
 const THEME_PREFERENCES: readonly ThemePreference[] = ['light', 'dark', 'system'];
 
@@ -298,6 +299,16 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
       });
     },
 
+    setAskedAboutSession(sessionId) {
+      if (snapshot.askedAboutSessionId === sessionId) return;
+
+      write('remember your answer', () => {
+        if (sessionId === null)
+          database.run('delete from settings where key = ?', [ASKED_ABOUT_SESSION_KEY]);
+        else writeSetting(database, ASKED_ABOUT_SESSION_KEY, sessionId);
+      });
+    },
+
     setThemePreference(preference) {
       if (snapshot.themePreference === preference) return;
 
@@ -383,6 +394,7 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
     hasCompletedOnboarding: readSetting(database, ONBOARDING_COMPLETED_KEY) !== null,
     profileName: readSetting(database, PROFILE_NAME_KEY),
     themePreference: THEME_PREFERENCES.find((known) => known === storedTheme) ?? 'system',
+    askedAboutSessionId: readSetting(database, ASKED_ABOUT_SESSION_KEY),
   };
 }
 

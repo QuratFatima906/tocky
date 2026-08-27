@@ -306,7 +306,7 @@ describe('findRunningSessionProblem', () => {
     ).toBeNull();
   });
 
-  it('counts tracked time, so a session paused for days is not suspicious', () => {
+  it('leaves a paused session alone, however long it has been sitting there', () => {
     const pausedThrough = {
       ...RUNNING,
       startedAt: NOON - 40 * HOUR,
@@ -314,6 +314,26 @@ describe('findRunningSessionProblem', () => {
     };
 
     expect(findRunningSessionProblem(pausedThrough, NOON)).toBeNull();
+  });
+
+  it('counts tracked time, so hours spent paused never push it over', () => {
+    const mostlyPaused = {
+      ...RUNNING,
+      startedAt: NOON - 40 * HOUR,
+      pauses: [{ startedAt: NOON - 39 * HOUR, endedAt: NOON - HOUR }],
+    };
+
+    expect(findRunningSessionProblem(mostlyPaused, NOON)).toBeNull();
+  });
+
+  it('still calls out a broken clock on a session that is paused', () => {
+    const paused = {
+      ...RUNNING,
+      startedAt: NOON + HOUR,
+      pauses: [{ startedAt: NOON + 2 * HOUR, endedAt: null }],
+    };
+
+    expect(findRunningSessionProblem(paused, NOON)).toBe('startsInTheFuture');
   });
 
   it('notices a session that starts after the moment it is read', () => {

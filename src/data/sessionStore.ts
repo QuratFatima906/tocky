@@ -11,10 +11,17 @@ export type SessionStoreSnapshot = {
   readonly hasCompletedOnboarding: boolean;
   readonly profileName: string | null;
   readonly themePreference: ThemePreference;
+  /**
+   * The running session Tocky has already asked about. Persisted rather than
+   * held in memory because the question is asked when the app opens, and
+   * force-quitting is ordinary on iOS — a ref would ask again every launch.
+   */
+  readonly askedAboutSessionId: string | null;
 };
 
 /** Everything the `settings` table holds, rather than a table of its own. */
-type StoredSetting = 'hasCompletedOnboarding' | 'profileName' | 'themePreference';
+type StoredSetting =
+  'hasCompletedOnboarding' | 'profileName' | 'themePreference' | 'askedAboutSessionId';
 
 /**
  * Mirrors SQLite's "no row recorded yet": a snapshot that says nothing about a
@@ -76,6 +83,8 @@ export type SessionStore = {
   /** An empty name clears it, rather than greeting the user with blank space. */
   setProfileName: (name: string) => void;
   setThemePreference: (preference: ThemePreference) => void;
+  /** Remembers that the user has answered for this session, so it is asked once. */
+  setAskedAboutSession: (sessionId: string | null) => void;
   addCategory: (draft: CategoryDraft) => void;
   editCategory: (categoryId: string, draft: CategoryDraft) => void;
   /** Archiving keeps a category's history readable; only the picker loses it. */
@@ -183,6 +192,7 @@ export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   hasCompletedOnboarding: false,
   profileName: null,
   themePreference: 'system',
+  askedAboutSessionId: null,
 };
 
 export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore {
@@ -190,6 +200,7 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
     hasCompletedOnboarding: false,
     profileName: null,
     themePreference: 'system',
+    askedAboutSessionId: null,
     ...seed,
   };
   const listeners = new Set<() => void>();
@@ -304,6 +315,13 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
       if (snapshot.themePreference === themePreference) return;
 
       snapshot = { ...snapshot, themePreference };
+      listeners.forEach((listener) => listener());
+    },
+
+    setAskedAboutSession(askedAboutSessionId) {
+      if (snapshot.askedAboutSessionId === askedAboutSessionId) return;
+
+      snapshot = { ...snapshot, askedAboutSessionId };
       listeners.forEach((listener) => listener());
     },
 

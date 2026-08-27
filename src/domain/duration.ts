@@ -62,7 +62,11 @@ export function overlapsRange(session: Session, range: TimeRange, now: number): 
  */
 export type RunningSessionProblem = 'startsInTheFuture' | 'runsImplausiblyLong';
 
-/** Longer than a working day of *tracked* time, so a long pause never counts. */
+/**
+ * A working day of *tracked* time — pauses never count towards it. Note that
+ * this is reached by a genuine eight-hour day at the moment it completes, not
+ * only by a runaway timer; the prompt it raises keeps the session either way.
+ */
 export const IMPLAUSIBLY_LONG_SECONDS = 8 * 60 * 60;
 
 export function findRunningSessionProblem(
@@ -70,7 +74,14 @@ export function findRunningSessionProblem(
   now: number,
 ): RunningSessionProblem | null {
   if (!isRunning(session)) return null;
+
+  // A broken clock is worth saying whatever else is true of the session, and
+  // it is worth saying first: every length below is computed from that clock.
   if (session.startedAt > now) return 'startsInTheFuture';
+
+  // A paused session is not running away with anything. It grows by nothing
+  // while it waits, so there is no hour at which it becomes worth asking about.
+  if (isPaused(session)) return null;
 
   return sessionSeconds(session, now) >= IMPLAUSIBLY_LONG_SECONDS ? 'runsImplausiblyLong' : null;
 }

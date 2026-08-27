@@ -25,6 +25,7 @@ describe('createInMemorySessionStore', () => {
       hasCompletedOnboarding: false,
       profileName: null,
       themePreference: 'system',
+      askedAboutSessionId: null,
     });
   });
 
