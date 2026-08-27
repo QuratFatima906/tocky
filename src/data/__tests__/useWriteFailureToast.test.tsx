@@ -30,6 +30,14 @@ function storeOnAFullDisk(): SqliteSessionStore {
   return store;
 }
 
+let logged: jest.SpyInstance;
+
+beforeEach(() => {
+  logged = jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+
+afterEach(() => logged.mockRestore());
+
 it('tells the user which write failed, and that nothing was lost', async () => {
   const store = storeOnAFullDisk();
   await renderWithProviders(<WriteFailureListener store={store} />);

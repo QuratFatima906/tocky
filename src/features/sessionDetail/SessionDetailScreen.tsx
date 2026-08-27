@@ -71,7 +71,10 @@ function SessionDetail({
   const linkedTask = tasks.find((task) => task.id === session.linkedTaskId);
 
   function saveEdit(edit: SessionEdit): void {
-    store.editSession(session.id, edit);
+    // The form stays open on a failed write, so the user still has what they
+    // typed rather than losing it to a toast that claims it was saved.
+    if (!store.editSession(session.id, edit)) return;
+
     setIsEditing(false);
     showToast('Session updated');
   }
@@ -83,7 +86,8 @@ function SessionDetail({
         text: 'Delete',
         style: 'destructive',
         onPress: () => {
-          store.deleteSession(session.id);
+          if (!store.deleteSession(session.id)) return;
+
           showToast('Session deleted');
           onBack();
         },
@@ -94,8 +98,12 @@ function SessionDetail({
   function resume(): void {
     const active = findActiveSession(sessions);
     const startAgain = () => {
-      store.startSession({ categoryId: session.categoryId, label: session.label, at: Date.now() });
-      onResumed();
+      const landed = store.startSession({
+        categoryId: session.categoryId,
+        label: session.label,
+        at: Date.now(),
+      });
+      if (landed) onResumed();
     };
 
     if (active === null || category === undefined) {

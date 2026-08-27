@@ -58,13 +58,13 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
 
     const active = findActiveSession(sessions);
     const track = () => {
-      store.startSession({
+      const landed = store.startSession({
         categoryId: task.categoryId,
         label: task.title,
         at: Date.now(),
         linkedTaskId: task.id,
       });
-      onTrackingStarted();
+      if (landed) onTrackingStarted();
     };
 
     if (active === null) {
@@ -100,8 +100,9 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
       {
         text: 'End it',
         onPress: () => {
-          store.endActiveSession(at);
-          store.setTaskCompleted(task.id, at);
+          // Both or neither: a task marked done while its session keeps
+          // running is worse than a task that stayed open.
+          if (store.endActiveSession(at)) store.setTaskCompleted(task.id, at);
         },
       },
     ]);

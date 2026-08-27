@@ -81,13 +81,18 @@ function RunningTimer({
   const category = categories.find((candidate) => candidate.id === session.categoryId);
 
   function endSession(at: number): void {
-    store.endActiveSession(at);
+    // A write that did not land has already said so. Saying "saved" over the
+    // top of it, and leaving for Home, would be the app lying about the one
+    // thing it exists to record.
+    if (!store.endActiveSession(at)) return;
+
     showToast(`Session saved · ${formatDuration(sessionSeconds(session, at))}`);
     onEnded();
   }
 
   function discardSession(): void {
-    store.deleteSession(session.id);
+    if (!store.deleteSession(session.id)) return;
+
     showToast('Session discarded');
     onEnded();
   }

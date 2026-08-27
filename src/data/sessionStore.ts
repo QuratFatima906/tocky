@@ -43,6 +43,17 @@ export type StartSessionInput = {
   readonly linkedTaskId?: string | null;
 };
 
+/**
+ * `false` means the write never reached disk and the store did not move, so a
+ * screen must not say it did — no success toast, no navigating away, no
+ * closing a form over the user's typing. Only the writes a screen acts on the
+ * outcome of report it; the rest cannot mislead anyone, because their whole
+ * effect is a snapshot that simply stays where it was. A write refused for a
+ * reason of its own — a session that is not there, a state already reached —
+ * still counts as landed: nothing failed, so nothing needs saying.
+ */
+export type WriteLanded = boolean;
+
 export type SessionStore = {
   subscribe: (onStoreChanged: () => void) => () => void;
   getSnapshot: () => SessionStoreSnapshot;
@@ -50,16 +61,16 @@ export type SessionStore = {
    * Ends whatever is running at the same instant the new session starts, so
    * switching category leaves no untracked gap and no overlap.
    */
-  startSession: (input: StartSessionInput) => void;
+  startSession: (input: StartSessionInput) => WriteLanded;
   pauseActiveSession: (at: number) => void;
   resumeActiveSession: (at: number) => void;
-  endActiveSession: (at: number) => void;
+  endActiveSession: (at: number) => WriteLanded;
   /** Removes a session outright. Only ever from an explicit choice. */
-  deleteSession: (sessionId: string) => void;
-  editSession: (sessionId: string, edit: SessionEdit) => void;
+  deleteSession: (sessionId: string) => WriteLanded;
+  editSession: (sessionId: string, edit: SessionEdit) => WriteLanded;
   noteActiveSession: (note: string | null) => void;
   addTask: (input: AddTaskInput) => void;
-  setTaskCompleted: (taskId: string, completedAt: number | null) => void;
+  setTaskCompleted: (taskId: string, completedAt: number | null) => WriteLanded;
   /** Retires the intro panes for good. Onboarding is shown once per install. */
   completeOnboarding: () => void;
   /** An empty name clears it, rather than greeting the user with blank space. */
@@ -220,25 +231,28 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
         ],
       };
       listeners.forEach((listener) => listener());
+      return true;
     },
 
     endActiveSession(at) {
       replaceActiveSession((active) => endedAtInstant(active, at));
+      return true;
     },
 
     deleteSession(sessionId) {
-      if (!snapshot.sessions.some((session) => session.id === sessionId)) return;
+      if (!snapshot.sessions.some((session) => session.id === sessionId)) return true;
 
       snapshot = {
         ...snapshot,
         sessions: snapshot.sessions.filter((session) => session.id !== sessionId),
       };
       listeners.forEach((listener) => listener());
+      return true;
     },
 
     editSession(sessionId, edit) {
       const existing = snapshot.sessions.find((session) => session.id === sessionId);
-      if (existing === undefined) return;
+      if (existing === undefined) return true;
 
       snapshot = {
         ...snapshot,
@@ -247,6 +261,7 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
         ),
       };
       listeners.forEach((listener) => listener());
+      return true;
     },
 
     addTask(input) {
@@ -256,13 +271,14 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
 
     setTaskCompleted(taskId, completedAt) {
       const existing = snapshot.tasks.find((task) => task.id === taskId);
-      if (existing === undefined || existing.completedAt === completedAt) return;
+      if (existing === undefined || existing.completedAt === completedAt) return true;
 
       snapshot = {
         ...snapshot,
         tasks: snapshot.tasks.map((task) => (task.id === taskId ? { ...task, completedAt } : task)),
       };
       listeners.forEach((listener) => listener());
+      return true;
     },
 
     noteActiveSession(note) {

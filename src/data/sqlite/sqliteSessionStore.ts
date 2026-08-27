@@ -91,7 +91,7 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
    * snapshot untouched: the running session keeps running and its time is
    * still on disk, because the last thing that reached disk is still there.
    */
-  function write(action: string, apply: () => void): void {
+  function write(action: string, apply: () => void): boolean {
     // ponytail: one immediate retry, which covers a database busy for a moment
     // and nothing else. A backoff queue belongs here only once a real failure
     // turns out to need one.
@@ -101,11 +101,16 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
       try {
         apply();
       } catch (error) {
+        // Not every failure is a full disk. A constraint violation or a typo in
+        // one of these statements would otherwise be swallowed into "try
+        // again" and run twice, with nothing left to debug from.
+        console.error(`Tocky could not ${action}.`, error);
         failureListeners.forEach((listener) => listener({ action, error }));
-        return;
+        return false;
       }
     }
     reloadAndNotify();
+    return true;
   }
 
   return {
@@ -125,7 +130,7 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
       const active = findActiveSession(snapshot.sessions);
       const session = newSession(input);
 
-      write('start the session', () => {
+      return write('start the session', () => {
         database.inTransaction(() => {
           if (active !== null && isAccidentalStart(active, input.at)) {
             database.run('delete from pauses where sessionId = ?', [active.id]);
@@ -155,9 +160,9 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
 
     endActiveSession(at) {
       const active = findActiveSession(snapshot.sessions);
-      if (active === null) return;
+      if (active === null) return true;
 
-      write('end the session', () => {
+      return write('end the session', () => {
         database.inTransaction(() => {
           database.run('update sessions set endedAt = ? where id = ?', [at, active.id]);
           database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
@@ -169,9 +174,9 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
     },
 
     deleteSession(sessionId) {
-      if (!snapshot.sessions.some((session) => session.id === sessionId)) return;
+      if (!snapshot.sessions.some((session) => session.id === sessionId)) return true;
 
-      write('delete the session', () => {
+      return write('delete the session', () => {
         database.inTransaction(() => {
           database.run('delete from pauses where sessionId = ?', [sessionId]);
           database.run('delete from sessions where id = ?', [sessionId]);
@@ -180,9 +185,9 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
     },
 
     editSession(sessionId, edit) {
-      if (!snapshot.sessions.some((session) => session.id === sessionId)) return;
+      if (!snapshot.sessions.some((session) => session.id === sessionId)) return true;
 
-      write('save your changes', () => {
+      return write('save your changes', () => {
         database.run(
           `update sessions
               set categoryId = ?, label = ?, startedAt = ?, endedAt = ?, note = ?
@@ -206,9 +211,9 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
 
     setTaskCompleted(taskId, completedAt) {
       const existing = snapshot.tasks.find((task) => task.id === taskId);
-      if (existing === undefined || existing.completedAt === completedAt) return;
+      if (existing === undefined || existing.completedAt === completedAt) return true;
 
-      write('update the task', () => {
+      return write('update the task', () => {
         database.run('update tasks set completedAt = ? where id = ?', [completedAt, taskId]);
       });
     },

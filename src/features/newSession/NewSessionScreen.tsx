@@ -31,12 +31,15 @@ export function NewSessionScreen({
   const runningCategory = categories.find((category) => category.id === activeSession?.categoryId);
 
   function startSession(category: Category): void {
-    store.startSession({
+    const landed = store.startSession({
       categoryId: category.id,
       label: label.trim() === '' ? null : label.trim(),
       at: Date.now(),
     });
-    onStarted();
+
+    // Opening the timer over a session that was never recorded would show a
+    // clock counting time nothing is keeping.
+    if (landed) onStarted();
   }
 
   function confirmSwitchThenStart(category: Category): void {
