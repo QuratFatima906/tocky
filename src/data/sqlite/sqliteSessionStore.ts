@@ -1,3 +1,4 @@
+import type { ThemePreference } from '@/design-system';
 import {
   findActiveSession,
   isPaused,
@@ -7,11 +8,21 @@ import {
   type Task,
 } from '@/domain';
 
-import { newSession, newTask, type SessionStore, type SessionStoreSnapshot } from '../sessionStore';
+import {
+  newSession,
+  newTask,
+  trimmedNameOrNull,
+  type SessionStore,
+  type SessionStoreSnapshot,
+} from '../sessionStore';
 import type { SqliteDatabase } from './database';
 import { migrateToLatestSchema } from './migrations';
 
 const ONBOARDING_COMPLETED_KEY = 'onboardingCompleted';
+const PROFILE_NAME_KEY = 'profileName';
+const THEME_PREFERENCE_KEY = 'themePreference';
+
+const THEME_PREFERENCES: readonly ThemePreference[] = ['light', 'dark', 'system'];
 
 type CategoryRow = {
   id: string;
@@ -143,10 +154,24 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
     completeOnboarding() {
       if (snapshot.hasCompletedOnboarding) return;
 
-      database.run('insert or replace into settings (key, value) values (?, ?)', [
-        ONBOARDING_COMPLETED_KEY,
-        'true',
-      ]);
+      writeSetting(database, ONBOARDING_COMPLETED_KEY, 'true');
+      reloadAndNotify();
+    },
+
+    setProfileName(name) {
+      const profileName = trimmedNameOrNull(name);
+      if (snapshot.profileName === profileName) return;
+
+      if (profileName === null)
+        database.run('delete from settings where key = ?', [PROFILE_NAME_KEY]);
+      else writeSetting(database, PROFILE_NAME_KEY, profileName);
+      reloadAndNotify();
+    },
+
+    setThemePreference(preference) {
+      if (snapshot.themePreference === preference) return;
+
+      writeSetting(database, THEME_PREFERENCE_KEY, preference);
       reloadAndNotify();
     },
 
@@ -207,12 +232,28 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
     )
     .map<Task>((row) => ({ ...row }));
 
-  const hasCompletedOnboarding =
-    database.all<{ value: string }>('select value from settings where key = ?', [
-      ONBOARDING_COMPLETED_KEY,
-    ]).length > 0;
+  const storedTheme = readSetting(database, THEME_PREFERENCE_KEY);
 
-  return { status: 'ready', categories, sessions, tasks, hasCompletedOnboarding };
+  return {
+    status: 'ready',
+    categories,
+    sessions,
+    tasks,
+    hasCompletedOnboarding: readSetting(database, ONBOARDING_COMPLETED_KEY) !== null,
+    profileName: readSetting(database, PROFILE_NAME_KEY),
+    themePreference: THEME_PREFERENCES.find((known) => known === storedTheme) ?? 'system',
+  };
+}
+
+function readSetting(database: SqliteDatabase, key: string): string | null {
+  return (
+    database.all<{ value: string }>('select value from settings where key = ?', [key])[0]?.value ??
+    null
+  );
+}
+
+function writeSetting(database: SqliteDatabase, key: string, value: string): void {
+  database.run('insert or replace into settings (key, value) values (?, ?)', [key, value]);
 }
 
 function groupPausesBySessionId(rows: readonly PauseRow[]): Map<string, Pause[]> {

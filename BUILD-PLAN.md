@@ -356,15 +356,46 @@ flash of Home before onboarding.
 Sign-in is a placeholder: accounts and sync are P1, and the locked "no account
 wall" decision means nothing behind it is required to use Tocky.
 
-### C10 · Settings
+### C10a · Settings shell & profile — **done**
 
-- [ ] Profile card + edit
-- [ ] Tocky Plus banner, hidden when already Plus
+- [x] Profile card + edit, persisted, and Home finally greets by name
+- [x] Appearance: Light / Dark / System, persisted across relaunches
+- [x] General: manage categories row with a live count
+- [x] Version string
+- [x] Rows for work that cannot ship yet are marked **Soon** rather than
+      pretending to navigate
+
+**Appearance was not in the plan, and is the most useful row on the screen.**
+The dark theme was built in A2 and wired through every token, but nothing in
+the UI ever called `setPreference` -- the app had a complete dark mode no user
+could reach. It costs no native module, so it went in.
+
+**The tab bar was light in dark mode.** `GlassView` followed the system
+appearance while the app followed its own preference. It takes a `colorScheme`
+prop for exactly this case. Invisible until Appearance made dark reachable.
+
+**No Tocky Plus banner.** "Hidden when already Plus" implies an entitlement
+system that does not exist. A monetisation call, not an implementation one.
+
+**No sign out.** The locked decisions say no account wall; there is nothing to
+sign out of.
+
+**Daily reminder, weekly report and export are blocked, not cut.** They need
+`expo-notifications`, a date picker and `expo-sharing` / `expo-file-system`,
+and `pod install` is still broken, so none can be installed. They are on the
+screen, marked Soon, so the shape of Settings is right when they land.
+
+### C10b · Manage categories
+
+- [ ] Category CRUD on the store contract, both implementations
+- [ ] Add / edit / reorder / archive
+- [ ] Delete blocked when sessions exist -- archive instead
+
+### C10c · Export & reminders — blocked on `pod install`
+
 - [ ] Preferences: daily reminder (+ time picker), idle detection, weekly report
-- [ ] General: manage categories, export data, help & support
-- [ ] Sign out with confirm; version string
-- [ ] Manage categories: add / edit / reorder / archive (delete blocked when sessions exist)
 - [ ] Export: CSV + JSON via the share sheet
+- [ ] Help & support
 
 ---
 

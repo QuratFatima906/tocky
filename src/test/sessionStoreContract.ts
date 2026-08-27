@@ -403,6 +403,51 @@ export function describeSessionStoreContract(
       expect(onStoreChanged).not.toHaveBeenCalled();
     });
 
+    it('starts with no profile name and no theme of its own', () => {
+      const snapshot = createStore([]).getSnapshot();
+
+      expect(snapshot.profileName).toBeNull();
+      expect(snapshot.themePreference).toBe('system');
+    });
+
+    it('remembers a profile name, trimmed', () => {
+      const store = createStore([]);
+
+      store.setProfileName('  Alex Rivera  ');
+
+      expect(store.getSnapshot().profileName).toBe('Alex Rivera');
+    });
+
+    it('clears the name rather than storing blank space', () => {
+      const store = createStore([]);
+      store.setProfileName('Alex');
+
+      store.setProfileName('   ');
+
+      expect(store.getSnapshot().profileName).toBeNull();
+    });
+
+    it('remembers a theme preference', () => {
+      const store = createStore([]);
+
+      store.setThemePreference('dark');
+
+      expect(store.getSnapshot().themePreference).toBe('dark');
+    });
+
+    it('does not churn subscribers when a setting is unchanged', () => {
+      const store = createStore([]);
+      store.setProfileName('Alex');
+      store.setThemePreference('dark');
+      const onStoreChanged = jest.fn();
+      store.subscribe(onStoreChanged);
+
+      store.setProfileName('Alex');
+      store.setThemePreference('dark');
+
+      expect(onStoreChanged).not.toHaveBeenCalled();
+    });
+
     it('leaves finished sessions alone when there is nothing active', () => {
       const store = createStore([FINISHED_SESSION]);
       const before = store.getSnapshot();
