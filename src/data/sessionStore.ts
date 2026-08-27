@@ -81,7 +81,9 @@ export type SessionStore = {
   /**
    * Removes the task and lets go of every session tracked against it, rather
    * than removing those too. The time was really spent; only the thing it was
-   * spent on is gone, and each session keeps the task's title as its label.
+   * spent on is gone. Each session keeps whatever label it holds — the task's
+   * title, since that is what starting from a task writes there, unless the
+   * user has since cleared it, which is theirs to have done.
    */
   deleteTask: (taskId: string) => WriteLanded;
   /** Retires the intro panes for good. Onboarding is shown once per install. */

@@ -476,3 +476,52 @@ describe('deleting a task', () => {
     expect(store.getSnapshot().tasks).toEqual([]);
   });
 });
+
+describe('the category filter when a category empties', () => {
+  const WORK_TASK = buildTask({ id: 'w', title: 'Write release notes', categoryId: 'work' });
+  const HEALTH_TASK = buildTask({ id: 'h', title: 'Go for a run', categoryId: 'health' });
+
+  it('does not strand the user in a category that no longer has anything', async () => {
+    const alert = alertSpy();
+    const store = await renderTasks(storeWith([WORK_TASK, HEALTH_TASK]));
+
+    await press('Show Work');
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    // The chip row hides itself once one category is left, so a filter still
+    // pointing at Work would take every remaining task down with it.
+    expect(store.getSnapshot().tasks).toHaveLength(1);
+    expect(screen.getByText('Go for a run')).toBeOnTheScreen();
+    expect(screen.queryByText('Nothing in this category.')).toBeNull();
+  });
+
+  it('counts what is left, rather than counting nothing', async () => {
+    const alert = alertSpy();
+    await renderTasks(storeWith([WORK_TASK, HEALTH_TASK]));
+
+    await press('Show Work');
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    expect(screen.getByText('0 of 1 done')).toBeOnTheScreen();
+  });
+
+  it('keeps a filter that still has something in it', async () => {
+    const alert = alertSpy();
+    await renderTasks(
+      storeWith([
+        WORK_TASK,
+        buildTask({ id: 'w2', title: 'Second one', categoryId: 'work' }),
+        HEALTH_TASK,
+      ]),
+    );
+
+    await press('Show Work');
+    await press('Delete Write release notes');
+    await tapAlertButton(alert, 'Delete');
+
+    expect(screen.getByText('Second one')).toBeOnTheScreen();
+    expect(screen.queryByText('Go for a run')).toBeNull();
+  });
+});

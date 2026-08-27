@@ -41,12 +41,22 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
   const [isAdding, setIsAdding] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<string>(ALL_CATEGORIES);
 
+  // A filter naming a category with nothing left in it is not a filter, it is
+  // a dead end: the chip row hides itself once one category is left, taking
+  // the way back to All with it, and every remaining task with it. Deleting a
+  // task is the first thing that can empty a category, so this is derived
+  // rather than reset on delete — whatever empties one, the screen recovers.
+  const activeFilter =
+    categoryFilter !== ALL_CATEGORIES && tasks.some((task) => task.categoryId === categoryFilter)
+      ? categoryFilter
+      : ALL_CATEGORIES;
+
   const visibleTasks = useMemo(
     () =>
-      categoryFilter === ALL_CATEGORIES
+      activeFilter === ALL_CATEGORIES
         ? tasks
-        : tasks.filter((task) => task.categoryId === categoryFilter),
-    [tasks, categoryFilter],
+        : tasks.filter((task) => task.categoryId === activeFilter),
+    [tasks, activeFilter],
   );
 
   const openTasks = visibleTasks.filter((task) => task.completedAt === null);
@@ -171,14 +181,14 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
         >
           <FilterChip
             name="All"
-            isSelected={categoryFilter === ALL_CATEGORIES}
+            isSelected={activeFilter === ALL_CATEGORIES}
             onPress={() => setCategoryFilter(ALL_CATEGORIES)}
           />
           {usedCategories.map((category) => (
             <FilterChip
               key={category.id}
               name={category.name}
-              isSelected={categoryFilter === category.id}
+              isSelected={activeFilter === category.id}
               onPress={() => setCategoryFilter(category.id)}
             />
           ))}
@@ -320,9 +330,9 @@ function FilterChip({
 
 /**
  * Says out loud what survives. Time tracked against a task was really spent,
- * so it stays in History under the label it was given — only the link to the
- * task goes. A session still running is worth naming separately, because it
- * carries on running and the row that showed it is about to disappear.
+ * so it stays in History with the label it holds — only the link to the task
+ * goes. A session still running is worth naming separately, because it carries
+ * on running and the row that showed it is about to disappear.
  */
 function deleteWarningFor(tracked: readonly Session[]): string {
   if (tracked.length === 0) return 'Nothing has been tracked against it yet.';
