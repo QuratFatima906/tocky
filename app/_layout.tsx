@@ -1,7 +1,7 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -13,6 +13,7 @@ import {
   useWriteFailureToast,
 } from '@/data';
 import { ThemeProvider, ToastProvider, useAppFonts, useTheme } from '@/design-system';
+import { useRunningSessionWatch } from '@/features/timer/useRunningSessionWatch';
 
 export const unstable_settings = { anchor: '(tabs)' };
 
@@ -25,7 +26,15 @@ function ThemedApp() {
   const { status, hasCompletedOnboarding } = useSessionStoreSnapshot();
   const isPastOnboarding = status !== 'ready' || hasCompletedOnboarding;
 
+  const router = useRouter();
+
   useWriteFailureToast(sessionStore);
+  useRunningSessionWatch({
+    onEditSession: useCallback(
+      (sessionId: string) => router.push(`/session/${sessionId}`),
+      [router],
+    ),
+  });
 
   return (
     <>

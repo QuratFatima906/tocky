@@ -16,7 +16,9 @@ export {
   weekRange,
 } from './calendar';
 export {
+  findRunningSessionProblem,
   findSessionTimeProblem,
+  IMPLAUSIBLY_LONG_SECONDS,
   isPaused,
   isRunning,
   overlapsRange,
@@ -24,7 +26,7 @@ export {
   sessionSecondsInRange,
   UNBOUNDED_RANGE,
 } from './duration';
-export type { SessionTimeProblem } from './duration';
+export type { RunningSessionProblem, SessionTimeProblem } from './duration';
 export {
   dayGroupHeading,
   formatClockTime,

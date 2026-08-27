@@ -52,6 +52,29 @@ export function overlapsRange(session: Session, range: TimeRange, now: number): 
   return overlapMilliseconds(session.startedAt, session.endedAt ?? now, range) > 0;
 }
 
+/**
+ * A session nobody has stopped counts every second the clock hands it, and the
+ * clock is not always telling the truth. It can run for days because the app
+ * was killed, or start in the future because the device clock moved backwards
+ * — where `sessionSeconds` clamps to zero and the timer sits at 00:00 saying
+ * nothing. Neither is fixed here: the session is left exactly as recorded and
+ * the user is asked, because only they know which one it was.
+ */
+export type RunningSessionProblem = 'startsInTheFuture' | 'runsImplausiblyLong';
+
+/** Longer than a working day of *tracked* time, so a long pause never counts. */
+export const IMPLAUSIBLY_LONG_SECONDS = 8 * 60 * 60;
+
+export function findRunningSessionProblem(
+  session: Session,
+  now: number,
+): RunningSessionProblem | null {
+  if (!isRunning(session)) return null;
+  if (session.startedAt > now) return 'startsInTheFuture';
+
+  return sessionSeconds(session, now) >= IMPLAUSIBLY_LONG_SECONDS ? 'runsImplausiblyLong' : null;
+}
+
 export type SessionTimeProblem = 'endsBeforeItStarts' | 'startsInTheFuture' | 'overlapsAnother';
 
 /**

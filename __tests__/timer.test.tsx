@@ -4,7 +4,7 @@ import { Alert } from 'react-native';
 import { createInMemorySessionStore, DEFAULT_CATEGORIES, type SessionStore } from '@/data';
 import { isRunning, type Session } from '@/domain';
 import { TimerScreen } from '@/features/timer/TimerScreen';
-import { renderWithProviders } from '@/test/renderWithProviders';
+import { INCLUDING_HIDDEN, renderWithProviders } from '@/test/renderWithProviders';
 
 const NOW = new Date(2026, 7, 19, 12, 0).getTime();
 const MINUTE = 60_000;
@@ -318,5 +318,27 @@ describe('when the write cannot reach disk', () => {
     expect(screen.queryByText('Session discarded')).toBeNull();
     expect(onEnded).not.toHaveBeenCalled();
     alert.mockRestore();
+  });
+});
+
+describe('the owl on the ring', () => {
+  it('is curious while an ordinary session runs', async () => {
+    await renderTimer();
+
+    expect(screen.getByTestId('tocky-owl-curious', INCLUDING_HIDDEN)).toBeOnTheScreen();
+  });
+
+  it('is sleepy while the session is paused', async () => {
+    await renderTimer(
+      storeWith([{ ...RUNNING_SESSION, pauses: [{ startedAt: NOW, endedAt: null }] }]),
+    );
+
+    expect(screen.getByTestId('tocky-owl-sleepy', INCLUDING_HIDDEN)).toBeOnTheScreen();
+  });
+
+  it('is surprised once the session has run longer than a working day', async () => {
+    await renderTimer(storeWith([{ ...RUNNING_SESSION, startedAt: NOW - 39 * 60 * MINUTE }]));
+
+    expect(screen.getByTestId('tocky-owl-surprised', INCLUDING_HIDDEN)).toBeOnTheScreen();
   });
 });
