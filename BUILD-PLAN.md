@@ -414,19 +414,59 @@ held and leaves the picker. Restoring puts it back.
 
 ## Milestone D — Robustness
 
-### D1 · Edge & fail cases (`Tocky-Flows.md` §6)
+### D1 · Edge & fail cases (`Tocky-Flows.md` §6) — **done**
 
-- [ ] Short session (<60s) discard confirm
-- [ ] Suspiciously long session keep-or-edit prompt
-- [ ] Cross-midnight attribution (split at local midnight)
-- [ ] DST, timezone travel, backwards clock jump detection
-- [ ] App killed while running → restore on relaunch
-- [ ] Rapid double-tap Start debounce
-- [ ] Idle detection with **keep** as the default action
-- [ ] Task deleted while linked → keep sessions, null the link
-- [ ] Write failure → retry, error toast, never lose in-memory session
-- [ ] Offline indicator
-- [ ] Notifications denied while reminder is ON
+Split into three PRs. Four items were already built, one was cut, two stay
+blocked with C10c.
+
+- [x] Short session (<60s) discard confirm — already built in C4
+- [x] Cross-midnight attribution (split at local midnight) — already built in C5
+- [x] App killed while running → restore on relaunch — already true of SQLite
+- [x] Rapid double-tap Start debounce — D1a
+- [x] Write failure → retry, error toast, never lose in-memory session — D1a
+- [x] Suspiciously long session keep-or-edit prompt — D1b
+- [x] DST, timezone travel, backwards clock jump detection — D1b
+- [x] Task deleted while linked → keep sessions, null the link — D1c
+- [x] Owl `surprised` on a very long session (§6.1) — D1b, not in the original list
+- [ ] ~~Offline indicator~~ — **cut**
+- [ ] Idle detection with **keep** as the default action — **cannot be built**
+- [ ] Notifications denied while reminder is ON — **unreachable**, moves to C10c
+
+**The offline indicator is cut.** There is no `fetch`, no network client and no
+remote of any kind in the app. An indicator for a condition that cannot affect
+anything is what the locked decisions argue against, and the owner agreed.
+
+**Idle detection cannot be built.** React Native exposes no user-idle API.
+`Tocky-Flows.md` §6.4 already licenses degrading to manual pause, which is what
+the app does. What survives of the idea — asking about a session that has run
+away with itself — is the D1b prompt. The preference toggle stays in C10c.
+
+**Notifications denied is unreachable** until `expo-notifications` can be
+installed, so it moves to C10c with the rest of reminders.
+
+#### D1a · Writes that cannot lose a session, starts that cannot double
+
+- [x] `startSession` discards a session a second tap ended before it recorded
+      anything — measured on the wall clock, so a session deliberately paused
+      and switched away from is still kept
+- [x] Every SQLite write retried once, then reported, leaving the snapshot
+      untouched so a running session is never lost
+- [x] `WriteLanded` on the five writes a screen acts on the outcome of, so no
+      screen claims success over a write that never landed
+
+#### D1b · When the clock lies
+
+- [x] `findRunningSessionProblem`, sibling to `findSessionTimeProblem`
+- [x] Prompt on open and on foreground, keep as the default, asked once per
+      session and written down so a force-quit does not ask again
+- [x] Backwards clock jump made visible instead of clamping to `00:00`
+- [x] Owl `surprised` past the same threshold
+
+#### D1c · Delete a task, keep its sessions
+
+- [x] `deleteTask` on the contract, both implementations
+- [x] Sessions kept, `linkedTaskId` nulled, in one transaction
+- [x] Confirm naming how many sessions survive, and a running one separately
 
 ### D2 · Accessibility
 
