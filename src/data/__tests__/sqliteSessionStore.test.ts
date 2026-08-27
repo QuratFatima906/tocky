@@ -167,3 +167,147 @@ describe('createSqliteSessionStore', () => {
     expect(createSqliteSessionStore(createNodeSqliteDatabase()).getSnapshot().status).toBe('ready');
   });
 });
+
+/**
+ * A database that refuses writes the way a full disk would.
+ * `failOnlyTheNextWrite` is the transient case a retry survives.
+ * `failEveryWriteFrom` lets the first n - 1 statements through and refuses
+ * from the nth on, which is the only way to get a transaction partway in and
+ * prove it rolls back.
+ */
+function databaseFailingWrites(database: SqliteDatabase): SqliteDatabase & {
+  failOnlyTheNextWrite: () => void;
+  failEveryWriteFrom: (nth: number) => void;
+} {
+  let writesUntilFailure = Number.POSITIVE_INFINITY;
+  let recoversAfterFailing = false;
+
+  return {
+    ...database,
+    failOnlyTheNextWrite: () => {
+      writesUntilFailure = 0;
+      recoversAfterFailing = true;
+    },
+    failEveryWriteFrom: (nth) => {
+      writesUntilFailure = nth - 1;
+      recoversAfterFailing = false;
+    },
+    run: (sql, params) => {
+      if (writesUntilFailure <= 0) {
+        if (recoversAfterFailing) writesUntilFailure = Number.POSITIVE_INFINITY;
+        throw new Error('database or disk is full');
+      }
+      writesUntilFailure -= 1;
+      database.run(sql, params);
+    },
+  };
+}
+
+describe('a write that cannot reach disk', () => {
+  let logged: jest.SpyInstance;
+
+  beforeEach(() => {
+    logged = jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => logged.mockRestore());
+
+  it('logs what actually went wrong, so a real bug is not read as a full disk', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+
+    database.failEveryWriteFrom(1);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(logged).toHaveBeenCalledWith('Tocky could not end the session.', expect.any(Error));
+  });
+
+  it('retries once, so a momentarily busy database costs nothing', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed);
+
+    database.failOnlyTheNextWrite();
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(store.getSnapshot().sessions[0]!.endedAt).toBe(CONTRACT_NOW);
+    expect(onWriteFailed).not.toHaveBeenCalled();
+  });
+
+  it('leaves the running session running rather than losing its time', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const before = store.getSnapshot();
+
+    database.failEveryWriteFrom(1);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(store.getSnapshot()).toBe(before);
+    expect(store.getSnapshot().sessions[0]!.endedAt).toBeNull();
+  });
+
+  it('names the action it could not carry out', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed);
+
+    database.failEveryWriteFrom(1);
+    store.pauseActiveSession(CONTRACT_NOW);
+
+    expect(onWriteFailed).toHaveBeenCalledTimes(1);
+    expect(onWriteFailed.mock.calls[0]![0]).toMatchObject({ action: 'pause the session' });
+  });
+
+  it('does not tell subscribers a thing changed when nothing did', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onStoreChanged = jest.fn();
+    store.subscribe(onStoreChanged);
+
+    database.failEveryWriteFrom(1);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(onStoreChanged).not.toHaveBeenCalled();
+  });
+
+  it('stops reporting failures once unsubscribed', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed)();
+
+    database.failEveryWriteFrom(1);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(onWriteFailed).not.toHaveBeenCalled();
+  });
+
+  it('rolls a failed multi-statement write all the way back', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed);
+
+    store.pauseActiveSession(CONTRACT_NOW - 60_000);
+
+    // Starting a session ends the old one, closes its pause, then inserts the
+    // new one. Refusing from the third leaves the first two to be undone.
+    database.failEveryWriteFrom(3);
+    store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW });
+
+    // Read the disk, not the snapshot: the snapshot is deliberately frozen on
+    // a failed write, so it would look right however much half-work survived.
+    const rows = database.all<{ id: string; endedAt: number | null }>(
+      'select id, endedAt from sessions',
+    );
+    const openPauses = database.all<{ total: number }>(
+      'select count(*) as total from pauses where endedAt is null',
+    )[0]!.total;
+
+    expect(onWriteFailed).toHaveBeenCalledTimes(1);
+    expect(rows).toEqual([{ id: ACTIVE_SESSION.id, endedAt: null }]);
+    expect(openPauses).toBe(1);
+  });
+});

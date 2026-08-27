@@ -9,6 +9,7 @@ import {
 } from '@/domain';
 
 import {
+  isAccidentalStart,
   isCategoryInUse,
   newCategory,
   newSession,
@@ -25,6 +26,20 @@ const PROFILE_NAME_KEY = 'profileName';
 const THEME_PREFERENCE_KEY = 'themePreference';
 
 const THEME_PREFERENCES: readonly ThemePreference[] = ['light', 'dark', 'system'];
+
+/**
+ * A write that never reached disk, after being retried. The snapshot is left
+ * exactly as it was, so nothing recorded is lost — the change simply did not
+ * happen, and `action` names it well enough to tell the user which one.
+ */
+export type WriteFailure = {
+  readonly action: string;
+  readonly error: unknown;
+};
+
+export type SqliteSessionStore = SessionStore & {
+  subscribeToWriteFailures: (listener: (failure: WriteFailure) => void) => () => void;
+};
 
 type CategoryRow = {
   id: string;
@@ -56,11 +71,12 @@ type TaskRow = {
   completedAt: number | null;
 };
 
-export function createSqliteSessionStore(database: SqliteDatabase): SessionStore {
+export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessionStore {
   migrateToLatestSchema(database);
 
   let snapshot = readSnapshot(database);
   const listeners = new Set<() => void>();
+  const failureListeners = new Set<(failure: WriteFailure) => void>();
 
   // ponytail: every write re-reads the whole store. Fine for one person's own
   // history; swap for a targeted snapshot update if a year of sessions drags.
@@ -69,10 +85,43 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
     listeners.forEach((listener) => listener());
   }
 
+  /**
+   * A full disk or a busy database must not take the app down mid-session.
+   * Every write is retried once, and a write that still fails leaves the
+   * snapshot untouched: the running session keeps running and its time is
+   * still on disk, because the last thing that reached disk is still there.
+   */
+  function write(action: string, apply: () => void): boolean {
+    // ponytail: one immediate retry, which covers a database busy for a moment
+    // and nothing else. A backoff queue belongs here only once a real failure
+    // turns out to need one.
+    try {
+      apply();
+    } catch {
+      try {
+        apply();
+      } catch (error) {
+        // Not every failure is a full disk. A constraint violation or a typo in
+        // one of these statements would otherwise be swallowed into "try
+        // again" and run twice, with nothing left to debug from.
+        console.error(`Tocky could not ${action}.`, error);
+        failureListeners.forEach((listener) => listener({ action, error }));
+        return false;
+      }
+    }
+    reloadAndNotify();
+    return true;
+  }
+
   return {
     subscribe(onStoreChanged) {
       listeners.add(onStoreChanged);
       return () => listeners.delete(onStoreChanged);
+    },
+
+    subscribeToWriteFailures(onWriteFailed) {
+      failureListeners.add(onWriteFailed);
+      return () => failureListeners.delete(onWriteFailed);
     },
 
     getSnapshot: () => snapshot,
@@ -81,186 +130,213 @@ export function createSqliteSessionStore(database: SqliteDatabase): SessionStore
       const active = findActiveSession(snapshot.sessions);
       const session = newSession(input);
 
-      database.inTransaction(() => {
-        if (active !== null) {
-          database.run('update sessions set endedAt = ? where id = ?', [input.at, active.id]);
-          database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
-            input.at,
-            active.id,
-          ]);
-        }
+      return write('start the session', () => {
+        database.inTransaction(() => {
+          if (active !== null && isAccidentalStart(active, input.at)) {
+            database.run('delete from pauses where sessionId = ?', [active.id]);
+            database.run('delete from sessions where id = ?', [active.id]);
+          } else if (active !== null) {
+            database.run('update sessions set endedAt = ? where id = ?', [input.at, active.id]);
+            database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
+              input.at,
+              active.id,
+            ]);
+          }
 
-        database.run(
-          `insert into sessions (id, categoryId, label, startedAt, endedAt, linkedTaskId, note)
-           values (?, ?, ?, ?, null, ?, null)`,
-          [session.id, session.categoryId, session.label, session.startedAt, session.linkedTaskId],
-        );
+          database.run(
+            `insert into sessions (id, categoryId, label, startedAt, endedAt, linkedTaskId, note)
+             values (?, ?, ?, ?, null, ?, null)`,
+            [
+              session.id,
+              session.categoryId,
+              session.label,
+              session.startedAt,
+              session.linkedTaskId,
+            ],
+          );
+        });
       });
-      reloadAndNotify();
     },
 
     endActiveSession(at) {
       const active = findActiveSession(snapshot.sessions);
-      if (active === null) return;
+      if (active === null) return true;
 
-      database.inTransaction(() => {
-        database.run('update sessions set endedAt = ? where id = ?', [at, active.id]);
-        database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
-          at,
-          active.id,
-        ]);
+      return write('end the session', () => {
+        database.inTransaction(() => {
+          database.run('update sessions set endedAt = ? where id = ?', [at, active.id]);
+          database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
+            at,
+            active.id,
+          ]);
+        });
       });
-      reloadAndNotify();
     },
 
     deleteSession(sessionId) {
-      if (!snapshot.sessions.some((session) => session.id === sessionId)) return;
+      if (!snapshot.sessions.some((session) => session.id === sessionId)) return true;
 
-      database.inTransaction(() => {
-        database.run('delete from pauses where sessionId = ?', [sessionId]);
-        database.run('delete from sessions where id = ?', [sessionId]);
+      return write('delete the session', () => {
+        database.inTransaction(() => {
+          database.run('delete from pauses where sessionId = ?', [sessionId]);
+          database.run('delete from sessions where id = ?', [sessionId]);
+        });
       });
-      reloadAndNotify();
     },
 
     editSession(sessionId, edit) {
-      if (!snapshot.sessions.some((session) => session.id === sessionId)) return;
+      if (!snapshot.sessions.some((session) => session.id === sessionId)) return true;
 
-      database.run(
-        `update sessions
-            set categoryId = ?, label = ?, startedAt = ?, endedAt = ?, note = ?
-          where id = ?`,
-        [edit.categoryId, edit.label, edit.startedAt, edit.endedAt, edit.note, sessionId],
-      );
-      reloadAndNotify();
+      return write('save your changes', () => {
+        database.run(
+          `update sessions
+              set categoryId = ?, label = ?, startedAt = ?, endedAt = ?, note = ?
+            where id = ?`,
+          [edit.categoryId, edit.label, edit.startedAt, edit.endedAt, edit.note, sessionId],
+        );
+      });
     },
 
     addTask(input) {
       const task = newTask(input);
 
-      database.run(
-        `insert into tasks (id, title, categoryId, estimateSeconds, createdAt, completedAt)
-         values (?, ?, ?, ?, ?, null)`,
-        [task.id, task.title, task.categoryId, task.estimateSeconds, task.createdAt],
-      );
-      reloadAndNotify();
+      write('add the task', () => {
+        database.run(
+          `insert into tasks (id, title, categoryId, estimateSeconds, createdAt, completedAt)
+           values (?, ?, ?, ?, ?, null)`,
+          [task.id, task.title, task.categoryId, task.estimateSeconds, task.createdAt],
+        );
+      });
     },
 
     setTaskCompleted(taskId, completedAt) {
       const existing = snapshot.tasks.find((task) => task.id === taskId);
-      if (existing === undefined || existing.completedAt === completedAt) return;
+      if (existing === undefined || existing.completedAt === completedAt) return true;
 
-      database.run('update tasks set completedAt = ? where id = ?', [completedAt, taskId]);
-      reloadAndNotify();
+      return write('update the task', () => {
+        database.run('update tasks set completedAt = ? where id = ?', [completedAt, taskId]);
+      });
     },
 
     completeOnboarding() {
       if (snapshot.hasCompletedOnboarding) return;
 
-      writeSetting(database, ONBOARDING_COMPLETED_KEY, 'true');
-      reloadAndNotify();
+      write('finish setting up', () => {
+        writeSetting(database, ONBOARDING_COMPLETED_KEY, 'true');
+      });
     },
 
     setProfileName(name) {
       const profileName = trimmedNameOrNull(name);
       if (snapshot.profileName === profileName) return;
 
-      if (profileName === null)
-        database.run('delete from settings where key = ?', [PROFILE_NAME_KEY]);
-      else writeSetting(database, PROFILE_NAME_KEY, profileName);
-      reloadAndNotify();
+      write('save your name', () => {
+        if (profileName === null)
+          database.run('delete from settings where key = ?', [PROFILE_NAME_KEY]);
+        else writeSetting(database, PROFILE_NAME_KEY, profileName);
+      });
     },
 
     addCategory(draft) {
       const category = newCategory(draft);
-      const nextOrder =
-        database.all<{ nextOrder: number }>(
-          'select coalesce(max(sortOrder), 0) + 1 as nextOrder from categories',
-        )[0]?.nextOrder ?? 1;
 
-      database.run(
-        `insert into categories (id, name, icon, color, isArchived, sortOrder)
-         values (?, ?, ?, ?, 0, ?)`,
-        [category.id, category.name, category.icon, category.color, nextOrder],
-      );
-      reloadAndNotify();
+      write('add the category', () => {
+        const nextOrder =
+          database.all<{ nextOrder: number }>(
+            'select coalesce(max(sortOrder), 0) + 1 as nextOrder from categories',
+          )[0]?.nextOrder ?? 1;
+
+        database.run(
+          `insert into categories (id, name, icon, color, isArchived, sortOrder)
+           values (?, ?, ?, ?, 0, ?)`,
+          [category.id, category.name, category.icon, category.color, nextOrder],
+        );
+      });
     },
 
     editCategory(categoryId, draft) {
       if (!snapshot.categories.some((category) => category.id === categoryId)) return;
 
-      database.run('update categories set name = ?, icon = ?, color = ? where id = ?', [
-        draft.name.trim(),
-        draft.icon,
-        draft.color,
-        categoryId,
-      ]);
-      reloadAndNotify();
+      write('save the category', () => {
+        database.run('update categories set name = ?, icon = ?, color = ? where id = ?', [
+          draft.name.trim(),
+          draft.icon,
+          draft.color,
+          categoryId,
+        ]);
+      });
     },
 
     setCategoryArchived(categoryId, isArchived) {
       const existing = snapshot.categories.find((category) => category.id === categoryId);
       if (existing === undefined || existing.isArchived === isArchived) return;
 
-      database.run('update categories set isArchived = ? where id = ?', [
-        isArchived ? 1 : 0,
-        categoryId,
-      ]);
-      reloadAndNotify();
+      write(isArchived ? 'archive the category' : 'restore the category', () => {
+        database.run('update categories set isArchived = ? where id = ?', [
+          isArchived ? 1 : 0,
+          categoryId,
+        ]);
+      });
     },
 
     reorderCategories(orderedCategoryIds) {
-      database.inTransaction(() => {
-        orderedCategoryIds.forEach((categoryId, index) => {
-          database.run('update categories set sortOrder = ? where id = ?', [index, categoryId]);
+      write('reorder your categories', () => {
+        database.inTransaction(() => {
+          orderedCategoryIds.forEach((categoryId, index) => {
+            database.run('update categories set sortOrder = ? where id = ?', [index, categoryId]);
+          });
         });
       });
-      reloadAndNotify();
     },
 
     deleteCategory(categoryId) {
       if (isCategoryInUse(categoryId, snapshot)) return;
       if (!snapshot.categories.some((category) => category.id === categoryId)) return;
 
-      database.run('delete from categories where id = ?', [categoryId]);
-      reloadAndNotify();
+      write('delete the category', () => {
+        database.run('delete from categories where id = ?', [categoryId]);
+      });
     },
 
     setThemePreference(preference) {
       if (snapshot.themePreference === preference) return;
 
-      writeSetting(database, THEME_PREFERENCE_KEY, preference);
-      reloadAndNotify();
+      write('save your appearance choice', () => {
+        writeSetting(database, THEME_PREFERENCE_KEY, preference);
+      });
     },
 
     noteActiveSession(note) {
       const active = findActiveSession(snapshot.sessions);
       if (active === null || active.note === note) return;
 
-      database.run('update sessions set note = ? where id = ?', [note, active.id]);
-      reloadAndNotify();
+      write('save your note', () => {
+        database.run('update sessions set note = ? where id = ?', [note, active.id]);
+      });
     },
 
     pauseActiveSession(at) {
       const active = findActiveSession(snapshot.sessions);
       if (active === null || isPaused(active)) return;
 
-      database.run('insert into pauses (sessionId, startedAt, endedAt) values (?, ?, null)', [
-        active.id,
-        at,
-      ]);
-      reloadAndNotify();
+      write('pause the session', () => {
+        database.run('insert into pauses (sessionId, startedAt, endedAt) values (?, ?, null)', [
+          active.id,
+          at,
+        ]);
+      });
     },
 
     resumeActiveSession(at) {
       const active = findActiveSession(snapshot.sessions);
       if (active === null || !isPaused(active)) return;
 
-      database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
-        at,
-        active.id,
-      ]);
-      reloadAndNotify();
+      write('resume the session', () => {
+        database.run('update pauses set endedAt = ? where sessionId = ? and endedAt is null', [
+          at,
+          active.id,
+        ]);
+      });
     },
   };
 }

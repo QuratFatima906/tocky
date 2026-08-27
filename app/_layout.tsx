@@ -10,6 +10,7 @@ import {
   openTockyDatabase,
   SessionStoreProvider,
   useSessionStoreSnapshot,
+  useWriteFailureToast,
 } from '@/data';
 import { ThemeProvider, ToastProvider, useAppFonts, useTheme } from '@/design-system';
 
@@ -23,6 +24,8 @@ function ThemedApp() {
   const theme = useTheme();
   const { status, hasCompletedOnboarding } = useSessionStoreSnapshot();
   const isPastOnboarding = status !== 'ready' || hasCompletedOnboarding;
+
+  useWriteFailureToast(sessionStore);
 
   return (
     <>

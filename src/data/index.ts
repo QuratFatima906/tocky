@@ -16,3 +16,5 @@ export { openTockyDatabase, TOCKY_DATABASE_NAME } from './sqlite/database';
 export type { SqliteDatabase, SqlValue } from './sqlite/database';
 export { LATEST_SCHEMA_VERSION } from './sqlite/migrations';
 export { createSqliteSessionStore } from './sqlite/sqliteSessionStore';
+export type { SqliteSessionStore, WriteFailure } from './sqlite/sqliteSessionStore';
+export { useWriteFailureToast } from './useWriteFailureToast';

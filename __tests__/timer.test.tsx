@@ -33,6 +33,11 @@ function storeWith(sessions: readonly Session[]): SessionStore {
   });
 }
 
+/** The store the app has when the disk is full: writes report they never landed. */
+function storeThatCannotWrite(sessions: readonly Session[]): SessionStore {
+  return { ...storeWith(sessions), endActiveSession: () => false, deleteSession: () => false };
+}
+
 async function renderTimer(store: SessionStore = storeWith([RUNNING_SESSION])) {
   await renderWithProviders(
     <TimerScreen onCollapse={onCollapse} onSwitchCategory={onSwitchCategory} onEnded={onEnded} />,
@@ -283,5 +288,35 @@ describe('the note', () => {
     });
 
     expect(store.getSnapshot().sessions[0]!.note).toBeNull();
+  });
+});
+
+describe('when the write cannot reach disk', () => {
+  it('does not say the session was saved', async () => {
+    await renderTimer(storeThatCannotWrite([RUNNING_SESSION]));
+
+    await press('End');
+
+    expect(screen.queryByText(/Session saved/)).toBeNull();
+  });
+
+  it('stays on the timer rather than leaving for Home', async () => {
+    await renderTimer(storeThatCannotWrite([RUNNING_SESSION]));
+
+    await press('End');
+
+    expect(onEnded).not.toHaveBeenCalled();
+  });
+
+  it('does not say a session was discarded when it is still there', async () => {
+    const alert = alertSpy();
+    await renderTimer(storeThatCannotWrite([RUNNING_SESSION]));
+
+    await press('More options');
+    await tapAlertButton(alert, 'Discard');
+
+    expect(screen.queryByText('Session discarded')).toBeNull();
+    expect(onEnded).not.toHaveBeenCalled();
+    alert.mockRestore();
   });
 });

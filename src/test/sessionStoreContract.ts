@@ -144,6 +144,61 @@ export function describeSessionStoreContract(
       expect(started.startedAt).toBe(previous.endedAt);
     });
 
+    it('discards a session a second Start tap ended before it recorded anything', () => {
+      const store = createStore([FINISHED_SESSION]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+      const ghostId = store.getSnapshot().sessions[0]!.id;
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW + 40 });
+
+      const { sessions } = store.getSnapshot();
+      expect(sessions.map((session) => session.id)).not.toContain(ghostId);
+      expect(sessions.filter(isRunning)).toHaveLength(1);
+      expect(sessions).toHaveLength(2);
+    });
+
+    it('keeps a session switched away from after a full second of tracking', () => {
+      const store = createStore([]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW + 1000 });
+
+      expect(store.getSnapshot().sessions).toHaveLength(2);
+    });
+
+    it('keeps a session paused on purpose, however little of it counted', () => {
+      const store = createStore([]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+      store.pauseActiveSession(CONTRACT_NOW);
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW + 10 * MINUTE });
+
+      const paused = store.getSnapshot().sessions.find((session) => session.categoryId === 'work')!;
+      expect(sessionSeconds(paused, CONTRACT_NOW + 20 * MINUTE)).toBe(0);
+      expect(paused.endedAt).toBe(CONTRACT_NOW + 10 * MINUTE);
+    });
+
+    it('keeps a session the clock jumped backwards over, rather than eating it', () => {
+      const store = createStore([]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW - 30 * MINUTE });
+
+      expect(store.getSnapshot().sessions).toHaveLength(2);
+    });
+
+    it('takes the discarded session pauses and all', () => {
+      const store = createStore([]);
+
+      store.startSession({ categoryId: 'work', label: null, at: CONTRACT_NOW });
+      store.pauseActiveSession(CONTRACT_NOW);
+      store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW + 40 });
+
+      const [running] = store.getSnapshot().sessions;
+      expect(store.getSnapshot().sessions).toHaveLength(1);
+      expect(running!.pauses).toEqual([]);
+    });
+
     it('closes an open pause when the paused session is switched away from', () => {
       const store = createStore([ACTIVE_SESSION]);
 
