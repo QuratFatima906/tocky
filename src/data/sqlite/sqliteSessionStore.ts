@@ -219,6 +219,19 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
       });
     },
 
+    deleteTask(taskId) {
+      if (!snapshot.tasks.some((task) => task.id === taskId)) return true;
+
+      return write('delete the task', () => {
+        database.inTransaction(() => {
+          // Let the sessions go before the task does, so there is no instant
+          // where a session points at a row that is not there.
+          database.run('update sessions set linkedTaskId = null where linkedTaskId = ?', [taskId]);
+          database.run('delete from tasks where id = ?', [taskId]);
+        });
+      });
+    },
+
     completeOnboarding() {
       if (snapshot.hasCompletedOnboarding) return;
 

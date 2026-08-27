@@ -407,6 +407,76 @@ export function describeSessionStoreContract(
       expect(onStoreChanged).not.toHaveBeenCalled();
     });
 
+    it('deletes a task', () => {
+      const store = createStore([]);
+      store.addTask({ title: 'Write it up', categoryId: 'work', estimateSeconds: null, at: 1 });
+      const taskId = store.getSnapshot().tasks[0]!.id;
+
+      store.deleteTask(taskId);
+
+      expect(store.getSnapshot().tasks).toEqual([]);
+    });
+
+    it('keeps every session tracked against a deleted task, and lets go of the link', () => {
+      const store = createStore([]);
+      store.addTask({ title: 'Write it up', categoryId: 'work', estimateSeconds: null, at: 1 });
+      const taskId = store.getSnapshot().tasks[0]!.id;
+      store.startSession({
+        categoryId: 'work',
+        label: 'Write it up',
+        at: CONTRACT_NOW - 30 * MINUTE,
+        linkedTaskId: taskId,
+      });
+      store.endActiveSession(CONTRACT_NOW);
+
+      store.deleteTask(taskId);
+      const [session] = store.getSnapshot().sessions;
+
+      expect(session).toMatchObject({ linkedTaskId: null, label: 'Write it up' });
+      expect(sessionSeconds(session!, CONTRACT_NOW)).toBe(30 * 60);
+    });
+
+    it('leaves sessions linked to other tasks alone', () => {
+      const store = createStore([]);
+      store.addTask({ title: 'Doomed', categoryId: 'work', estimateSeconds: null, at: 1 });
+      store.addTask({ title: 'Spared', categoryId: 'work', estimateSeconds: null, at: 2 });
+      const [spared, doomed] = store.getSnapshot().tasks;
+      store.startSession({
+        categoryId: 'work',
+        label: null,
+        at: CONTRACT_NOW - MINUTE,
+        linkedTaskId: spared!.id,
+      });
+
+      store.deleteTask(doomed!.id);
+
+      expect(store.getSnapshot().sessions[0]!.linkedTaskId).toBe(spared!.id);
+    });
+
+    it('lets a session that is running carry on running', () => {
+      const store = createStore([]);
+      store.addTask({ title: 'Write it up', categoryId: 'work', estimateSeconds: null, at: 1 });
+      const taskId = store.getSnapshot().tasks[0]!.id;
+      store.startSession({
+        categoryId: 'work',
+        label: null,
+        at: CONTRACT_NOW - MINUTE,
+        linkedTaskId: taskId,
+      });
+
+      store.deleteTask(taskId);
+
+      expect(store.getSnapshot().sessions.filter(isRunning)).toHaveLength(1);
+    });
+
+    it('ignores a delete for a task it does not have', () => {
+      const store = createStore([ACTIVE_SESSION]);
+
+      store.deleteTask('never-existed');
+
+      expect(store.getSnapshot().sessions).toHaveLength(1);
+    });
+
     it('links a session to the task it was started from', () => {
       const store = createStore([]);
       store.addTask({

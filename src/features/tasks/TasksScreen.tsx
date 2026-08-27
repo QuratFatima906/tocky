@@ -10,9 +10,11 @@ import {
   Text,
   TockyOwl,
   useTheme,
+  useToast,
 } from '@/design-system';
 import {
   findActiveSession,
+  isRunning,
   sessionTrackingTask,
   trackedSecondsForTask,
   type Category,
@@ -33,6 +35,7 @@ const ALL_CATEGORIES = 'all';
 export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => void }) {
   const theme = useTheme();
   const store = useSessionStore();
+  const showToast = useToast();
   const { status, tasks, sessions, categories } = useSessionStoreSnapshot();
   const now = useNow(TRACKED_TICK_MS);
   const [isAdding, setIsAdding] = useState(false);
@@ -77,6 +80,21 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
       to: category,
       onConfirm: track,
     });
+  }
+
+  function confirmDelete(task: Task): void {
+    const tracked = sessions.filter((session) => session.linkedTaskId === task.id);
+
+    Alert.alert(`Delete "${task.title}"?`, deleteWarningFor(tracked), [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          if (store.deleteTask(task.id)) showToast(`Deleted "${task.title}"`);
+        },
+      },
+    ]);
   }
 
   function toggleCompleted(task: Task, at: number): void {
@@ -193,6 +211,7 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
             now={now}
             onToggleCompleted={() => toggleCompleted(task, Date.now())}
             onStartTracking={() => startTracking(task)}
+            onDelete={() => confirmDelete(task)}
           />
         ))}
 
@@ -216,6 +235,7 @@ export function TasksScreen({ onTrackingStarted }: { onTrackingStarted: () => vo
             now={now}
             onToggleCompleted={() => toggleCompleted(task, Date.now())}
             onStartTracking={() => startTracking(task)}
+            onDelete={() => confirmDelete(task)}
           />
         ))}
 
@@ -243,6 +263,7 @@ function TaskRowForTask({
   now,
   onToggleCompleted,
   onStartTracking,
+  onDelete,
 }: {
   task: Task;
   categories: readonly Category[];
@@ -250,6 +271,7 @@ function TaskRowForTask({
   now: number;
   onToggleCompleted: () => void;
   onStartTracking: () => void;
+  onDelete: () => void;
 }) {
   return (
     <TaskRow
@@ -259,6 +281,7 @@ function TaskRowForTask({
       isTracking={sessionTrackingTask(task, sessions) !== null}
       onToggleCompleted={onToggleCompleted}
       onStartTracking={onStartTracking}
+      onDelete={onDelete}
     />
   );
 }
@@ -293,4 +316,20 @@ function FilterChip({
       </Text>
     </PressableScale>
   );
+}
+
+/**
+ * Says out loud what survives. Time tracked against a task was really spent,
+ * so it stays in History under the label it was given — only the link to the
+ * task goes. A session still running is worth naming separately, because it
+ * carries on running and the row that showed it is about to disappear.
+ */
+function deleteWarningFor(tracked: readonly Session[]): string {
+  if (tracked.length === 0) return 'Nothing has been tracked against it yet.';
+
+  const stillRunning = tracked.some((session) => isRunning(session));
+  const count = tracked.length === 1 ? '1 session' : `${tracked.length} sessions`;
+  const kept = `${count} tracked against it will be kept in your history.`;
+
+  return stillRunning ? `${kept} The one running now carries on.` : kept;
 }

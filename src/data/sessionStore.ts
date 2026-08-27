@@ -78,6 +78,12 @@ export type SessionStore = {
   noteActiveSession: (note: string | null) => void;
   addTask: (input: AddTaskInput) => void;
   setTaskCompleted: (taskId: string, completedAt: number | null) => WriteLanded;
+  /**
+   * Removes the task and lets go of every session tracked against it, rather
+   * than removing those too. The time was really spent; only the thing it was
+   * spent on is gone, and each session keeps the task's title as its label.
+   */
+  deleteTask: (taskId: string) => WriteLanded;
   /** Retires the intro panes for good. Onboarding is shown once per install. */
   completeOnboarding: () => void;
   /** An empty name clears it, rather than greeting the user with blank space. */
@@ -294,6 +300,20 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
 
     noteActiveSession(note) {
       replaceActiveSession((active) => (active.note === note ? active : { ...active, note }));
+    },
+
+    deleteTask(taskId) {
+      if (!snapshot.tasks.some((task) => task.id === taskId)) return true;
+
+      snapshot = {
+        ...snapshot,
+        tasks: snapshot.tasks.filter((task) => task.id !== taskId),
+        sessions: snapshot.sessions.map((session) =>
+          session.linkedTaskId === taskId ? { ...session, linkedTaskId: null } : session,
+        ),
+      };
+      listeners.forEach((listener) => listener());
+      return true;
     },
 
     completeOnboarding() {
