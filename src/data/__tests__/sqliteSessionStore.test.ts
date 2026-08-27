@@ -167,3 +167,101 @@ describe('createSqliteSessionStore', () => {
     expect(createSqliteSessionStore(createNodeSqliteDatabase()).getSnapshot().status).toBe('ready');
   });
 });
+
+/** A database that fails the next `count` writes, the way a full disk would. */
+function databaseFailingWrites(database: SqliteDatabase): SqliteDatabase & {
+  failNextWrites: (count: number) => void;
+} {
+  let remainingFailures = 0;
+
+  return {
+    ...database,
+    failNextWrites: (count) => {
+      remainingFailures = count;
+    },
+    run: (sql, params) => {
+      if (remainingFailures > 0) {
+        remainingFailures -= 1;
+        throw new Error('database or disk is full');
+      }
+      database.run(sql, params);
+    },
+  };
+}
+
+describe('a write that cannot reach disk', () => {
+  it('retries once, so a momentarily busy database costs nothing', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed);
+
+    database.failNextWrites(1);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(store.getSnapshot().sessions[0]!.endedAt).toBe(CONTRACT_NOW);
+    expect(onWriteFailed).not.toHaveBeenCalled();
+  });
+
+  it('leaves the running session running rather than losing its time', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const before = store.getSnapshot();
+
+    database.failNextWrites(2);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(store.getSnapshot()).toBe(before);
+    expect(store.getSnapshot().sessions[0]!.endedAt).toBeNull();
+  });
+
+  it('names the action it could not carry out', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed);
+
+    database.failNextWrites(2);
+    store.pauseActiveSession(CONTRACT_NOW);
+
+    expect(onWriteFailed).toHaveBeenCalledTimes(1);
+    expect(onWriteFailed.mock.calls[0]![0]).toMatchObject({ action: 'pause the session' });
+  });
+
+  it('does not tell subscribers a thing changed when nothing did', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onStoreChanged = jest.fn();
+    store.subscribe(onStoreChanged);
+
+    database.failNextWrites(2);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(onStoreChanged).not.toHaveBeenCalled();
+  });
+
+  it('stops reporting failures once unsubscribed', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+    const onWriteFailed = jest.fn();
+    store.subscribeToWriteFailures(onWriteFailed)();
+
+    database.failNextWrites(2);
+    store.endActiveSession(CONTRACT_NOW);
+
+    expect(onWriteFailed).not.toHaveBeenCalled();
+  });
+
+  it('rolls a failed multi-statement write all the way back', () => {
+    const database = databaseFailingWrites(databaseHolding([ACTIVE_SESSION]));
+    const store = createSqliteSessionStore(database);
+
+    store.pauseActiveSession(CONTRACT_NOW - 60_000);
+    database.failNextWrites(4);
+    store.startSession({ categoryId: 'health', label: null, at: CONTRACT_NOW });
+
+    const { sessions } = store.getSnapshot();
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]!.pauses).toEqual([{ startedAt: CONTRACT_NOW - 60_000, endedAt: null }]);
+  });
+});

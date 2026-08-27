@@ -137,6 +137,23 @@ export function reordered(
   return [...named, ...categories.filter((category) => !named.includes(category))];
 }
 
+/**
+ * Two taps on Start land milliseconds apart, and the first opens a session the
+ * second immediately ends — a zero-length ghost in History that no one meant to
+ * record. Discarding it is not losing data, because there is none: measured on
+ * the wall clock, not on tracked seconds, so a session someone deliberately
+ * paused and switched away from is still real however little it counted.
+ */
+const ACCIDENTAL_START_WINDOW_MS = 1000;
+
+export function isAccidentalStart(active: Session, at: number): boolean {
+  const elapsed = at - active.startedAt;
+
+  // A clock moved backwards makes any session look shorter than it was, and a
+  // negative elapsed is not evidence of anything. Keep it and let D1b ask.
+  return elapsed >= 0 && elapsed < ACCIDENTAL_START_WINDOW_MS;
+}
+
 function endedAtInstant(session: Session, at: number): Session {
   return {
     ...session,
@@ -190,14 +207,16 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
 
     startSession(input) {
       const active = findActiveSession(snapshot.sessions);
+      const discardsActive = active !== null && isAccidentalStart(active, input.at);
 
       snapshot = {
         ...snapshot,
         sessions: [
           newSession(input),
-          ...snapshot.sessions.map((session) =>
-            session.id === active?.id ? endedAtInstant(session, input.at) : session,
-          ),
+          ...snapshot.sessions.flatMap((session) => {
+            if (session.id !== active?.id) return [session];
+            return discardsActive ? [] : [endedAtInstant(session, input.at)];
+          }),
         ],
       };
       listeners.forEach((listener) => listener());
