@@ -23,13 +23,10 @@ import {
   type Category,
   type Session,
 } from '@/domain';
-import { useNow } from '@/hooks/useNow';
-import { useSpokenElapsed } from '@/hooks/useSpokenElapsed';
 
 import { TimerControls } from './TimerControls';
 import { TimerRing } from './TimerRing';
 
-const ELAPSED_TICK_MS = 1000;
 const KEEP_OR_DISCARD_BELOW_SECONDS = 60;
 const NOTE_MAX_LENGTH = 240;
 const PILL_ICON_SIZE = 16;
@@ -77,10 +74,6 @@ function RunningTimer({
   const [isEditingNote, setIsEditingNote] = useState(false);
 
   const isPaused = isSessionPaused(session);
-  const now = useNow(isPaused ? null : ELAPSED_TICK_MS);
-  const elapsedSeconds = sessionSeconds(session, now);
-
-  useSpokenElapsed(elapsedSeconds, isPaused);
   const category = categories.find((candidate) => candidate.id === session.categoryId);
 
   function endSession(at: number): void {
@@ -149,7 +142,7 @@ function RunningTimer({
 
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <TimerRing
-          elapsedSeconds={elapsedSeconds}
+          session={session}
           isPaused={isPaused}
           categoryColor={category?.color ?? theme.color.accent}
         />
