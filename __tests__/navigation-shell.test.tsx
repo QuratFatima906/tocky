@@ -342,7 +342,11 @@ describe('NowTrackingHost', () => {
 
       return (
         <>
-          <Pressable accessibilityLabel="Return to the tabs" onPress={() => setIsLive(true)} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Return to the tabs"
+            onPress={() => setIsLive(true)}
+          />
           <NowTrackingHost isLive={isLive} onOpenTimer={onOpenTimer} />
           <TockyTabBar
             state={tabBarState('index')}
@@ -389,7 +393,11 @@ describe('bottom chrome clearance', () => {
 
     return (
       <>
-        <Pressable accessibilityLabel="Hide the tracking bar" onPress={() => setMounted(false)} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Hide the tracking bar"
+          onPress={() => setMounted(false)}
+        />
         {mounted && <NowTrackingHost onOpenTimer={jest.fn()} />}
       </>
     );

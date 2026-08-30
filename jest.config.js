@@ -1,4 +1,7 @@
 process.env.TZ = 'America/New_York';
+// Unmounting is done by jest.setup.ts instead, so the accessibility audit runs
+// against the tree a test left behind rather than after RNTL has torn it down.
+process.env.RNTL_SKIP_AUTO_CLEANUP = 'true';
 
 module.exports = {
   preset: 'jest-expo',

@@ -1,9 +1,19 @@
 import { View } from 'react-native';
 
-import { IconButton, PressableScale, Surface, Text, TockyIcon, useTheme } from '@/design-system';
+import {
+  IconButton,
+  MINIMUM_TOUCH_TARGET,
+  PressableScale,
+  Surface,
+  Text,
+  TockyIcon,
+  useTheme,
+} from '@/design-system';
 import { formatDuration, type Category, type Task } from '@/domain';
 
 const CHECKBOX_SIZE = 26;
+// The circle is what the design draws; the target is what a thumb has to hit.
+const CHECKBOX_SLOP = (MINIMUM_TOUCH_TARGET - CHECKBOX_SIZE) / 2;
 const TRACKING_DOT_SIZE = 6;
 const CATEGORY_PILL_MAX_WIDTH = '32%';
 
@@ -44,6 +54,7 @@ export function TaskRow({
         accessibilityState={{ checked: isCompleted }}
         accessibilityLabel={task.title}
         onPress={onToggleCompleted}
+        hitSlop={CHECKBOX_SLOP}
         style={{ width: CHECKBOX_SIZE, height: CHECKBOX_SIZE }}
       >
         {isCompleted ? (

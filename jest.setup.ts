@@ -1,3 +1,7 @@
+import { cleanup } from '@testing-library/react-native';
+
+import { expectNoAccessibilityGaps } from '@/test/accessibility';
+
 let mockUuidCount = 0;
 
 // expo-crypto's native module is auto-mocked to return undefined under Jest,
@@ -8,6 +12,14 @@ jest.mock('expo-crypto', () => ({
 
 beforeEach(() => {
   mockUuidCount = 0;
+});
+
+// Every rendered tree in the suite is held to what VoiceOver needs, so a
+// control added without a label fails the test that rendered it rather than
+// waiting for someone to write an accessibility test for that screen.
+afterEach(async () => {
+  expectNoAccessibilityGaps();
+  await cleanup();
 });
 
 export {};

@@ -24,6 +24,7 @@ import {
   type Session,
 } from '@/domain';
 import { useNow } from '@/hooks/useNow';
+import { useSpokenElapsed } from '@/hooks/useSpokenElapsed';
 
 import { TimerControls } from './TimerControls';
 import { TimerRing } from './TimerRing';
@@ -78,6 +79,8 @@ function RunningTimer({
   const isPaused = isSessionPaused(session);
   const now = useNow(isPaused ? null : ELAPSED_TICK_MS);
   const elapsedSeconds = sessionSeconds(session, now);
+
+  useSpokenElapsed(elapsedSeconds, isPaused);
   const category = categories.find((candidate) => candidate.id === session.categoryId);
 
   function endSession(at: number): void {
