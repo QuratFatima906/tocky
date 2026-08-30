@@ -110,7 +110,7 @@ describe('SettingsScreen rows', () => {
     const onManageCategories = jest.fn();
     await renderSettings(storeWith(), { onManageCategories });
 
-    await press('Manage categories');
+    await press(`Manage categories, ${DEFAULT_CATEGORIES.length}`);
 
     expect(onManageCategories).toHaveBeenCalled();
   });

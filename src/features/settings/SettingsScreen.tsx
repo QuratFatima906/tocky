@@ -1,6 +1,6 @@
 import Constants from 'expo-constants';
 import { useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import { useSessionStore, useSessionStoreSnapshot } from '@/data';
 import {
@@ -15,9 +15,12 @@ import {
   TockyOwl,
   useTheme,
   useThemePreference,
+  useToast,
   type CategoryIconName,
   type ThemePreference,
 } from '@/design-system';
+import type { ExportFormat } from '@/domain';
+import { shareExport } from '@/services/shareExport';
 
 import { SettingsRow } from './SettingsRow';
 
@@ -38,8 +41,9 @@ function hueOf(icon: CategoryIconName, fallback: string): string {
 export function SettingsScreen({ onManageCategories }: { onManageCategories?: () => void }) {
   const theme = useTheme();
   const store = useSessionStore();
-  const { profileName, categories } = useSessionStoreSnapshot();
+  const { profileName, categories, sessions, tasks } = useSessionStoreSnapshot();
   const { preference, setPreference } = useThemePreference();
+  const showToast = useToast();
 
   const [draftName, setDraftName] = useState<string | null>(null);
 
@@ -51,6 +55,27 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
   function chooseAppearance(next: ThemePreference): void {
     setPreference(next);
     store.setThemePreference(next);
+  }
+
+  async function exportAs(format: ExportFormat): Promise<void> {
+    const outcome = await shareExport({ sessions, categories, tasks }, format, Date.now());
+
+    // Dismissing the share sheet is a decision, not a failure, so it says
+    // nothing -- and a failure never reads as though the file went out.
+    if (outcome === 'shared') showToast(`Exported ${sessions.length} sessions`);
+    if (outcome === 'failed') showToast('Export failed');
+  }
+
+  function askForExportFormat(): void {
+    Alert.alert(
+      'Export your sessions',
+      `${sessions.length} sessions, with the categories and tasks they refer to.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'CSV', onPress: () => void exportAs('csv') },
+        { text: 'JSON', onPress: () => void exportAs('json') },
+      ],
+    );
   }
 
   const activeCategoryCount = categories.filter((category) => !category.isArchived).length;
@@ -173,7 +198,8 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
           icon="switch"
           hue={hueOf('personal', theme.color.accent)}
           label="Export data"
-          isAwaited
+          value={String(sessions.length)}
+          onPress={askForExportFormat}
         />
         <SettingsRow
           icon="health"

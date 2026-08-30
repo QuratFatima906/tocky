@@ -404,11 +404,22 @@ what to show, the contract decides what is allowed.
 **Archiving keeps history.** An archived category keeps every session it ever
 held and leaves the picker. Restoring puts it back.
 
-### C10c · Export & reminders — blocked on `pod install`
+### C10c · Export & reminders — unblocked, `pod install` fixed in E2
 
 - [ ] Preferences: daily reminder (+ time picker), idle detection, weekly report
-- [ ] Export: CSV + JSON via the share sheet
+- [x] Export: CSV + JSON via the share sheet — C10c-a
 - [ ] Help & support
+
+#### C10c-a · Export
+
+- [x] `sessionsToCsv` / `sessionsToJson` in the domain, pure and derived —
+      durations computed the way every screen computes them, never stored
+- [x] CSV quoting that survives a note with a comma, a quote or a line break
+- [x] The share sheet is handed a file, since a CSV is only useful if a
+      spreadsheet will open it
+- [x] Dismissing the sheet says nothing; a failure never reads as a success
+- [x] `SettingsRow` announces its value, so the row reads as "Export data, 12"
+      rather than dropping the count VoiceOver most needs
 
 ---
 

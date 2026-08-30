@@ -1,0 +1,16 @@
+appId: com.tocky.app
+name: A recorded session can be exported through the share sheet
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/start-work-session.yaml
+- runFlow: subflows/end-session.yaml
+- openLink: tocky://settings
+# The row counts what would go out rather than saying it is coming soon.
+- assertVisible: 'Export data, 1'
+- tapOn: 'Export data, 1'
+- assertVisible: 'Export your sessions'
+- tapOn: 'CSV'
+# The share sheet is handed a file, so it names one -- not a wall of text.
+- assertVisible: '.*tocky-.*csv.*'
+# The sheet is system UI and outlives the app, so it is closed deliberately.
+- stopApp
