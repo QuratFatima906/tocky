@@ -1,0 +1,61 @@
+name: Release
+
+# Builds are chargeable and need credentials this repository does not have
+# yet, so nothing here runs on a push. A tag asks for a build; the workflow
+# refuses politely rather than failing when the secrets are absent.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile
+        type: choice
+        options: [preview, production]
+        default: preview
+      submit:
+        description: Submit to TestFlight when the build finishes
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: EAS build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the credentials exist
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::EXPO_TOKEN is not set. Add it in Settings → Secrets → Actions."
+            echo "See docs/RELEASING.md for what else is needed before a build can run."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # The same gate every pull request passes. A tag is not a reason to skip it.
+      - run: npm run verify
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build
+        run: eas build --platform ios --profile ${{ inputs.profile || 'production' }} --non-interactive --wait
+
+      - name: Submit to TestFlight
+        if: inputs.submit || startsWith(github.ref, 'refs/tags/v')
+        run: eas submit --platform ios --latest --non-interactive
