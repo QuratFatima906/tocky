@@ -5,5 +5,10 @@ import { SettingsScreen } from '@/features/settings/SettingsScreen';
 export default function SettingsRoute() {
   const router = useRouter();
 
-  return <SettingsScreen onManageCategories={() => router.push('/categories')} />;
+  return (
+    <SettingsScreen
+      onManageCategories={() => router.push('/categories')}
+      onOpenHelp={() => router.push('/help')}
+    />
+  );
 }

@@ -56,3 +56,11 @@ export function nextReminderAt(
 
   return due.getTime();
 }
+
+/**
+ * The week's look-back arrives on Monday morning, because weeks start Monday
+ * everywhere else in Tocky and the week it reports on has just closed.
+ *
+ * iOS counts weekdays from Sunday, so Monday is the second.
+ */
+export const WEEKLY_REPORT_SCHEDULE = { weekday: 2, hour: 9, minute: 0 } as const;

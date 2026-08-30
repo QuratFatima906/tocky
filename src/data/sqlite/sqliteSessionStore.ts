@@ -31,6 +31,7 @@ const REMINDER_ON_KEY = 'dailyReminderOn';
 // The time is kept under its own key so switching the reminder off does not
 // throw away the time the user picked.
 const REMINDER_TIME_KEY = 'dailyReminderTime';
+const WEEKLY_REPORT_KEY = 'weeklyReport';
 
 const THEME_PREFERENCES: readonly ThemePreference[] = ['light', 'dark', 'system'];
 
@@ -334,6 +335,14 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
       });
     },
 
+    setWeeklyReport(isOn) {
+      if (snapshot.weeklyReport === isOn) return;
+
+      write('save your weekly report choice', () => {
+        writeSetting(database, WEEKLY_REPORT_KEY, isOn ? 'true' : 'false');
+      });
+    },
+
     setAskedAboutSession(sessionId) {
       if (snapshot.askedAboutSessionId === sessionId) return;
 
@@ -433,6 +442,7 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
       isOn: readSetting(database, REMINDER_ON_KEY) === 'true',
       ...parseReminderTime(readSetting(database, REMINDER_TIME_KEY)),
     },
+    weeklyReport: readSetting(database, WEEKLY_REPORT_KEY) === 'true',
     askedAboutSessionId: readSetting(database, ASKED_ABOUT_SESSION_KEY),
   };
 }

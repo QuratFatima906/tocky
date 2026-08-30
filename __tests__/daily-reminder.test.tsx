@@ -153,7 +153,7 @@ describe('when notifications are refused', () => {
     await openWithReminderOnButDenied();
 
     expect(
-      screen.getByText('Notifications are off for Tocky, so this reminder will not arrive.'),
+      screen.getByText('Notifications are off for Tocky, so this will not arrive.'),
     ).toBeTruthy();
   });
 
@@ -163,7 +163,9 @@ describe('when notifications are refused', () => {
 
     await act(async () => {
       fireEvent.press(
-        screen.getByLabelText('Notifications are off for Tocky. Open Settings to turn them on.'),
+        screen.getByLabelText(
+          'Notifications are off for Tocky, so Daily reminder will not arrive. Open Settings.',
+        ),
       );
     });
 

@@ -13,6 +13,9 @@ name: A daily reminder can be switched on and given a time
 - assertVisible: 'Reminder time, 20:00'
 - tapOn: 'Reminder time, 20:00'
 - assertVisible: 'Pick the reminder time'
+# The weekly report shares the same chrome and the same permission.
+- tapOn:
+    id: 'weekly-report-switch'
 # It is a preference, so it outlives the process it was set in.
 - stopApp
 - launchApp:

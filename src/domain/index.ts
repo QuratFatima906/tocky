@@ -34,6 +34,7 @@ export {
   isTimeOfDay,
   nextReminderAt,
   parseReminderTime,
+  WEEKLY_REPORT_SCHEDULE,
 } from './reminder';
 export type { DailyReminder } from './reminder';
 export {
