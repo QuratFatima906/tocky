@@ -5,8 +5,15 @@ name: A recorded session can be exported through the share sheet
 - runFlow: subflows/start-work-session.yaml
 - runFlow: subflows/end-session.yaml
 - openLink: tocky://settings
+- assertVisible: 'Settings'
+# Export sits at the bottom of Settings, below the fold on a shorter device,
+# so the flow scrolls to it rather than assuming the screen is tall enough.
+- scrollUntilVisible:
+    element:
+      text: 'Export data, 1'
+    direction: DOWN
+    timeout: 10000
 # The row counts what would go out rather than saying it is coming soon.
-- assertVisible: 'Export data, 1'
 - tapOn: 'Export data, 1'
 - assertVisible: 'Export your sessions'
 - tapOn: 'CSV'

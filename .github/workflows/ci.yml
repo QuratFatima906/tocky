@@ -108,8 +108,10 @@ jobs:
           MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true'
         run: maestro test .maestro/
 
+      # Only on failure: this directory holds every run's screenshots and
+      # hierarchy dumps, and uploading it on success costs minutes for nothing.
       - name: Upload flow artifacts
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: maestro-artifacts
