@@ -4,7 +4,10 @@ name: A recorded session can be exported through the share sheet
 - runFlow: subflows/fresh-start.yaml
 - runFlow: subflows/start-work-session.yaml
 - runFlow: subflows/end-session.yaml
-- openLink: tocky://settings
+# Through the door a person uses. A tocky://settings deep link works against a
+# debug build and does not against a Release one, and the point of this flow is
+# the export rather than how Settings was reached.
+- tapOn: 'Open your profile'
 - assertVisible: 'Settings'
 # Export sits at the bottom of Settings, below the fold on a shorter device,
 # so the flow scrolls to it rather than assuming the screen is tall enough.
