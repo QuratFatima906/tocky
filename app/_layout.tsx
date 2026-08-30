@@ -43,6 +43,9 @@ function ThemedApp() {
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: theme.color.background },
+          // A screen sliding in is the largest movement in the app, so Reduce
+          // Motion trades it for a cross-fade rather than leaving it to snap.
+          ...(theme.motion.reduced && { animation: 'fade' as const }),
         }}
       >
         <Stack.Protected guard={isPastOnboarding}>

@@ -16,7 +16,6 @@ export type ColorRole =
   | 'text'
   | 'textSecondary'
   | 'textTertiary'
-  | 'textDecorative'
   | 'textOnAccent'
   | 'accent'
   | 'accentPressed'
@@ -54,7 +53,6 @@ const LIGHT: Record<ColorRole, string> = {
   text: palette.ink,
   textSecondary: palette.slate,
   textTertiary: palette.stone,
-  textDecorative: palette.lilac,
   textOnAccent: palette.white,
 
   accent: palette.pink,
@@ -94,7 +92,6 @@ const DARK: Record<ColorRole, string> = {
   text: palette.nightText,
   textSecondary: palette.nightMuted,
   textTertiary: palette.nightMuted,
-  textDecorative: palette.nightSubtle,
   textOnAccent: palette.nightInk,
 
   accent: palette.pinkOnDark,

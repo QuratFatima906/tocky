@@ -111,28 +111,47 @@ describe('contrast helpers', () => {
 });
 
 describe('color role contrast', () => {
-  const TEXT_ROLES_REQUIRING_BODY_CONTRAST: readonly ColorRole[] = [
-    'text',
-    'textSecondary',
-    'textTertiary',
-    'successText',
-    'warningText',
-    'errorText',
-    'infoText',
-  ];
+  // Derived from the roles themselves rather than listed, so a role added later
+  // is audited without anyone remembering to add it here. A role that cannot
+  // meet the threshold has to say why, in one place, rather than go unmentioned.
+  const EXEMPT_TEXT_ROLES: Partial<Record<ColorRole, string>> = {
+    textOnAccent:
+      'white on the pink CTA, kept against AA by the owner on 2026-08-20; light mode only, and dark passes at 6.73:1',
+  };
+
+  const TEXT_ROLES = (Object.keys(colors.light) as ColorRole[]).filter(
+    (role) => role.startsWith('text') || role.endsWith('Text'),
+  );
 
   const TEXT_BACKDROPS: readonly ColorRole[] = ['background', 'surface', 'surfaceMuted'];
 
+  it('audits every role whose name says it is text, and says which it excuses', () => {
+    expect(TEXT_ROLES.filter((role) => EXEMPT_TEXT_ROLES[role] === undefined)).toEqual([
+      'text',
+      'textSecondary',
+      'textTertiary',
+      'successText',
+      'warningText',
+      'errorText',
+      'infoText',
+    ]);
+  });
+
   it.each(SCHEMES)('meets AA body contrast for text roles in %s mode', (scheme) => {
-    for (const role of TEXT_ROLES_REQUIRING_BODY_CONTRAST) {
-      for (const backdrop of TEXT_BACKDROPS) {
-        const ratio = contrastRatio(colors[scheme][role], colors[scheme][backdrop]);
-        expect({ scheme, role, backdrop, ratio: Number(ratio.toFixed(2)) }).toEqual(
-          expect.objectContaining({ ratio: expect.any(Number) }),
-        );
-        expect(ratio).toBeGreaterThanOrEqual(WCAG_AA_BODY_TEXT);
-      }
-    }
+    const failures = TEXT_ROLES.filter((role) => EXEMPT_TEXT_ROLES[role] === undefined).flatMap(
+      (role) =>
+        TEXT_BACKDROPS.map((backdrop) => ({
+          role,
+          backdrop,
+          ratio: Number(contrastRatio(colors[scheme][role], colors[scheme][backdrop]).toFixed(2)),
+        })).filter(({ ratio }) => ratio < WCAG_AA_BODY_TEXT),
+    );
+
+    expect(failures).toEqual([]);
+  });
+
+  it('keeps the exempted roles down to the one that was argued for', () => {
+    expect(Object.keys(EXEMPT_TEXT_ROLES)).toEqual(['textOnAccent']);
   });
 
   it.each(SCHEMES)('meets the non-text threshold for interactive borders in %s mode', (scheme) => {

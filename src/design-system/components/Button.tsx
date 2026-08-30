@@ -19,13 +19,39 @@ export type ButtonProps = Omit<PressableScaleProps, 'children'> & {
   fullWidth?: boolean;
 };
 
+// A height rather than a minimum clips the label the moment Dynamic Type grows
+// it, so the resting size is a floor and the padding is what holds the shape.
 const SIZES: Record<
   ButtonSize,
-  { height: number; paddingHorizontal: number; text: TextVariant; icon: number }
+  {
+    minHeight: number;
+    paddingVertical: number;
+    paddingHorizontal: number;
+    text: TextVariant;
+    icon: number;
+  }
 > = {
-  small: { height: MINIMUM_TOUCH_TARGET, paddingHorizontal: 16, text: 'labelSmall', icon: 16 },
-  medium: { height: 52, paddingHorizontal: 24, text: 'label', icon: 20 },
-  large: { height: 60, paddingHorizontal: 28, text: 'screenTitle', icon: 22 },
+  small: {
+    minHeight: MINIMUM_TOUCH_TARGET,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    text: 'labelSmall',
+    icon: 16,
+  },
+  medium: {
+    minHeight: 52,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    text: 'label',
+    icon: 20,
+  },
+  large: {
+    minHeight: 60,
+    paddingVertical: 16,
+    paddingHorizontal: 28,
+    text: 'screenTitle',
+    icon: 22,
+  },
 };
 
 type VariantColors = { label: ColorRole; background?: ColorRole; border?: ColorRole };
@@ -55,7 +81,8 @@ export function Button({
   const labelColor = theme.color[colors.label];
 
   const shape: ViewStyle = {
-    height: metrics.height,
+    minHeight: metrics.minHeight,
+    paddingVertical: metrics.paddingVertical,
     paddingHorizontal: metrics.paddingHorizontal,
     borderRadius: theme.radius.xl,
     opacity: isDisabled ? 0.45 : 1,
