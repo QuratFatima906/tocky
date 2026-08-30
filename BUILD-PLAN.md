@@ -472,10 +472,10 @@ installed, so it moves to C10c with the rest of reminders.
 
 - [x] VoiceOver labels, roles, and hints on every interactive element — D2a
 - [x] Live timer announced politely, not per second — D2a
-- [ ] Dynamic Type to the largest sizes; Timer and Insights verified
+- [x] Dynamic Type to the largest sizes; Timer and Insights verified — D2b
 - [x] Hit targets ≥44pt audited — D2a
-- [ ] Contrast audit, light and dark
-- [ ] Reduce Motion swaps transitions for fades
+- [x] Contrast audit, light and dark — D2b
+- [x] Reduce Motion swaps transitions for fades — D2b
 - [x] Chart and ring semantic labels — already built in C4 and C7
 - [x] Automated a11y assertions in the test suite — D2a
 
@@ -490,9 +490,14 @@ installed, so it moves to C10c with the rest of reminders.
 
 #### D2b · Dynamic Type, contrast and Reduce Motion
 
-- [ ] Dynamic Type to the largest sizes; Timer and Insights verified
-- [ ] Contrast audit, light and dark
-- [ ] Reduce Motion swaps transitions for fades
+- [x] `Button` given a minimum height and padding, so a label that grows is not
+      clipped by the box it sits in — and rests at the designed height until it
+      does
+- [x] Contrast audit derived from the colour roles rather than a list, with the
+      one exempted role naming the decision that exempted it
+- [x] `textDecorative` deleted — a role no screen used
+- [x] Reduce Motion drops the press scale rather than snapping it, and trades
+      the stack's slide for a cross-fade
 
 ### D3 · Performance
 

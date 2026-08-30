@@ -119,10 +119,49 @@ describe('Button', () => {
     'meets the 44pt minimum at %s size',
     async (size) => {
       await renderWithProviders(<Button label="Start" size={size} onPress={jest.fn()} />);
-      const height = flatten(screen.getByRole('button', { name: 'Start' }).props.style).height;
-      expect(height).toBeGreaterThanOrEqual(MINIMUM_TOUCH_TARGET);
+      const { minHeight } = flatten(screen.getByRole('button', { name: 'Start' }).props.style);
+      expect(minHeight).toBeGreaterThanOrEqual(MINIMUM_TOUCH_TARGET);
     },
   );
+
+  it.each(['small', 'medium', 'large'] as const)(
+    'lets Dynamic Type grow the %s button rather than clipping its label',
+    async (size) => {
+      await renderWithProviders(<Button label="Start" size={size} onPress={jest.fn()} />);
+      const style = flatten(screen.getByRole('button', { name: 'Start' }).props.style);
+
+      expect(style.height).toBeUndefined();
+      expect(style.paddingVertical).toBeGreaterThan(0);
+    },
+  );
+
+  // The floor has to stay above the label at the default text size, or swapping
+  // the fixed height for a minimum would quietly resize every button in the app.
+  it.each([
+    ['small', 44, 'labelSmall'],
+    ['medium', 52, 'label'],
+    ['large', 60, 'screenTitle'],
+  ] as const)(
+    'rests at the designed %s height until Dynamic Type asks for more',
+    async (size, designedHeight, variant) => {
+      await renderWithProviders(<Button label="Start" size={size} onPress={jest.fn()} />);
+      const { minHeight, paddingVertical } = flatten(
+        screen.getByRole('button', { name: 'Start' }).props.style,
+      ) as { minHeight: number; paddingVertical: number };
+      const { fontSize, lineHeightRatio } = textVariants[variant];
+
+      expect(minHeight).toBe(designedHeight);
+      expect(fontSize * lineHeightRatio + paddingVertical * 2).toBeLessThanOrEqual(designedHeight);
+    },
+  );
+
+  it('caps how far its label scales, since the label cannot reflow', async () => {
+    await renderWithProviders(<Button label="Start" onPress={jest.fn()} />);
+
+    expect(screen.getByText('Start').props.maxFontSizeMultiplier).toBe(
+      textVariants.label.maxFontSizeMultiplier,
+    );
+  });
 });
 
 describe('IconButton', () => {
