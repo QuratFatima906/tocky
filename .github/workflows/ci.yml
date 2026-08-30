@@ -36,6 +36,9 @@ jobs:
       - name: Bundle for iOS
         run: npx expo export --platform ios --output-dir /tmp/expo-export
 
+      - name: Bundle size budget
+        run: node scripts/check-bundle-size.mjs /tmp/expo-export
+
       - name: Typecheck
         run: npm run typecheck
 

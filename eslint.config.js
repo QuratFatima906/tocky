@@ -42,6 +42,29 @@ module.exports = [
     },
   },
   {
+    // Tocky records time on the device and sends it nowhere. That is what let
+    // the offline indicator be cut in D1 -- an indicator for a condition that
+    // cannot affect anything -- and it is what keeps starting and stopping a
+    // session off the far side of a radio. Both stop being true the moment one
+    // call is added, so the absence is enforced rather than remembered.
+    files: ['src/**/*.{ts,tsx}', 'app/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-globals': [
+        'error',
+        ...['fetch', 'XMLHttpRequest', 'WebSocket', 'EventSource'].map((name) => ({
+          name,
+          message:
+            'Tocky makes no network call. Starting and stopping a session must never wait on one.',
+        })),
+      ],
+    },
+  },
+  {
+    // A build script whose whole job is to report a number.
+    files: ['scripts/**/*.mjs'],
+    rules: { 'no-console': 'off' },
+  },
+  {
     files: ['src/design-system/**/*.{ts,tsx}'],
     rules: { 'no-restricted-imports': 'off' },
   },

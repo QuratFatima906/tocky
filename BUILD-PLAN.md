@@ -501,12 +501,21 @@ installed, so it moves to C10c with the rest of reminders.
 
 ### D3 · Performance
 
-- [ ] Only the elapsed numerals re-render on tick
-- [ ] Memoized selectors; aggregation cached and invalidated on write
-- [ ] Cold start under 2s
-- [ ] No network call in the start/stop critical path
-- [ ] List virtualization for History
-- [ ] Bundle and render profiling pass
+- [x] Only the elapsed numerals re-render on tick — the clock moved into
+      `TimerRing`, and a test counts the controls' renders so the next change
+      cannot lift it back up unnoticed
+- [x] Memoized selectors; aggregation cached and invalidated on write — already
+      true: every aggregation is a `useMemo` keyed on the store snapshot, which
+      is what a write replaces
+- [ ] **Cold start under 2s — needs a release build.** The only build on the
+      machine is debug, served by Metro, so a number measured from it says
+      nothing about the shipped app. Moves to E3 with EAS.
+- [x] No network call in the start/stop critical path — enforced by lint rather
+      than remembered, so it fails when the call is typed
+- [x] List virtualization for History — already a `FlatList` over days, built
+      in C5
+- [x] Bundle profiling pass — the iOS bundle has a budget CI enforces, at
+      3958 KB against 4600 KB, rather than a number read once in a PR
 
 ---
 

@@ -2,7 +2,15 @@ import { StyleSheet, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { Text, TockyOwl, useTheme } from '@/design-system';
-import { formatDurationForSpeech, formatElapsed, IMPLAUSIBLY_LONG_SECONDS } from '@/domain';
+import {
+  formatDurationForSpeech,
+  formatElapsed,
+  IMPLAUSIBLY_LONG_SECONDS,
+  sessionSeconds,
+  type Session,
+} from '@/domain';
+import { useNow } from '@/hooks/useNow';
+import { useSpokenElapsed } from '@/hooks/useSpokenElapsed';
 
 const RING_SIZE = 288;
 const RING_STROKE = 18;
@@ -10,17 +18,30 @@ const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 const OWL_SIZE = 52;
 const SECONDS_PER_SWEEP = 60 * 60;
+const ELAPSED_TICK_MS = 1_000;
 
+/**
+ * The clock lives here rather than on the screen, so a tick re-renders the ring
+ * and the numerals it moves and nothing else -- not the controls, not the note,
+ * and not the handlers the screen rebuilds around them.
+ *
+ * Saying the elapsed time aloud is the same job as drawing it, for someone who
+ * cannot see the ring, so it runs off the same clock.
+ */
 export function TimerRing({
-  elapsedSeconds,
+  session,
   isPaused,
   categoryColor,
 }: {
-  elapsedSeconds: number;
+  session: Session;
   isPaused: boolean;
   categoryColor: string;
 }) {
   const theme = useTheme();
+  const now = useNow(isPaused ? null : ELAPSED_TICK_MS);
+  const elapsedSeconds = sessionSeconds(session, now);
+
+  useSpokenElapsed(elapsedSeconds, isPaused);
   // The ring is a clock face, not a target: one full sweep per hour tracked.
   const sweep = (elapsedSeconds % SECONDS_PER_SWEEP) / SECONDS_PER_SWEEP;
   const ringColor = isPaused ? theme.color.textTertiary : theme.category.glyph(categoryColor);
