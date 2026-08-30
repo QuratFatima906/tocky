@@ -1,7 +1,9 @@
 import type { ThemePreference } from '@/design-system';
 import {
   findActiveSession,
+  formatReminderTime,
   isPaused,
+  parseReminderTime,
   type Category,
   type Pause,
   type Session,
@@ -25,6 +27,10 @@ const ONBOARDING_COMPLETED_KEY = 'onboardingCompleted';
 const PROFILE_NAME_KEY = 'profileName';
 const THEME_PREFERENCE_KEY = 'themePreference';
 const ASKED_ABOUT_SESSION_KEY = 'askedAboutSessionId';
+const REMINDER_ON_KEY = 'dailyReminderOn';
+// The time is kept under its own key so switching the reminder off does not
+// throw away the time the user picked.
+const REMINDER_TIME_KEY = 'dailyReminderTime';
 
 const THEME_PREFERENCES: readonly ThemePreference[] = ['light', 'dark', 'system'];
 
@@ -312,6 +318,22 @@ export function createSqliteSessionStore(database: SqliteDatabase): SqliteSessio
       });
     },
 
+    setDailyReminder(reminder) {
+      const current = snapshot.dailyReminder;
+      if (
+        reminder.isOn === current.isOn &&
+        reminder.hour === current.hour &&
+        reminder.minute === current.minute
+      ) {
+        return;
+      }
+
+      write('save your reminder', () => {
+        writeSetting(database, REMINDER_ON_KEY, reminder.isOn ? 'true' : 'false');
+        writeSetting(database, REMINDER_TIME_KEY, formatReminderTime(reminder));
+      });
+    },
+
     setAskedAboutSession(sessionId) {
       if (snapshot.askedAboutSessionId === sessionId) return;
 
@@ -407,6 +429,10 @@ function readSnapshot(database: SqliteDatabase): SessionStoreSnapshot {
     hasCompletedOnboarding: readSetting(database, ONBOARDING_COMPLETED_KEY) !== null,
     profileName: readSetting(database, PROFILE_NAME_KEY),
     themePreference: THEME_PREFERENCES.find((known) => known === storedTheme) ?? 'system',
+    dailyReminder: {
+      isOn: readSetting(database, REMINDER_ON_KEY) === 'true',
+      ...parseReminderTime(readSetting(database, REMINDER_TIME_KEY)),
+    },
     askedAboutSessionId: readSetting(database, ASKED_ABOUT_SESSION_KEY),
   };
 }

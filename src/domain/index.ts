@@ -28,6 +28,15 @@ export {
 } from './duration';
 export type { RunningSessionProblem, SessionTimeProblem } from './duration';
 export {
+  DAILY_REMINDER_OFF,
+  DEFAULT_REMINDER_TIME,
+  formatReminderTime,
+  isTimeOfDay,
+  nextReminderAt,
+  parseReminderTime,
+} from './reminder';
+export type { DailyReminder } from './reminder';
+export {
   EXPORT_MIME_TYPES,
   exportContents,
   exportFileName,

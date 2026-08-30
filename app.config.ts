@@ -57,6 +57,8 @@ const config: ExpoConfig = {
     'expo-font',
     'expo-sqlite',
     'expo-localization',
+    'expo-notifications',
+    '@react-native-community/datetimepicker',
     [
       'expo-splash-screen',
       {

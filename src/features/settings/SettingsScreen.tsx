@@ -1,5 +1,5 @@
 import Constants from 'expo-constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 import { useSessionStore, useSessionStoreSnapshot } from '@/data';
@@ -19,9 +19,16 @@ import {
   type CategoryIconName,
   type ThemePreference,
 } from '@/design-system';
-import type { ExportFormat } from '@/domain';
+import type { DailyReminder, ExportFormat } from '@/domain';
+import {
+  applyDailyReminder,
+  askForReminderPermission,
+  currentReminderPermission,
+  type ReminderPermission,
+} from '@/services/dailyReminder';
 import { shareExport } from '@/services/shareExport';
 
+import { DailyReminderRow } from './DailyReminderRow';
 import { SettingsRow } from './SettingsRow';
 
 const AVATAR_TILE_SIZE = 58;
@@ -41,11 +48,25 @@ function hueOf(icon: CategoryIconName, fallback: string): string {
 export function SettingsScreen({ onManageCategories }: { onManageCategories?: () => void }) {
   const theme = useTheme();
   const store = useSessionStore();
-  const { profileName, categories, sessions, tasks } = useSessionStoreSnapshot();
+  const { profileName, categories, sessions, tasks, dailyReminder } = useSessionStoreSnapshot();
   const { preference, setPreference } = useThemePreference();
   const showToast = useToast();
 
   const [draftName, setDraftName] = useState<string | null>(null);
+  const [reminderPermission, setReminderPermission] = useState<ReminderPermission>('undetermined');
+
+  // Whether notifications are allowed can change outside the app entirely, so
+  // it is read when the screen opens rather than remembered from last time.
+  useEffect(() => {
+    let isMounted = true;
+    void currentReminderPermission().then((permission) => {
+      if (isMounted) setReminderPermission(permission);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   function saveName(): void {
     if (draftName !== null) store.setProfileName(draftName);
@@ -55,6 +76,17 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
   function chooseAppearance(next: ThemePreference): void {
     setPreference(next);
     store.setThemePreference(next);
+  }
+
+  async function changeReminder(next: DailyReminder): Promise<void> {
+    // Asking only when it is switched on, never when the time is nudged, so
+    // the system prompt appears once and for a reason the user just gave.
+    if (next.isOn && !dailyReminder.isOn) {
+      setReminderPermission(await askForReminderPermission());
+    }
+
+    store.setDailyReminder(next);
+    await applyDailyReminder(next);
   }
 
   async function exportAs(format: ExportFormat): Promise<void> {
@@ -155,11 +187,10 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
       </SettingsGroup>
 
       <SettingsGroup title="Preferences">
-        <SettingsRow
-          icon="history"
-          hue={hueOf('work', theme.color.accent)}
-          label="Daily reminder"
-          isAwaited
+        <DailyReminderRow
+          reminder={dailyReminder}
+          permission={reminderPermission}
+          onChange={(next) => void changeReminder(next)}
         />
         <SettingsRow
           icon="tasks"
