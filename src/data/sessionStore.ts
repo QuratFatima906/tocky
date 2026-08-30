@@ -1,7 +1,15 @@
 import { randomUUID } from 'expo-crypto';
 
 import type { ThemePreference } from '@/design-system';
-import { findActiveSession, isPaused, type Category, type Session, type Task } from '@/domain';
+import {
+  DAILY_REMINDER_OFF,
+  findActiveSession,
+  isPaused,
+  type Category,
+  type DailyReminder,
+  type Session,
+  type Task,
+} from '@/domain';
 
 export type SessionStoreSnapshot = {
   readonly status: 'loading' | 'ready';
@@ -11,6 +19,8 @@ export type SessionStoreSnapshot = {
   readonly hasCompletedOnboarding: boolean;
   readonly profileName: string | null;
   readonly themePreference: ThemePreference;
+  /** A nudge to record, kept whether or not it is on, so the time survives. */
+  readonly dailyReminder: DailyReminder;
   /**
    * The running session Tocky has already asked about. Persisted rather than
    * held in memory because the question is asked when the app opens, and
@@ -21,7 +31,11 @@ export type SessionStoreSnapshot = {
 
 /** Everything the `settings` table holds, rather than a table of its own. */
 type StoredSetting =
-  'hasCompletedOnboarding' | 'profileName' | 'themePreference' | 'askedAboutSessionId';
+  | 'hasCompletedOnboarding'
+  | 'profileName'
+  | 'themePreference'
+  | 'dailyReminder'
+  | 'askedAboutSessionId';
 
 /**
  * Mirrors SQLite's "no row recorded yet": a snapshot that says nothing about a
@@ -91,6 +105,8 @@ export type SessionStore = {
   /** An empty name clears it, rather than greeting the user with blank space. */
   setProfileName: (name: string) => void;
   setThemePreference: (preference: ThemePreference) => void;
+  /** Off keeps the time that was chosen, so turning it back on does not lose it. */
+  setDailyReminder: (reminder: DailyReminder) => void;
   /** Remembers that the user has answered for this session, so it is asked once. */
   setAskedAboutSession: (sessionId: string | null) => void;
   addCategory: (draft: CategoryDraft) => void;
@@ -200,6 +216,7 @@ export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   hasCompletedOnboarding: false,
   profileName: null,
   themePreference: 'system',
+  dailyReminder: DAILY_REMINDER_OFF,
   askedAboutSessionId: null,
 };
 
@@ -208,6 +225,7 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
     hasCompletedOnboarding: false,
     profileName: null,
     themePreference: 'system',
+    dailyReminder: DAILY_REMINDER_OFF,
     askedAboutSessionId: null,
     ...seed,
   };
@@ -337,6 +355,20 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
       if (snapshot.themePreference === themePreference) return;
 
       snapshot = { ...snapshot, themePreference };
+      listeners.forEach((listener) => listener());
+    },
+
+    setDailyReminder(dailyReminder) {
+      const { isOn, hour, minute } = snapshot.dailyReminder;
+      if (
+        dailyReminder.isOn === isOn &&
+        dailyReminder.hour === hour &&
+        dailyReminder.minute === minute
+      ) {
+        return;
+      }
+
+      snapshot = { ...snapshot, dailyReminder };
       listeners.forEach((listener) => listener());
     },
 

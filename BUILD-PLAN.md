@@ -406,9 +406,29 @@ held and leaves the picker. Restoring puts it back.
 
 ### C10c · Export & reminders — unblocked, `pod install` fixed in E2
 
-- [ ] Preferences: daily reminder (+ time picker), idle detection, weekly report
+- [x] Daily reminder (+ time picker) — C10c-b
+- [ ] ~~Idle detection~~ — **cannot be built**, React Native exposes no
+      user-idle API. Said so on the screen rather than offered as a toggle
+      that would lie.
+- [ ] Weekly report
 - [x] Export: CSV + JSON via the share sheet — C10c-a
 - [ ] Help & support
+
+#### C10c-b · Daily reminder
+
+- [x] `expo-notifications` and `@react-native-community/datetimepicker`, both
+      installable now that `pod install` works — the 2026-08-25 "no pickers"
+      decision said to revisit exactly when it did
+- [x] The reminder is a time kept whether or not it is on, so switching it off
+      and back on does not lose it
+- [x] One notification, cancelled and rescheduled together, so moving the time
+      can never leave a second one behind
+- [x] Permission asked when it is switched on, never when the time is nudged
+- [x] `Tocky-Flows.md` §6.4 — denied notifications say the reminder will not
+      arrive, link to the only place that can change it, and do not break the
+      toggle
+- [x] Copy held to the locked decisions by a test: no goal, streak, target or
+      score, and nothing that can be missed
 
 #### C10c-a · Export
 

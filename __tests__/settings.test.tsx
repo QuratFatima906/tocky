@@ -119,7 +119,10 @@ describe('SettingsScreen rows', () => {
     await renderSettings();
 
     expect(screen.getAllByText('Soon').length).toBeGreaterThan(0);
-    expect(screen.queryByLabelText('Daily reminder')).toBeNull();
+    // Idle detection cannot be built at all -- React Native exposes no
+    // user-idle API -- so it says so rather than offering a toggle that lies.
+    expect(screen.getByText('Idle detection')).toBeOnTheScreen();
+    expect(screen.queryByLabelText('Idle detection')).toBeNull();
   });
 
   it('names the version it is running', async () => {

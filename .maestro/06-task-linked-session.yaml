@@ -3,6 +3,8 @@ name: Tracking against a task, and deleting the task without losing its session
 ---
 - runFlow: subflows/fresh-start.yaml
 - tapOn: 'Tasks'
+# Waiting for the screen rather than racing the tab transition to the tap.
+- assertVisible: '.* of .* done'
 - tapOn: 'Add a task'
 - tapOn: 'What needs doing?'
 - inputText: 'Write the release notes'

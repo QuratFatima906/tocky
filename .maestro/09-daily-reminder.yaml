@@ -1,0 +1,21 @@
+appId: com.tocky.app
+name: A daily reminder can be switched on and given a time
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: 'Open your profile'
+- assertVisible: 'Settings'
+- assertVisible: 'Daily reminder'
+# The switch and the row label share a name, so the switch is taken by role.
+- tapOn:
+    id: 'daily-reminder-switch'
+# Switching it on is the one moment the system prompt is warranted.
+- tapOn: 'Allow'
+- assertVisible: 'Reminder time, 20:00'
+- tapOn: 'Reminder time, 20:00'
+- assertVisible: 'Pick the reminder time'
+# It is a preference, so it outlives the process it was set in.
+- stopApp
+- launchApp:
+    clearState: false
+- tapOn: 'Open your profile'
+- assertVisible: 'Reminder time, 20:00'

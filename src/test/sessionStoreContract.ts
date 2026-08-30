@@ -581,15 +581,42 @@ export function describeSessionStoreContract(
       expect(store.getSnapshot().themePreference).toBe('dark');
     });
 
+    it('starts with the reminder off, at a default time rather than midnight', () => {
+      expect(createStore([]).getSnapshot().dailyReminder).toEqual({
+        isOn: false,
+        hour: 20,
+        minute: 0,
+      });
+    });
+
+    it('remembers a reminder that was switched on, and when', () => {
+      const store = createStore([]);
+
+      store.setDailyReminder({ isOn: true, hour: 8, minute: 30 });
+
+      expect(store.getSnapshot().dailyReminder).toEqual({ isOn: true, hour: 8, minute: 30 });
+    });
+
+    it('keeps the chosen time when the reminder is switched off', () => {
+      const store = createStore([]);
+
+      store.setDailyReminder({ isOn: true, hour: 8, minute: 30 });
+      store.setDailyReminder({ isOn: false, hour: 8, minute: 30 });
+
+      expect(store.getSnapshot().dailyReminder).toEqual({ isOn: false, hour: 8, minute: 30 });
+    });
+
     it('does not churn subscribers when a setting is unchanged', () => {
       const store = createStore([]);
       store.setProfileName('Alex');
       store.setThemePreference('dark');
+      store.setDailyReminder({ isOn: true, hour: 8, minute: 30 });
       const onStoreChanged = jest.fn();
       store.subscribe(onStoreChanged);
 
       store.setProfileName('Alex');
       store.setThemePreference('dark');
+      store.setDailyReminder({ isOn: true, hour: 8, minute: 30 });
 
       expect(onStoreChanged).not.toHaveBeenCalled();
     });

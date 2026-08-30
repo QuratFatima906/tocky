@@ -25,6 +25,7 @@ describe('createInMemorySessionStore', () => {
       hasCompletedOnboarding: false,
       profileName: null,
       themePreference: 'system',
+      dailyReminder: { isOn: false, hour: 20, minute: 0 },
       askedAboutSessionId: null,
     });
   });
