@@ -1,0 +1,26 @@
+appId: com.tocky.app
+name: Tracking against a task, and deleting the task without losing its session
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: 'Tasks'
+- tapOn: 'Add a task'
+- tapOn: 'What needs doing?'
+- inputText: 'Write the release notes'
+# A task belongs to a category, so Add stays disabled until one is picked.
+- tapOn: 'Work'
+# The software keyboard sits over the bottom of the form, and a tap aimed at
+# Add task lands on the letter underneath it instead. The field asks for a
+# done key, so pressing it puts the keyboard away the way a person would.
+- pressKey: Enter
+- tapOn: 'Add task'
+- assertVisible: 'Write the release notes'
+- tapOn: 'Write the release notes,.*Start tracking.*'
+- assertVisible: 'Tracking session'
+- runFlow: subflows/end-session.yaml
+- tapOn: 'Tasks'
+- tapOn: 'Delete Write the release notes'
+- tapOn: 'Delete'
+- assertNotVisible: 'Write the release notes'
+# The task is gone. The session it was linked to is not.
+- tapOn: 'History'
+- assertVisible: 'Write the release notes,.*from.*'

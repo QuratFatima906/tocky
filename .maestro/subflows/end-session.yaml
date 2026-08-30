@@ -1,0 +1,10 @@
+appId: com.tocky.app
+name: End the running session, keeping it
+---
+- tapOn: 'End'
+# Every session a flow records is seconds long, and Tocky asks before saving
+# anything under a minute rather than deciding for the user.
+- assertVisible: 'Keep this session?'
+- tapOn: 'Keep it'
+- assertVisible:
+    id: 'tocky-tab-bar'

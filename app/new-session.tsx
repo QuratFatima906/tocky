@@ -10,7 +10,10 @@ export default function NewSessionRoute() {
       onDismiss={router.back}
       onStarted={() => {
         router.back();
-        router.push('/timer');
+        // Switching opens this modal from the timer, so pushing would stack a
+        // second timer over the first and leave ending or collapsing the new
+        // session on the old route, which by then is tracking nothing.
+        router.navigate('/timer');
       }}
     />
   );

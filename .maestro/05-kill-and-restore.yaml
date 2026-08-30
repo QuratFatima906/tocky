@@ -1,0 +1,13 @@
+appId: com.tocky.app
+name: A running session survives the app being killed
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/start-work-session.yaml
+- stopApp
+- launchApp:
+    clearState: false
+# Still running, so the persistent bar offers the way back into it.
+- assertVisible: 'Now tracking.*'
+- tapOn: 'Now tracking.*'
+- assertVisible: 'Tracking session'
+- runFlow: subflows/end-session.yaml

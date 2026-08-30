@@ -58,3 +58,60 @@ jobs:
           name: coverage
           path: coverage/
           retention-days: 7
+
+  e2e:
+    name: End-to-end (iOS simulator)
+    # Expo 57 podspecs declare Swift 6.0 and the codegen leans on SPM, which
+    # Xcode 16 resolves as an opaque "Could not resolve package dependencies".
+    runs-on: macos-26
+    # A native build and seven flows on a simulator take far longer than the
+    # unit suite, and every one of them depends on that suite being right, so
+    # they run once it has passed rather than beside it.
+    needs: verify
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - run: npm ci
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Show the toolchain
+        run: |
+          ls /Applications | grep -i xcode || true
+          xcodebuild -version
+          xcrun simctl list devices available | grep -i iphone || true
+
+      - name: Boot a simulator
+        run: |
+          xcrun simctl boot "iPhone 17 Pro" || xcrun simctl boot "iPhone 16 Pro"
+          xcrun simctl bootstatus booted
+
+      - name: Build and install the app
+        run: npx expo run:ios --configuration Release --no-bundler
+
+      - name: Run the flows
+        env:
+          MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true'
+        run: maestro test .maestro/
+
+      - name: Upload flow artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-artifacts
+          path: ~/.maestro/tests/
+          retention-days: 7

@@ -1,0 +1,10 @@
+appId: com.tocky.app
+name: A paused session freezes the clock and says so
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/start-work-session.yaml
+- tapOn: 'Pause tracking'
+- assertVisible: 'Paused session'
+- tapOn: 'Resume tracking'
+- assertVisible: 'Tracking session'
+- runFlow: subflows/end-session.yaml

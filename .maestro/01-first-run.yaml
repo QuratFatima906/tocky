@@ -1,0 +1,20 @@
+appId: com.tocky.app
+name: First run walks through onboarding and lands on Home
+---
+- clearState
+- launchApp
+- assertVisible: 'Where did your day go?'
+- tapOn: 'Next'
+- assertVisible: 'Pick a category, start the clock.'
+- tapOn: 'Next'
+- assertVisible: 'See where your hours land.'
+- tapOn: 'Get started'
+- assertVisible:
+    id: 'tocky-tab-bar'
+# Leaving by any door retires the panes, so a relaunch goes straight to Home.
+- stopApp
+- launchApp:
+    clearState: false
+- assertNotVisible: 'Where did your day go?'
+- assertVisible:
+    id: 'tocky-tab-bar'

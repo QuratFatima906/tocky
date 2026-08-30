@@ -1,0 +1,4 @@
+# Only the numbered flows are entry points. Everything under subflows/ is called
+# by them, and would otherwise be run on its own against no particular state.
+flows:
+  - '0*.yaml'

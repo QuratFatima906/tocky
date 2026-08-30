@@ -1,0 +1,20 @@
+appId: com.tocky.app
+name: A recorded session can be opened, edited and deleted
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/start-work-session.yaml
+- runFlow: subflows/end-session.yaml
+- tapOn: 'History'
+# A session started without a label is titled by its category, so the row reads
+# the category twice: title, then category, then when it ran.
+- tapOn: 'Work, Work, from .*'
+- assertVisible: 'Edit this session'
+- tapOn: 'Edit this session'
+- assertVisible: 'Save changes'
+- tapOn: 'Back'
+- tapOn: 'Delete this session'
+- assertVisible: 'Delete this session?'
+# Anchored, because the dialog's title says Delete too and is not a button.
+- tapOn: '^Delete$'
+- assertVisible:
+    id: 'tocky-tab-bar'
