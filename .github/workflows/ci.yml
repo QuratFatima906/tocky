@@ -61,7 +61,9 @@ jobs:
 
   e2e:
     name: End-to-end (iOS simulator)
-    runs-on: macos-15
+    # Expo 57 podspecs declare Swift 6.0 and the codegen leans on SPM, which
+    # Xcode 16 resolves as an opaque "Could not resolve package dependencies".
+    runs-on: macos-26
     # A native build and seven flows on a simulator take far longer than the
     # unit suite, and every one of them depends on that suite being right, so
     # they run once it has passed rather than beside it.
@@ -87,7 +89,13 @@ jobs:
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
-      - name: Boot the simulator
+      - name: Show the toolchain
+        run: |
+          ls /Applications | grep -i xcode || true
+          xcodebuild -version
+          xcrun simctl list devices available | grep -i iphone || true
+
+      - name: Boot a simulator
         run: |
           xcrun simctl boot "iPhone 17 Pro" || xcrun simctl boot "iPhone 16 Pro"
           xcrun simctl bootstatus booted
