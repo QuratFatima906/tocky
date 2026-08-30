@@ -530,9 +530,19 @@ installed, so it moves to C10c with the rest of reminders.
 
 ### E2 · End-to-end tests
 
-- [ ] Maestro flows: first run · start→end · pause/resume · switch · edit ·
-      delete · offline · kill-and-restore · task-linked session
-- [ ] CI job running E2E on an iOS simulator
+- [x] Maestro flows: first run · start→end · pause/resume · switch · edit ·
+      delete · kill-and-restore · task-linked session
+- [x] CI job running E2E on an iOS simulator
+- [ ] ~~Offline flow~~ — **cut**, for the same reason the offline indicator was
+      cut in D1: there is no network call to take away, and lint now enforces it
+
+Each flow buys its own isolation from a `fresh-start` subflow. They share one
+simulator, so a session left running by the flow before turns the next tap on
+Start into a confirm dialog rather than a timer.
+
+**Three defects the unit suite could not see.** Every one of them needed a real
+device: a keyboard that occupies space, a navigation stack with depth, and a
+native alert layered over the React tree.
 
 ### E3 · Build & deploy
 

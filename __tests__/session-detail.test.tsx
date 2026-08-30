@@ -154,7 +154,7 @@ describe('deleting', () => {
     const alert = alertSpy();
     const store = await renderDetail();
 
-    await press('Delete');
+    await press('Delete this session');
 
     expect(alert).toHaveBeenCalled();
     expect(store.getSnapshot().sessions).toHaveLength(1);
@@ -164,7 +164,7 @@ describe('deleting', () => {
     const alert = alertSpy();
     const store = await renderDetail();
 
-    await press('Delete');
+    await press('Delete this session');
     await tapAlertButton(alert, 'Delete');
 
     expect(store.getSnapshot().sessions).toHaveLength(0);
@@ -174,7 +174,9 @@ describe('deleting', () => {
   it('refuses to delete a session that is still running, and says why', async () => {
     await renderDetail(storeWith([{ ...SESSION, endedAt: null }]));
 
-    expect(screen.getByLabelText('Delete').props.accessibilityState.disabled).toBe(true);
+    expect(screen.getByLabelText('Delete this session').props.accessibilityState.disabled).toBe(
+      true,
+    );
     expect(
       screen.getByText('This session is still running. End it before deleting it.'),
     ).toBeTruthy();

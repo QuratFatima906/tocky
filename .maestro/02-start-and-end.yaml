@@ -1,0 +1,8 @@
+appId: com.tocky.app
+name: The core loop — start a session, end it, find it in History
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/start-work-session.yaml
+- runFlow: subflows/end-session.yaml
+- tapOn: 'History'
+- assertVisible: 'Work.*'

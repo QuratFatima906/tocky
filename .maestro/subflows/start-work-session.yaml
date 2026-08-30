@@ -1,0 +1,8 @@
+appId: com.tocky.app
+name: Start a Work session from the tab bar
+---
+- tapOn: 'Start a new session'
+- assertVisible: 'Pick a category to start'
+- tapOn: 'Work'
+- tapOn: 'Start Work session'
+- assertVisible: 'Tracking session'

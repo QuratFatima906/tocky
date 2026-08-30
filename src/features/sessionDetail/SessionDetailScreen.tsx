@@ -225,6 +225,10 @@ function SessionDetail({
             />
             <Button
               label="Delete"
+              // The confirm this opens has its own Delete, so for the moment
+              // both are on screen VoiceOver would announce two buttons called
+              // nothing but "Delete", with no way to tell which is which.
+              accessibilityLabel="Delete this session"
               icon="delete"
               variant="destructive"
               style={{ flex: 1 }}
