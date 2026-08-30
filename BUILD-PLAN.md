@@ -470,14 +470,29 @@ installed, so it moves to C10c with the rest of reminders.
 
 ### D2 · Accessibility
 
-- [ ] VoiceOver labels, roles, and hints on every interactive element
-- [ ] Live timer announced politely, not per second
+- [x] VoiceOver labels, roles, and hints on every interactive element — D2a
+- [x] Live timer announced politely, not per second — D2a
 - [ ] Dynamic Type to the largest sizes; Timer and Insights verified
-- [ ] Hit targets ≥44pt audited
+- [x] Hit targets ≥44pt audited — D2a
 - [ ] Contrast audit, light and dark
 - [ ] Reduce Motion swaps transitions for fades
-- [ ] Chart and ring semantic labels
-- [ ] Automated a11y assertions in the test suite
+- [x] Chart and ring semantic labels — already built in C4 and C7
+- [x] Automated a11y assertions in the test suite — D2a
+
+#### D2a · VoiceOver and the live timer
+
+- [x] Every rendered tree in the suite audited for label, trait and target size,
+      from a global teardown rather than a test per screen
+- [x] The audit held to catching each gap it claims to, since it has twice been
+      silently right about nothing
+- [x] Task checkbox given a 44pt target around its 26pt circle
+- [x] Elapsed time announced on the minute while tracking, and not while paused
+
+#### D2b · Dynamic Type, contrast and Reduce Motion
+
+- [ ] Dynamic Type to the largest sizes; Timer and Insights verified
+- [ ] Contrast audit, light and dark
+- [ ] Reduce Motion swaps transitions for fades
 
 ### D3 · Performance
 
