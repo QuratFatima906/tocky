@@ -55,6 +55,7 @@ function ThemedApp() {
           <Stack.Screen name="session/[id]" />
           <Stack.Screen name="settings" />
           <Stack.Screen name="categories" />
+          <Stack.Screen name="help" />
         </Stack.Protected>
 
         <Stack.Protected guard={!isPastOnboarding}>

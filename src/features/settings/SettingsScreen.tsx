@@ -22,6 +22,7 @@ import {
 import type { DailyReminder, ExportFormat } from '@/domain';
 import {
   applyDailyReminder,
+  applyWeeklyReport,
   askForReminderPermission,
   currentReminderPermission,
   type ReminderPermission,
@@ -30,6 +31,9 @@ import { shareExport } from '@/services/shareExport';
 
 import { DailyReminderRow } from './DailyReminderRow';
 import { SettingsRow } from './SettingsRow';
+import { SettingsToggleRow } from './SettingsToggleRow';
+
+const noop = () => {};
 
 const AVATAR_TILE_SIZE = 58;
 const AVATAR_OWL_SIZE = 38;
@@ -45,10 +49,17 @@ function hueOf(icon: CategoryIconName, fallback: string): string {
   return CATEGORY_PRESETS.find((preset) => preset.icon === icon)?.hue ?? fallback;
 }
 
-export function SettingsScreen({ onManageCategories }: { onManageCategories?: () => void }) {
+export function SettingsScreen({
+  onManageCategories,
+  onOpenHelp = noop,
+}: {
+  onManageCategories?: () => void;
+  onOpenHelp?: () => void;
+}) {
   const theme = useTheme();
   const store = useSessionStore();
-  const { profileName, categories, sessions, tasks, dailyReminder } = useSessionStoreSnapshot();
+  const { profileName, categories, sessions, tasks, dailyReminder, weeklyReport } =
+    useSessionStoreSnapshot();
   const { preference, setPreference } = useThemePreference();
   const showToast = useToast();
 
@@ -87,6 +98,13 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
 
     store.setDailyReminder(next);
     await applyDailyReminder(next);
+  }
+
+  async function changeWeeklyReport(isOn: boolean): Promise<void> {
+    if (isOn && !weeklyReport) setReminderPermission(await askForReminderPermission());
+
+    store.setWeeklyReport(isOn);
+    await applyWeeklyReport(isOn);
   }
 
   async function exportAs(format: ExportFormat): Promise<void> {
@@ -198,11 +216,13 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
           label="Idle detection"
           isAwaited
         />
-        <SettingsRow
+        <SettingsToggleRow
           icon="insights"
-          hue={hueOf('social', theme.color.accent)}
           label="Weekly report"
-          isAwaited
+          isOn={weeklyReport}
+          permission={reminderPermission}
+          switchTestID="weekly-report-switch"
+          onToggle={(isOn) => void changeWeeklyReport(isOn)}
           isLast
         />
       </SettingsGroup>
@@ -236,7 +256,7 @@ export function SettingsScreen({ onManageCategories }: { onManageCategories?: ()
           icon="health"
           hue={hueOf('health', theme.color.accent)}
           label="Help & support"
-          isAwaited
+          onPress={onOpenHelp}
           isLast
         />
       </SettingsGroup>

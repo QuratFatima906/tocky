@@ -1,6 +1,6 @@
 import * as Notifications from 'expo-notifications';
 
-import { type DailyReminder } from '@/domain';
+import { WEEKLY_REPORT_SCHEDULE, type DailyReminder } from '@/domain';
 
 /**
  * One notification, rescheduled whenever the reminder changes, so there is
@@ -10,10 +10,21 @@ import { type DailyReminder } from '@/domain';
  * cannot know whether the day went well and does not imply it did not.
  */
 const REMINDER_IDENTIFIER = 'tocky-daily-reminder';
+const WEEKLY_REPORT_IDENTIFIER = 'tocky-weekly-report';
 
 const REMINDER_CONTENT = {
   title: 'How did today go?',
   body: 'A minute now keeps the week honest.',
+} as const;
+
+/**
+ * A local notification carries the words it was scheduled with, and this one
+ * is scheduled a week before it arrives -- so it invites a look rather than
+ * claiming a total it cannot know yet.
+ */
+const WEEKLY_REPORT_CONTENT = {
+  title: 'Your week, in Tocky',
+  body: 'Have a look at where the hours went.',
 } as const;
 
 export type ReminderPermission = 'granted' | 'denied' | 'undetermined';
@@ -63,5 +74,24 @@ export async function applyDailyReminder(reminder: DailyReminder): Promise<void>
   } catch {
     // A reminder that could not be scheduled is reported by the screen, which
     // checks the permission, rather than taking the app down here.
+  }
+}
+
+/** The same shape as the daily reminder: one notification, replaced each time. */
+export async function applyWeeklyReport(isOn: boolean): Promise<void> {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(WEEKLY_REPORT_IDENTIFIER).catch(() => {});
+    if (!isOn) return;
+
+    await Notifications.scheduleNotificationAsync({
+      identifier: WEEKLY_REPORT_IDENTIFIER,
+      content: WEEKLY_REPORT_CONTENT,
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+        ...WEEKLY_REPORT_SCHEDULE,
+      },
+    });
+  } catch {
+    // Reported by the screen, which checks the permission, rather than here.
   }
 }

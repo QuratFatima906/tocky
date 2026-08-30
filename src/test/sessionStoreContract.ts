@@ -606,17 +606,31 @@ export function describeSessionStoreContract(
       expect(store.getSnapshot().dailyReminder).toEqual({ isOn: false, hour: 8, minute: 30 });
     });
 
+    it('starts with the weekly report off', () => {
+      expect(createStore([]).getSnapshot().weeklyReport).toBe(false);
+    });
+
+    it('remembers the weekly report being switched on', () => {
+      const store = createStore([]);
+
+      store.setWeeklyReport(true);
+
+      expect(store.getSnapshot().weeklyReport).toBe(true);
+    });
+
     it('does not churn subscribers when a setting is unchanged', () => {
       const store = createStore([]);
       store.setProfileName('Alex');
       store.setThemePreference('dark');
       store.setDailyReminder({ isOn: true, hour: 8, minute: 30 });
+      store.setWeeklyReport(true);
       const onStoreChanged = jest.fn();
       store.subscribe(onStoreChanged);
 
       store.setProfileName('Alex');
       store.setThemePreference('dark');
       store.setDailyReminder({ isOn: true, hour: 8, minute: 30 });
+      store.setWeeklyReport(true);
 
       expect(onStoreChanged).not.toHaveBeenCalled();
     });

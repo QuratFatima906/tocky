@@ -1,0 +1,21 @@
+appId: com.tocky.app
+name: Help answers what only the app can answer
+---
+- runFlow: subflows/fresh-start.yaml
+- tapOn: 'Open your profile'
+- assertVisible: 'Settings'
+# Help sits at the very bottom of Settings, below the fold on any device.
+- scrollUntilVisible:
+    element:
+      text: 'Help & support'
+    direction: DOWN
+    timeout: 10000
+- tapOn: 'Help & support'
+- assertVisible: 'Where is my data?'
+- assertVisible: 'What happens if I delete the app?'
+# The version it names is asserted in the unit tests, where nothing has to
+# scroll to reach it.
+- tapOn: 'Back'
+# Settings comes back scrolled to where it was left, so its title is above the
+# fold and the row Help was opened from is what is actually in view.
+- assertVisible: 'Help & support'

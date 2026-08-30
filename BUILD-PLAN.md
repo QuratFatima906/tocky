@@ -404,15 +404,29 @@ what to show, the contract decides what is allowed.
 **Archiving keeps history.** An archived category keeps every session it ever
 held and leaves the picker. Restoring puts it back.
 
-### C10c · Export & reminders — unblocked, `pod install` fixed in E2
+### C10c · Export & reminders — **done**
 
 - [x] Daily reminder (+ time picker) — C10c-b
 - [ ] ~~Idle detection~~ — **cannot be built**, React Native exposes no
       user-idle API. Said so on the screen rather than offered as a toggle
       that would lie.
-- [ ] Weekly report
+- [x] Weekly report — C10c-c
 - [x] Export: CSV + JSON via the share sheet — C10c-a
-- [ ] Help & support
+- [x] Help & support — C10c-c
+
+#### C10c-c · Weekly report and Help
+
+- [x] `SettingsToggleRow` promoted out of the daily reminder the moment the
+      weekly report needed the same chrome — the A3c rule, applied
+- [x] Monday morning, because weeks start Monday everywhere else in Tocky and
+      the week it reports on has just closed
+- [x] It invites a look rather than naming a total: a local notification
+      carries the words it was scheduled with, a week before it arrives
+- [x] Help answers what only the app can answer — where the data is, what
+      deleting it costs, why a pause does not count, why it asked about a long
+      session — and mails support with the version already in the subject
+- [x] The Maestro config glob was `0*.yaml`, which stopped matching at flow 10
+      and quietly ran nine while reporting them all green
 
 #### C10c-b · Daily reminder
 

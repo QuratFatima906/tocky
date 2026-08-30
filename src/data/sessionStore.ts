@@ -21,6 +21,8 @@ export type SessionStoreSnapshot = {
   readonly themePreference: ThemePreference;
   /** A nudge to record, kept whether or not it is on, so the time survives. */
   readonly dailyReminder: DailyReminder;
+  /** Monday's look back at the week that just closed. */
+  readonly weeklyReport: boolean;
   /**
    * The running session Tocky has already asked about. Persisted rather than
    * held in memory because the question is asked when the app opens, and
@@ -35,6 +37,7 @@ type StoredSetting =
   | 'profileName'
   | 'themePreference'
   | 'dailyReminder'
+  | 'weeklyReport'
   | 'askedAboutSessionId';
 
 /**
@@ -107,6 +110,7 @@ export type SessionStore = {
   setThemePreference: (preference: ThemePreference) => void;
   /** Off keeps the time that was chosen, so turning it back on does not lose it. */
   setDailyReminder: (reminder: DailyReminder) => void;
+  setWeeklyReport: (isOn: boolean) => void;
   /** Remembers that the user has answered for this session, so it is asked once. */
   setAskedAboutSession: (sessionId: string | null) => void;
   addCategory: (draft: CategoryDraft) => void;
@@ -217,6 +221,7 @@ export const LOADING_SNAPSHOT: SessionStoreSnapshot = {
   profileName: null,
   themePreference: 'system',
   dailyReminder: DAILY_REMINDER_OFF,
+  weeklyReport: false,
   askedAboutSessionId: null,
 };
 
@@ -226,6 +231,7 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
     profileName: null,
     themePreference: 'system',
     dailyReminder: DAILY_REMINDER_OFF,
+    weeklyReport: false,
     askedAboutSessionId: null,
     ...seed,
   };
@@ -369,6 +375,13 @@ export function createInMemorySessionStore(seed: SessionStoreSeed): SessionStore
       }
 
       snapshot = { ...snapshot, dailyReminder };
+      listeners.forEach((listener) => listener());
+    },
+
+    setWeeklyReport(weeklyReport) {
+      if (snapshot.weeklyReport === weeklyReport) return;
+
+      snapshot = { ...snapshot, weeklyReport };
       listeners.forEach((listener) => listener());
     },
 
