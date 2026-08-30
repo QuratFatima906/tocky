@@ -1,0 +1,26 @@
+appId: com.tocky.app
+name: A recorded session can be exported through the share sheet
+---
+- runFlow: subflows/fresh-start.yaml
+- runFlow: subflows/start-work-session.yaml
+- runFlow: subflows/end-session.yaml
+# Through the door a person uses. A tocky://settings deep link works against a
+# debug build and does not against a Release one, and the point of this flow is
+# the export rather than how Settings was reached.
+- tapOn: 'Open your profile'
+- assertVisible: 'Settings'
+# Export sits at the bottom of Settings, below the fold on a shorter device,
+# so the flow scrolls to it rather than assuming the screen is tall enough.
+- scrollUntilVisible:
+    element:
+      text: 'Export data, 1'
+    direction: DOWN
+    timeout: 10000
+# The row counts what would go out rather than saying it is coming soon.
+- tapOn: 'Export data, 1'
+- assertVisible: 'Export your sessions'
+- tapOn: 'CSV'
+# The share sheet is handed a file, so it names one -- not a wall of text.
+- assertVisible: '.*tocky-.*csv.*'
+# The sheet is system UI and outlives the app, so it is closed deliberately.
+- stopApp

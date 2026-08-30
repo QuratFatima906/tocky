@@ -74,7 +74,13 @@ export function SettingsRow({
   }
 
   return (
-    <PressableScale accessibilityRole="button" accessibilityLabel={label} onPress={onPress}>
+    <PressableScale
+      accessibilityRole="button"
+      // The value is the whole point of most of these rows -- how many
+      // categories, how many sessions -- and reading only the label drops it.
+      accessibilityLabel={value === undefined ? label : `${label}, ${value}`}
+      onPress={onPress}
+    >
       {body}
     </PressableScale>
   );

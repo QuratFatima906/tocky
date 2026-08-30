@@ -28,6 +28,14 @@ export {
 } from './duration';
 export type { RunningSessionProblem, SessionTimeProblem } from './duration';
 export {
+  EXPORT_MIME_TYPES,
+  exportContents,
+  exportFileName,
+  sessionsToCsv,
+  sessionsToJson,
+} from './export';
+export type { ExportContents, ExportFormat } from './export';
+export {
   dayGroupHeading,
   formatClockTime,
   formatComparedToLastWeek,
