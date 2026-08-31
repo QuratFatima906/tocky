@@ -1,8 +1,10 @@
 # Releasing Tocky
 
-Everything here is blocked on credentials the repository does not hold. The
-configuration is in place and checked; what remains is an account and two
-secrets.
+The checklist for cutting a release, once setup is done.
+
+**Setting up for the first time?** Start at
+[`docs/setup/`](setup/README.md), which walks through each account and
+credential step by step. This page assumes that is finished.
 
 ## What a human has to supply
 
@@ -18,15 +20,17 @@ a robot token, so it belongs to the account rather than to a person.
 
 ## First release, in order
 
-1. Enrol in the Apple Developer Program, and wait for it to be approved.
-2. `npx eas login`, then `npx eas build:configure` to attach the project to an
-   EAS account. This writes an `extra.eas.projectId` into the app config.
-3. Create the app in App Store Connect and put its ID and your Team ID into
-   `eas.json`. Both placeholders say `REPLACE_WITH_` until you do.
+Each step has a full walkthrough in [`docs/setup/`](setup/README.md).
+
+1. [Enrol in the Apple Developer Program](setup/02-apple-developer.md) and wait
+   for approval. Start this first — it is the only step with a queue.
+2. [Link the project to EAS and set up credentials](setup/03-eas-and-testflight.md).
+3. Put the App Store Connect app ID and your Apple Team ID into `eas.json`.
+   Both say `REPLACE_WITH_` until you do.
 4. Add `EXPO_TOKEN` to the repository secrets.
-5. `npx eas build --profile preview --platform ios` and install it on a device.
-   This is the first time the app runs anywhere other than a simulator.
-6. Tag the commit `v0.1.0`. The `Release` workflow builds production and
+5. Build `preview` and install it on a device.
+6. [Fill in the App Store listing](setup/04-app-store-listing.md).
+7. Tag the commit `v0.1.0`. The `Release` workflow builds production and
    submits to TestFlight.
 
 ## The build profiles
@@ -52,7 +56,7 @@ a robot token, so it belongs to the account rather than to a person.
 
 ## Still missing for the App Store
 
-These need a human and are not written down anywhere else:
+Walked through in [04 · App Store listing](setup/04-app-store-listing.md):
 
 - **Screenshots** at every required size, from a release build
 - **App Store description, keywords, support URL, marketing URL**
