@@ -589,13 +589,25 @@ Start into a confirm dialog rather than a timer.
 device: a keyboard that occupies space, a navigation stack with depth, and a
 native alert layered over the React tree.
 
-### E3 · Build & deploy
+### E3 · Build & deploy — **config done, blocked on credentials**
 
-- [ ] EAS build profiles: development · preview · production
-- [ ] App icon, adaptive icon, splash
-- [ ] GitHub Actions: EAS build on `main`, submit to TestFlight on tag
-- [ ] App Store metadata, privacy manifest, screenshots
-- [ ] Release checklist
+- [x] EAS build profiles: development · preview · production — E3a
+- [x] App icon, adaptive icon, splash — E3a fixed an adaptive icon that named a
+      file which had never existed, and a test now holds every named image to
+      being on disk
+- [x] GitHub Actions: build on a tag, submit to TestFlight — E3a. It refuses
+      with a readable message when `EXPO_TOKEN` is absent rather than failing
+      obscurely, and runs `npm run verify` before spending a build
+- [x] Privacy manifest — declared since A1, and tested
+- [ ] App Store metadata and screenshots — **needs a human**, listed in
+      `docs/RELEASING.md`
+- [x] Release checklist — `docs/RELEASING.md`
+- [ ] **Cold start under 2s**, moved here from D3: it needs a release build,
+      which needs the Apple Developer account
+
+Nothing here has been run. A build needs an Apple Developer Program
+enrolment, an App Store Connect app record, an Apple Team ID and an
+`EXPO_TOKEN`, and none of those can be produced from this repository.
 
 ### E4 · Siri / App Intents _(needs Xcode + Apple Developer account)_
 

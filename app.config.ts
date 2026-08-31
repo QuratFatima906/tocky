@@ -48,7 +48,10 @@ const config: ExpoConfig = {
   android: {
     package: 'com.tocky.app',
     adaptiveIcon: {
-      foregroundImage: './assets/adaptive-icon.png',
+      // The file this used to name has never existed; these are the ones that do.
+      foregroundImage: './assets/android-icon-foreground.png',
+      backgroundImage: './assets/android-icon-background.png',
+      monochromeImage: './assets/android-icon-monochrome.png',
       backgroundColor: NATIVE_SURFACES.paper,
     },
   },
